@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>quero - Gestión de almacenes y quioscos</title>
+    <style>
+        :root {
+            --gradient-start: #e0f0ff;
+            --gradient-end: #e6e0ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: black;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .btn-secondary {
+            color: #1a1a1a;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 4rem 2rem;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge {
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .hero p {
+            color: #666;
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .features {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            text-align: left;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        footer {
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-link {
+            color: #1a1a1a;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="logo">
+            <!-- <img src="{% static 'img/logo.svg' %}" alt="quero" width="40" height="40"> -->
+            quero
+        </a>
+        <div class="nav-buttons">
+            <a class="btn btn-primary">Registrarse</a>
+            <a class="btn btn-secondary">Iniciar Sesión</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="badge">
+            🚀 En desarrollo - Gratis por tiempo limitado
+        </div>
+        <h1>Gestione su almacén y quiosco con facilidad</h1>
+        <p>quero es un potente programa de gestión diseñado específicamente para almacenes y quioscos. Agiliza tus operaciones, ahorra tiempo y aumenta tus ganancias.</p>
+    </section>
+
+    <section class="features">
+        <h2>Características principales</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Sistema de stock</h3>
+                <p>Administre fácilmente su inventario con seguimiento en tiempo real y alertas automatizadas.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Caja registradora</h3>
+                <p>Procese transacciones de forma rápida y precisa con nuestro intuitivo sistema PDV (Punto de Venta).</p>
+            </div>
+            <div class="feature-card">
+                <h3>Cierre de caja</h3>
+                <p>Simplifique los procedimientos de cierre de día con resúmenes de ventas completos.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 quero, Inc</p>
+        <a class="footer-link">
+            ✉️ Contáctanos por correo
+        </a>
+    </footer>
+</body>
+</html>
