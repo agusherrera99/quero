@@ -11,6 +11,10 @@
         height: fit-content;
     }
 
+    .action_btns form button{
+        width: 180px;
+    }
+
     .card {
         background: white;
         border-radius: 0.5rem;
@@ -118,20 +122,27 @@
         <h2>Acciones de Cuenta</h2>
         <p>Gestiona tu cuenta.</p>
         
-        <div style="display: flex; flex-direction: row; gap: 1rem;">
+        <div class="action_btns" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+            <form action="{% url 'password_change' %}" style="">
+                {% csrf_token %}
+                <button class="btn btn-default btn-icon" type="submit">
+                    <i class="fa-solid fa-key fa-2x"></i>
+                    Cambiar contraseña
+                </button>
+            </form>
+            <form action="{% url 'password_reset' %}">
+                {% csrf_token %}
+                <button class="btn btn-default btn-icon" type="submit">
+                    <i class="fa-solid fa-unlock fa-2x"></i>
+                    Restablecer contraseña
+                </button>
+            </form>
             <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                     <button class="btn btn-danger btn-icon" type="submit">
-                        <i class="fa-solid fa-right-from-bracket fa-2x" style="margin-right: 1rem;"></i>
+                        <i class="fa-solid fa-right-from-bracket fa-2x"></i>
                         Cerrar Sesión
                     </button>
-            </form>
-            <form action="{% url 'password_change' %}">
-                {% csrf_token %}
-                <button class="btn btn-default btn-icon" type="submit">
-                    <i class="fa-solid fa-key fa-2x" style="margin-right: 1rem;"></i>
-                    Cambiar contraseña
-                </button>
             </form>
         </div>
     </div>

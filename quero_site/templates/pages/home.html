@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <title>Quero - Gestión de almacenes y quioscos</title>
     <style>
         :root {
@@ -162,39 +163,56 @@
             margin: 0 auto;
         }
 
+
         .features {
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .features h2 {
-            font-size: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .features-grid {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
         .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
             padding: 2rem;
-            text-align: left;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+                        0 10px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .feature-card h3 {
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1),
+                        0 12px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #4f46e5;
+            background: rgba(79, 70, 229, 0.1);
+            width: 4rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+        }
+
+        .feature-title {
             font-size: 1.5rem;
-            margin: 1rem 0;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .feature-card p {
-            color: #666;
-            line-height: 1.5;
+        .feature-description {
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 1rem;
         }
 
         footer {
@@ -236,20 +254,34 @@
     </section>
 
     <section class="features">
-        <h2>Características principales</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3>Sistema de stock</h3>
-                <p>Administre fácilmente su inventario con seguimiento en tiempo real y alertas automatizadas.</p>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-box"></i>
             </div>
-            <div class="feature-card">
-                <h3>Caja registradora</h3>
-                <p>Procese transacciones de forma rápida y precisa con nuestro intuitivo sistema PDV (Punto de Venta).</p>
+            <h2 class="feature-title">Sistema de stock</h2>
+            <p class="feature-description">
+                Administre fácilmente su inventario con seguimiento en tiempo real y alertas automatizadas.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-cash-register"></i>
             </div>
-            <div class="feature-card">
-                <h3>Cierre de caja</h3>
-                <p>Simplifique los procedimientos de cierre de día con resúmenes de ventas completos.</p>
+            <h2 class="feature-title">Caja registradora</h2>
+            <p class="feature-description">
+                Procese transacciones de forma rápida y precisa con nuestro intuitivo sistema PDV (Punto de Venta).
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-file-invoice"></i>
             </div>
+            <h2 class="feature-title">Cierre de caja</h2>
+            <p class="feature-description">
+                Simplifique los procedimientos de cierre de día con resúmenes de ventas completos.
+            </p>
         </div>
     </section>
 
