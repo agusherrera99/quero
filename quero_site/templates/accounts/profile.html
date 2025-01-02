@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Cuenta - Quero{% endblock %}
+
+{% block content %}
+<style>
+    .account-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        height: fit-content;
+    }
+
+    .card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #1a1a1a;
+    }
+
+    .card p {
+        color: #666;
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .logout-btn {
+        display: flex; 
+        align-items: center; 
+        padding: 2rem;
+        border-radius: 0.5rem;
+        width: 220px; 
+        height: 50px;
+        background-color: #ef4444;
+        border-color: #ef4444;
+        color: white;
+    }
+
+    .user-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .info-group {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        width: 220px; 
+        height: 70px;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: #1a1a1a;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .account-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="account-grid">
+    <div class="card">
+        <h2>Información personal</h2>
+        <p>Actualiza tu información.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
+            <div class="info-group">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ user.email }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Usuario</div>
+                <div class="info-value">{{ user.username }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Teléfono</div>
+                <div class="info-value">{{ user.phone }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Negocio</div>
+                <div class="info-value">{{ user.shop_name }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Nombre</div>
+                <div class="info-value">{{ user.first_name }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Apellido</div>
+                <div class="info-value">{{ user.last_name }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Acciones de Cuenta</h2>
+        <p>Gestiona tu cuenta.</p>
+        
+        <div style="display: flex; flex-direction: row; gap: 1rem;">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                    <button class="btn btn-danger btn-icon" type="submit">
+                        <i class="fa-solid fa-right-from-bracket fa-2x" style="margin-right: 1rem;"></i>
+                        Cerrar Sesión
+                    </button>
+            </form>
+            <form action="{% url 'password_change' %}">
+                {% csrf_token %}
+                <button class="btn btn-default btn-icon" type="submit">
+                    <i class="fa-solid fa-key fa-2x" style="margin-right: 1rem;"></i>
+                    Cambiar contraseña
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
