@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Selecciona tu tipo de negocio - Quero{% endblock %}
+
+{% block content %}
+<style>
+    .business-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(300px, 500px));
+        gap: 1.5rem;
+        padding: 1rem;
+        margin-top: 2rem;
+    }
+
+    .business-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        background-color: #ffffff;
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .business-card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .business-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .business-description {
+        font-size: 0.875rem;
+        color: #4a5568;
+        margin-bottom: 1rem;
+    }
+
+    .category-list, .subcategory-list {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .select-button {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        background-color: #4a5568;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .select-button:hover {
+        background-color: #2d3748;
+    }
+
+    .title-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .title-container {
+        display: inline-flex; 
+        flex-direction: column; 
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+
+<div class="title-section">
+    <div class="title-container">
+        <h1 class="text-3xl font-bold mb-6 text-center">Selecciona tu tipo de negocio</h1>
+        <p class="text-lg text-center mb-8">Elige el tipo de negocio que mejor se adapte a tu actividad comercial</p>
+    </div>
+</div>
+
+<div class="business-grid">
+    {% for business in business_types %}
+        <div class="business-card">
+            <h2 class="business-title">{{ business.type }}</h2>
+            <p class="business-description">{{ business.description }}</p>
+            <h3 class="font-semibold mb-2">Categorías principales:</h3>
+            <ul class="category-list">
+                {% for category in business.categories %}
+                    <li>{{ category }}</li>
+                {% endfor %}
+            </ul>
+            <h3 class="font-semibold mb-2">Subcategorías comunes:</h3>
+            <ul class="subcategory-list">
+                {% for subcategory in business.subcategories %}
+                    <li>{{ subcategory }}</li>
+                {% endfor %}
+            </ul>
+            <form method="post" action="{% url 'pages:select_business_type' %}">
+                {% csrf_token %}
+                <input type="hidden" name="business_type" value="{{ business.type }}">
+                <button type="submit" class="select-button">Seleccionar</button>
+            </form>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -175,19 +175,19 @@
         </a>
         {% if request.user.is_authenticated %}
             <nav class="nav-menu">
-                <a class="nav-item {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}">
+                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'stock' %}active{% endif %}" href="{% url 'stock:stock' %}">
                     <i class="fa-solid fa-cubes fa-2x"></i>
                     Inventario
                 </a>
-                <a class="nav-item {% if request.resolver_match.url_name == 'sales' %}active{% endif %}">
+                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'sales' %}active{% endif %}">
                     <i class="fa-solid fa-dollar-sign fa-2x"></i>
                     Venta
                 </a>
-                <a class="nav-item {% if request.resolver_match.url_name == 'summary' %}active{% endif %}">
+                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'summary' %}active{% endif %}">
                     <i class="fa-solid fa-book fa-2x"></i>
                     Resumen
                 </a>
-                <a class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">
+                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">
                     <i class="fa-solid fa-user fa-2x"></i>
                     Cuenta
                 </a>

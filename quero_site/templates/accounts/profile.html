@@ -123,7 +123,7 @@
         <p>Gestiona tu cuenta.</p>
         
         <div class="action_btns" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-            <form action="{% url 'password_change' %}" style="">
+            <form action="{% url 'password_change' %}">
                 {% csrf_token %}
                 <button class="btn btn-default btn-icon" type="submit">
                     <i class="fa-solid fa-key fa-2x"></i>

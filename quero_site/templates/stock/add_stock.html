@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>Registrar Cuenta - Quero</title>
+    <title>Añadir Producto - Quero</title>
     <style>
         * {
             margin: 0;
@@ -130,116 +130,87 @@
 </head>
 <body>
     <div class="card">
-        <h1>Crea tu cuenta</h1>
-        {% if messages %}
+        <h1>Añade un producto</h1>
+        <!-- {% if messages %}
             <div class="messages">
                 {% for message in messages %}
                     <div style="color: red; margin-bottom: 0.5rem;">{{ message }}</div>
                 {% endfor %}
             </div>
-        {% endif %}
+        {% endif %} -->
         <form method="post">
             {% csrf_token %}
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
                 <div class="form-group">
-                    <label for="shop_name">Nombre del negocio</label>
+                    <label for="category">Categoría</label>
                     <div class="input-icon">
-                        <i class="fa-solid fa-shop fa-lg"></i>
-                        {{ form.shop_name }}
+                        {{ form.category }}
                     </div>
-                    {% for error in form.shop_name.errors %}
+                    {% for error in form.category.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="form-group">
-                    <label for="first_name">Nombre</label>
+                    <label for="subcategory">Subcategoría</label>
                     <div class="input-icon">
-                        <i class="fa-regular fa-address-card fa-lg"></i>
-                        {{ form.first_name }}
+                        {{ form.subcategory }}
                     </div>
-                    {% for error in form.first_name.errors %}
+                    {% for error in form.subcategory.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="form-group">
-                    <label for="last_name">Apellido</label>
+                    <label for="name">Nombre del producto</label>
                     <div class="input-icon">
-                        <i class="fa-solid fa-address-card fa-lg"></i>
-                        {{ form.last_name }}
+                        {{ form.name }}
                     </div>
-                    {% for error in form.last_name.errors %}
+                    {% for error in form.name.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="form-group">
-                    <label for="phone">Teléfono</label>
+                    <label for="cantidad">Cantidad</label>
                     <div class="input-icon">
-                        <i class="fa-solid fa-mobile-screen-button fa-lg"></i>
-                        {{ form.phone }}
+                        {{ form.quantity }}
                     </div>
-                    {% for error in form.phone.errors %}
+                    {% for error in form.quantity.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
                 <div class="form-group">
-                    <label for="username">Nombre de usuario</label>
+                    <label for="price">Precio</label>
                     <div class="input-icon">
-                        <i class="fa-regular fa-user fa-lg"></i>
-                        <!-- Se asigna el valor del username si el formulario falla -->
-                        <input type="text" id="username" name="username" value="{{ form.username.value|default:'' }}" readonly class="readonly-input">
+                        {{ form.price }}
                     </div>
-                    {% for error in form.username.errors %}
-                        <p class="error" style="color: red;">{{ error }}</p>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <div class="input-icon">
-                        <i class="fa-regular fa-envelope fa-lg"></i>
-                        {{ form.email }}
-                    </div>
-                    {% for error in form.email.errors %}
-                        <p class="error" style="color: red;">{{ error }}</p>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <div class="input-icon">
-                        <i class="fa-solid fa-key fa-lg"></i>
-                        {{ form.password1 }}
-                    </div>
-                    {% for error in form.password.errors %}
-                        <p class="error" style="color: red;">{{ error }}</p>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    <label for="password2">Confirme la Contraseña</label>
-                    <div class="input-icon">
-                        <i class="fa-solid fa-key fa-lg"></i>
-                        {{ form.password2 }}
-                    </div>
-                    {% for error in form.password2.errors %}
+                    {% for error in form.price.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
             </div>
             <input type="hidden" name="next" value="{{ next }}" />
-            <button type="submit" class="submit-button">Registrar Cuenta</button>
-            <p class="footer-text">
-                ¿Ya estás registrado? <a href="{% url 'login' %}">Iniciar Sesión</a>
-            </p>
-            <p class="terms-text">
-                Al continuar, aceptas nuestros <a>Términos y Condiciones</a> y la <a>Política de Privacidad</a>.
-            </p>
+            <button type="submit" class="submit-button">Añadir</button>
         </form>
     </div>
 
     <script>
-        // JavaScript para actualizar el campo username automáticamente
-        document.getElementById('id_email').addEventListener('input', function() {
-            var email = this.value;
-            var username = email.split('@')[0]; // Obtener la parte antes del '@'
-            document.getElementById('username').value = username; // Asignar al campo username
+        // Al cambiar la categoría, actualiza las subcategorias con AJAX.
+        document.querySelector('select[name="category"]').addEventListener('change', function() {
+            let category_id = this.value;
+
+            fetch('/load_subcategories/?category_id=${category_id}')
+            .then(response => response.json())
+            .then(data => {
+                let subcategorySelect = document.querySelector('select[name="subcategory"]');
+
+                subcategorySelect.innerHTML = ''; // Limpia las subcategorias previas
+                data.subcategories.forEach(subcategory => {
+                    let option = document.createElement('option');
+
+                    option.value = subcategory.id;
+                    option.textContent = subcategory.name;
+                    subcategorySelect.appendChild(option);
+                });
+            });
         });
     </script>
 </body>

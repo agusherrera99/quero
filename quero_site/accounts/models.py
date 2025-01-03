@@ -3,8 +3,9 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    phone = models.CharField(max_length=30)
-    shop_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=30, default='0')
+    shop_name = models.CharField(max_length=100, default='sin nombre')
+    business_type = models.ForeignKey('pages.BusinessType', on_delete=models.CASCADE, null=False, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
