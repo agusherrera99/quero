@@ -14,6 +14,26 @@
             font-family: system-ui, -apple-system, sans-serif;
         }
 
+        .back-button {
+            position: absolute;
+            left: 0;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            color: #4B5563;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .back-button:hover {
+            color: #1a1a1a;
+        }
+
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+
         body {
             min-height: 100vh;
             display: flex;
@@ -22,7 +42,7 @@
             background-color: #f8f9fa;
         }
 
-        .card {
+        .form-container {
             background: white;
             padding: 2rem;
             border-radius: 0.5rem;
@@ -32,7 +52,7 @@
             margin: 1rem;
         }
 
-        .card h1 {
+        .form-container h1 {
             text-align: center;
             margin-bottom: 2rem;
             font-size: 1.5rem;
@@ -78,6 +98,14 @@
             background-color: transparent;
         }
 
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
         .submit-button {
             width: 100%;
             padding: 0.75rem;
@@ -96,8 +124,11 @@
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Añade un producto</h1>
+    <div class="form-container">
+        <div class="header-container">
+            <a href="{% url 'stock:stock' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
+            <h2>Añade un producto</h2>
+        </div>
         <form method="post">
             {% csrf_token %}
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
