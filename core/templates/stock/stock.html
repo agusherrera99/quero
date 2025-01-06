@@ -118,17 +118,17 @@
     <div class="stat-card">
         <div class="value">{{ unique_products }}</div>
         <div class="label">Productos únicos</div>
-        <div class="status" style="color: {{unique_percentage_color}};">{{ unique_percentage_text }} desde el último mes</div>
+        <div class="status" style="color: {{ unique_percentage_color }};">{{ unique_percentage_text }} desde el último mes</div>
     </div>
     <div class="stat-card">
         <div class="value">{{ total_quantity }}</div>
         <div class="label">Productos totales</div>
-        <div class="status" style="color: {{total_quantity_percentage_color}};">{{ total_quantity_percentage_text }} desde el último mes</div>
+        <div class="status" style="color: {{ total_quantity_percentage_color }};">{{ total_quantity_percentage_text }} desde el último mes</div>
     </div>
     <div class="stat-card">
         <div class="value">${{ stock_formatted_value }}</div>
         <div class="label">Valor del Stock</div>
-        <div class="status" style="color: {{stock_percentage_color}};">{{ stock_percentage_text }} desde el último mes</div>
+        <div class="status" style="color: {{ stock_percentage_color }};">{{ stock_percentage_text }} desde el último mes</div>
     </div>
 </div>
 

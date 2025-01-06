@@ -24,7 +24,7 @@ def login_view(request):
                 if user.is_active:
                     login(request, user)
                     messages.success(request, f'Bienvenido, {user.username}!')
-                    return redirect('accounts:profile')
+                    return redirect('stock:stock')
                 else:
                     messages.error(request, "Tu cuenta está desactivada.")
             else:
@@ -50,7 +50,7 @@ def registration_view(request):
                 messages.success(request, 'Tu cuenta ha sido creada exitosamente.')
                 login(request, user)
                 
-                return redirect('accounts:profile')
+                return redirect('stock:stock')
             except Exception as e:
                 messages.error(request, f"Hubo un problema al registrar tu cuenta: {str(e)}")
         else:
