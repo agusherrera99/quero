@@ -65,7 +65,7 @@
     .products-table th {
         background: #f8f9fa;
         padding: 0.75rem 1rem;
-        text-align: left;
+        text-align: center;
         font-weight: 500;
         color: #374151;
         font-size: 0.875rem;
@@ -74,6 +74,7 @@
 
     .products-table td {
         padding: 1rem;
+        text-align: center;
         border-bottom: 1px solid #e5e7eb;
         color: #1a1a1a;
     }
@@ -84,6 +85,7 @@
 
     .actions {
         display: flex;
+        justify-content: center;
         gap: 0.5rem;
     }
 
@@ -95,6 +97,7 @@
         border: none;
         cursor: pointer;
         transition: all 0.2s ease;
+        text-decoration: none;
     }
 
     .btn-icon-only:hover {
@@ -132,10 +135,10 @@
 <div class="table-container">
     <div class="table-header">
         <h2 class="table-title">Productos</h2>
-        <button class="btn btn-primary btn-icon">
+        <a class="btn btn-primary btn-icon" href="{% url 'stock:add_stock' %}">
             <i class="fas fa-plus"></i>
             Añadir Producto
-        </button>
+        </a>
     </div>
 
     <table class="products-table">
@@ -144,26 +147,22 @@
                 <th>Producto</th>
                 <th>Categoría</th>
                 <th>Subcategoría</th>
-                <th>Precio (u/kg)</th>
-                <th>Cantidad (u/kg)</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
                 <th>Acciones</th>
             </tr>
         </thead>
-        <!-- <tbody>
+        <tbody>
             {% for product in products %}
             <tr>
                 <td>{{ product.name }}</td>
-                <td>{{ product.category }}</td>
-                <td>{{ product.subcategory }}</td>
-                <td>${{ product.price }}</td>
-                <td>{{ product.quantity }}</td>
+                <td>{{ product.subcategory.category.name }}</td>
+                <td>{{ product.subcategory.name }}</td>
+                <td>${{ product.price }} ({{ product.uom }})</td>
+                <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
                 <td class="actions">
-                    <button class="btn-icon-only" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icon-only" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen fa-lg"></i></a>
+                    <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash fa-lg"></i></a>
                 </td>
             </tr>
             {% endfor %}
@@ -174,7 +173,7 @@
                 </td>
             </tr>
             {% endif %}
-        </tbody> -->
+        </tbody>
     </table>
 </div>
 {% endblock %}

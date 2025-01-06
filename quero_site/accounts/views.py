@@ -12,18 +12,18 @@ def profile(request):
 
 def login_view(request):
     if request.method == 'POST':
-        form = UserLoginForm(request.POST)
+        form = UserLoginForm(request.POST or None)
         
         if form.is_valid():
             email = form.cleaned_data.get('email')
             username = email.split('@')[0]
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=username, password=password)
-            print(user, email, password)
             
             if user is not None:
                 if user.is_active:
                     login(request, user)
+                    messages.success(request, f'Bienvenido, {user.username}!')
                     return redirect('accounts:profile')
                 else:
                     messages.error(request, "Tu cuenta está desactivada.")
@@ -41,13 +41,13 @@ def login_view(request):
 def registration_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
-        print(request.POST)
         if form.is_valid():
             try:
                 user = form.save(commit=False)
                 # usa el método set_password de Django para encriptar la contraseña antes de guardar el usuario en la base de datos.
                 user.set_password(form.cleaned_data['password1'])
                 user.save()
+                messages.success(request, 'Tu cuenta ha sido creada exitosamente.')
                 login(request, user)
                 
                 return redirect('accounts:profile')

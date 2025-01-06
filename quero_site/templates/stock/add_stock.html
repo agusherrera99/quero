@@ -44,8 +44,10 @@
 
         .form-group label {
             display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
             margin-bottom: 0.5rem;
-            color: #333;
         }
 
         .form-group input {
@@ -64,21 +66,16 @@
             border-color: #666;
         }
 
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon i {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #aaa;
-        }
-
-        .input-icon input {
-            padding-left: 35px;
+        .form-group select {
             width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            background-position: 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+            background-color: transparent;
         }
 
         .submit-button {
@@ -95,36 +92,6 @@
 
         .submit-button:hover {
             background: #333;
-        }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: #666;
-        }
-
-        .footer-text a {
-            color: #1a1a1a;
-            text-decoration: none;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
-
-        .terms-text {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.75rem;
-            color: #666;
-        }
-
-        /* Estilos para el campo de username cuando está deshabilitado visualmente */
-        .readonly-input {
-            background-color: #f0f0f0;
-            opacity: 0.7; /* Para hacerlo ver más desactivado */
-            pointer-events: none; /* Deshabilita la interacción */
         }
     </style>
 </head>
@@ -143,7 +110,7 @@
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
                 <div class="form-group">
                     <label for="category">Categoría</label>
-                    <div class="input-icon">
+                    <div>
                         {{ form.category }}
                     </div>
                     {% for error in form.category.errors %}
@@ -152,7 +119,7 @@
                 </div>
                 <div class="form-group">
                     <label for="subcategory">Subcategoría</label>
-                    <div class="input-icon">
+                    <div>
                         {{ form.subcategory }}
                     </div>
                     {% for error in form.subcategory.errors %}
@@ -161,7 +128,7 @@
                 </div>
                 <div class="form-group">
                     <label for="name">Nombre del producto</label>
-                    <div class="input-icon">
+                    <div>
                         {{ form.name }}
                     </div>
                     {% for error in form.name.errors %}
@@ -170,7 +137,7 @@
                 </div>
                 <div class="form-group">
                     <label for="cantidad">Cantidad</label>
-                    <div class="input-icon">
+                    <div>
                         {{ form.quantity }}
                     </div>
                     {% for error in form.quantity.errors %}
@@ -179,10 +146,19 @@
                 </div>
                 <div class="form-group">
                     <label for="price">Precio</label>
-                    <div class="input-icon">
+                    <div>
                         {{ form.price }}
                     </div>
                     {% for error in form.price.errors %}
+                        <p class="error" style="color: red;">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="uom">Unidad de Medida</label>
+                    <div>
+                        {{ form.uom }}
+                    </div>
+                    {% for error in form.uom.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
@@ -192,25 +168,35 @@
         </form>
     </div>
 
-    <script>
-        // Al cambiar la categoría, actualiza las subcategorias con AJAX.
-        document.querySelector('select[name="category"]').addEventListener('change', function() {
-            let category_id = this.value;
-
-            fetch('/load_subcategories/?category_id=${category_id}')
-            .then(response => response.json())
-            .then(data => {
-                let subcategorySelect = document.querySelector('select[name="subcategory"]');
-
-                subcategorySelect.innerHTML = ''; // Limpia las subcategorias previas
-                data.subcategories.forEach(subcategory => {
-                    let option = document.createElement('option');
-
-                    option.value = subcategory.id;
-                    option.textContent = subcategory.name;
-                    subcategorySelect.appendChild(option);
-                });
-            });
+    <script type="text/javascript">
+        // Cuando se cambie la categoría, hacer una petición AJAX para cargar las subcategorías correspondientes
+        document.getElementById('id_category').addEventListener('change', function () {
+            var categoryId = this.value;
+            
+            // Verifica que se haya seleccionado una categoría
+            if (categoryId) {
+                fetch(`/stock/load-subcategories/?category_id=${categoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Limpiar las opciones actuales del campo subcategoría
+                        var subcategoryField = document.getElementById('id_subcategory');
+                        subcategoryField.innerHTML = '';
+    
+                        // Añadir una opción por defecto (vacía)
+                        var option = document.createElement('option');
+                        option.value = '';
+                        option.text = 'Seleccione una subcategoría';
+                        subcategoryField.appendChild(option);
+    
+                        // Añadir las nuevas opciones de subcategorías
+                        data.subcategories.forEach(function (subcategory) {
+                            var option = document.createElement('option');
+                            option.value = subcategory.id;
+                            option.text = subcategory.name;
+                            subcategoryField.appendChild(option);
+                        });
+                    });
+            }
         });
     </script>
 </body>
