@@ -31,7 +31,7 @@
     }
 
     .stat-card .status {
-        font-size: 0.75rem;
+        font-size: 1rem;
         color: #6b7280;
         margin-top: 0.5rem;
     }
@@ -116,19 +116,19 @@
 
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="value">3</div>
+        <div class="value">{{ unique_products }}</div>
         <div class="label">Productos únicos</div>
-        <div class="status">igual desde el último mes</div>
+        <div class="status" style="color: {{unique_percentage_color}};">{{ unique_percentage_text }} desde el último mes</div>
     </div>
     <div class="stat-card">
-        <div class="value">41</div>
+        <div class="value">{{ total_quantity }}</div>
         <div class="label">Productos totales</div>
-        <div class="status">igual desde el último mes</div>
+        <div class="status" style="color: {{total_quantity_percentage_color}};">{{ total_quantity_percentage_text }} desde el último mes</div>
     </div>
     <div class="stat-card">
-        <div class="value">$114.400</div>
+        <div class="value">${{ stock_formatted_value }}</div>
         <div class="label">Valor del Stock</div>
-        <div class="status">igual desde el último mes</div>
+        <div class="status" style="color: {{stock_percentage_color}};">{{ stock_percentage_text }} desde el último mes</div>
     </div>
 </div>
 
