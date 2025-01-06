@@ -58,7 +58,7 @@ class AddProductForm(forms.ModelForm):
     )
 
     category = forms.ModelChoiceField(
-        queryset=models.Category.objects.all(),
+        queryset=models.Category.objects.none(),
         required=True,
         help_text='Seleccione una categoría para el producto.',
         widget=forms.Select(
@@ -93,7 +93,14 @@ class AddProductForm(forms.ModelForm):
         return price
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        user = self.request.user
         super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields['category'].queryset = user.business_type.category_list.all().order_by('name')
+            
+
         # Si existe un valor para 'category' en los datos del formulario (ya sea al editar o al ser enviado)
         if 'category' in self.data:
             try:

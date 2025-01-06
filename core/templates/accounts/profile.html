@@ -90,7 +90,7 @@
         <h2>Información personal</h2>
         <p>Actualiza tu información.</p>
         
-        <div style="display: grid; grid-template-columns: repeat(2, 240px);">
+        <div style="display: grid; grid-template-columns: repeat(4, 240px);">
             <div class="info-group">
                 <div class="info-label">Email</div>
                 <div class="info-value">{{ user.email }}</div>
@@ -102,6 +102,14 @@
             <div class="info-group">
                 <div class="info-label">Teléfono</div>
                 <div class="info-value">{{ user.phone }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Creado el</div>
+                <div class="info-value">{{ user.created_at }}</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Tipo de negocio</div>
+                <div class="info-value">{{ user.business_type }}</div>
             </div>
             <div class="info-group">
                 <div class="info-label">Negocio</div>

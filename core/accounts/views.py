@@ -50,7 +50,7 @@ def registration_view(request):
                 messages.success(request, 'Tu cuenta ha sido creada exitosamente.')
                 login(request, user)
                 
-                return redirect('pages:select-business-type')
+                return redirect('pages:business_type_selection')
             except Exception as e:
                 messages.error(request, f"Hubo un problema al registrar tu cuenta: {str(e)}")
         else:

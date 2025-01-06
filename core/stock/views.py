@@ -78,7 +78,7 @@ def stock(request):
 @login_required
 def add_stock(request):
     if request.method == 'POST':
-        form = forms.AddProductForm(request.POST or None)
+        form = forms.AddProductForm(data=request.POST, request=request)
 
         if form.is_valid():
             name = form.cleaned_data.get('name')
@@ -102,20 +102,19 @@ def add_stock(request):
             print(form.errors)
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
-        form = forms.AddProductForm()
+        form = forms.AddProductForm(request=request)
     
     return render(request, 'stock/add_stock.html', {'form': form})
 
 def edit_stock(request, pk):
     product = get_object_or_404(models.Product, pk=pk)
-    print(product.subcategory.category)
 
     if product.user != request.user:
         messages.error(request, 'No tienes permisos para editar este producto.')
         return redirect('stock:stock')
 
     if request.method == 'POST':
-        form = forms.AddProductForm(request.POST, instance=product)
+        form = forms.AddProductForm(data=request.POST, instance=product, request=request)
         if form.is_valid():
             form.save()
             messages.info(request, 'Producto actualizado correctamente.')
@@ -123,7 +122,7 @@ def edit_stock(request, pk):
         else:
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
-        form = forms.AddProductForm(instance=product)
+        form = forms.AddProductForm(instance=product, request=request)
 
     return render(request, 'stock/edit_stock.html', {'form': form})
 
