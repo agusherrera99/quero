@@ -129,6 +129,48 @@
             cursor: not-allowed;
         }
 
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            max-width: 350px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            animation: slideIn 0.2s ease-out;
+        }
+
+        .toast-success {
+            background-color: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            color: #15803D;
+        }
+
+        .toast-error {
+            background-color: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #B91C1C;
+        }
+
+        .toast-warning {
+            background-color: #FFFBEB;
+            border: 1px solid #FEF3C7;
+            color: #B45309;
+        }
+
+        .toast-info {
+            background-color: #F0F9FF;
+            border: 1px solid #BFDBFE;
+            color: #1D4ED8;
+        }
+
+        .toast-fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
         .nav-menu {
             padding: 1rem;
             flex: 1;
@@ -165,6 +207,26 @@
             padding: 2rem;
             width: 100%;
         }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -198,5 +260,18 @@
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.classList.add('toast-fade-out');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 500);
+                }, 3000);
+            });
+        });
+    </script>
 </body>
 </html>

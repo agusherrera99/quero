@@ -55,7 +55,7 @@ def edit_stock(request, pk):
         form = forms.AddProductForm(request.POST, instance=product)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Producto actualizado correctamente.')
+            messages.info(request, 'Producto actualizado correctamente.')
             return redirect('stock:stock')
         else:
             messages.error(request, 'Formulario no válido. Revisa los campos.')
@@ -74,7 +74,7 @@ def delete_stock(request, pk):
     
     if request.method == 'POST':
         product.delete()
-        messages.success(request, 'Producto eliminado correctamente.')
+        messages.info(request, 'Producto eliminado correctamente.')
         return redirect('stock:stock')
 
     return render(request, 'stock/delete_stock.html', {'product': product})

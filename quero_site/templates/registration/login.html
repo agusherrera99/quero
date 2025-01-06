@@ -145,13 +145,6 @@
 <body>
     <div class="card">
         <h1>Iniciar sesión</h1>
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div style="color: red; margin-bottom: 0.5rem;">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
@@ -182,6 +175,13 @@
             </p>
         </form>
     </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast toast-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
     <!-- Incluir el script de JavaScript -->
     <script>
