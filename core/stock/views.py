@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Sum, F
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -57,6 +58,11 @@ def stock(request):
     # Formatear el valor del stock en formato argentino
     stock_formatted_value = "{:,.2f}".format(stock_value).replace(",", "X").replace(".", ",").replace("X", ".")
 
+    # Paginación de productos
+    paginator = Paginator(products, 10)
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
+
     context = {
         'products': products,
         'unique_products': unique_products,
@@ -99,7 +105,6 @@ def add_stock(request):
             messages.success(request, 'Producto añadido correctamente.')
             return redirect('stock:stock')
         else:
-            print(form.errors)
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
         form = forms.AddProductForm(request=request)
