@@ -4,6 +4,81 @@
 
 {% block content %}
 <style>
+    .search-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .search-form {
+        position: relative;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border: 1px solid #E5E7EB;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: #1a1a1a;
+        background-color: white;
+        transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #1a1a1a;
+        box-shadow: 0 0 0 1px #1a1a1a;
+    }
+
+    .search-input::placeholder {
+        color: #9CA3AF;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6B7280;
+        pointer-events: none;
+    }
+
+    .search-clear {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6B7280;
+        cursor: pointer;
+        padding: 0.25rem;
+        border: none;
+        background: none;
+        display: none;
+    }
+
+    .search-input:not(:placeholder-shown) + .search-clear {
+        display: block;
+    }
+
+    .search-clear:hover {
+        color: #1a1a1a;
+    }
+
+    @media (max-width: 640px) {
+        .search-container {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .search-form {
+            max-width: 100%;
+        }
+    }
+
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -193,6 +268,22 @@
 <div class="table-container">
     <div class="table-header">
         <h2 class="table-title">Productos</h2>
+        <div class="search-container">
+            <form method="get" class="search-form">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    name="query" 
+                    class="search-input" 
+                    placeholder="Buscar productos..." 
+                    value="{{ request.GET.query|default:'' }}"
+                    autocomplete="off"
+                >
+                <button type="button" class="search-clear" onclick="clearSearch(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </form>
+        </div>
         <a class="btn btn-primary btn-icon" href="{% url 'stock:add_stock' %}">
             <i class="fas fa-plus"></i>
             Añadir Producto
@@ -211,25 +302,41 @@
             </tr>
         </thead>
         <tbody>
-            {% for product in products %}
-            <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.subcategory.category.name }}</td>
-                <td>{{ product.subcategory.name }}</td>
-                <td>${{ product.price }} ({{ product.uom }})</td>
-                <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
-                <td class="actions">
-                    <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen fa-lg"></i></a>
-                    <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash fa-lg"></i></a>
-                </td>
-            </tr>
-            {% endfor %}
+            {% if query %}
+                {% for product in results %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.subcategory.category.name }}</td>
+                        <td>{{ product.subcategory.name }}</td>
+                        <td>${{ product.price }} ({{ product.uom }})</td>
+                        <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
+                        <td class="actions">
+                            <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen fa-lg"></i></a>
+                            <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash fa-lg"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.subcategory.category.name }}</td>
+                    <td>{{ product.subcategory.name }}</td>
+                    <td>${{ product.price }} ({{ product.uom }})</td>
+                    <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
+                    <td class="actions">
+                        <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen fa-lg"></i></a>
+                        <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash fa-lg"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
             {% if not products %}
-            <tr>
-                <td colspan="6" style="text-align: center; padding: 2rem; color: #666;">
-                    No hay productos en el inventario
-                </td>
-            </tr>
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #666;">
+                        No hay productos en el inventario
+                    </td>
+                </tr>
             {% endif %}
         </tbody>
     </table>
@@ -276,4 +383,23 @@
         </div>
     {% endfor %}
 {% endif %}
+<script>
+    function clearSearch(button) {
+        const form = button.closest('form');
+        const input = form.querySelector('input[name="query"]');
+        input.value = '';
+        form.submit();
+    }
+
+    // Auto-submit form on input change after a delay
+    const searchInput = document.querySelector('.search-input');
+    let timeout = null;
+    
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            this.closest('form').submit();
+        }, 500);
+    });
+</script>
 {% endblock %}

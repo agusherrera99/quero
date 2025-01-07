@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
 from django.db.models import Sum, F
 from django.http import JsonResponse
@@ -58,6 +59,19 @@ def stock(request):
     # Formatear el valor del stock en formato argentino
     stock_formatted_value = "{:,.2f}".format(stock_value).replace(",", "X").replace(".", ",").replace("X", ".")
 
+    # Buscador de productos
+    search_form = forms.SearchForm()
+    query = None
+    results = []
+
+    if 'query' in request.GET:
+        search_form = forms.SearchForm(request.GET)
+        if search_form.is_valid():
+            query = search_form.cleaned_data['query']
+            results = (
+                products.annotate(search=SearchVector('name')).filter(search=query)
+            )
+
     # Paginación de productos
     paginator = Paginator(products, 10)
     page_number = request.GET.get('page')
@@ -76,7 +90,10 @@ def stock(request):
         'stock_formatted_value': stock_formatted_value,
         'stock_percentage': stock_percentage,
         'stock_percentage_text': stock_percentage_text,
-        'stock_percentage_color': stock_percentage_color
+        'stock_percentage_color': stock_percentage_color,
+        'search_form': search_form,
+        'query': query,
+        'results': results
     }
 
     return render(request, 'stock/stock.html', context)

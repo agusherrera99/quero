@@ -14,7 +14,6 @@ class Subcategory(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, null=False, default='sin categoria')
-    business = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'categories'
