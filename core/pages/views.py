@@ -21,7 +21,10 @@ def select_business_type(request):
         business_type_id = models.BusinessType.objects.get(name=business_type)
      
         request.user.business_type = business_type_id
+        # Eliminar todos los productos del usuario
+        request.user.product_set.all().delete()
         request.user.save()
+
         messages.success(request, 'Tipo de negocio seleccionado con éxito.')
         return redirect('accounts:profile')
     return render('pages/business_type_selection')

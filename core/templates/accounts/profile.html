@@ -13,6 +13,7 @@
 
     .action_btns form button{
         width: 180px;
+        height: 50px;
     }
 
     .card {
@@ -144,6 +145,13 @@
                     <i class="fa-solid fa-unlock fa-2x"></i>
                     Restablecer contraseña
                 </button>
+            </form>
+            <form  action="{% url 'pages:business_type_selection' %}" method="post">
+                {% csrf_token %}
+                    <button class="btn btn-warning btn-icon" type="submit">
+                        <i class="fa-solid fa-store fa-2x"></i>
+                        Cambiar tipo de negocio
+                    </button>
             </form>
             <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
