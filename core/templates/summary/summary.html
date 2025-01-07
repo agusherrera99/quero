@@ -1,0 +1,579 @@
+{% extends 'base.html' %}
+
+{% block title %}Resumen - Quero{% endblock %}
+
+{% block content %}
+<style>
+    .summary-container {
+        padding: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .stat-title {
+        font-size: 0.875rem;
+        color: #6B7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-change {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .stat-change.positive {
+        color: #059669;
+    }
+
+    .stat-change.negative {
+        color: #DC2626;
+    }
+
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .chart-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .chart-period {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .period-btn {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: #6B7280;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .period-btn:hover {
+        border-color: #1a1a1a;
+        color: #1a1a1a;
+    }
+
+    .period-btn.active {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .summary-table th {
+        background: #f8f9fa;
+        padding: 0.75rem 1.5rem;
+        text-align: left;
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.875rem;
+    }
+
+    .summary-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1a1a1a;
+    }
+
+    .summary-table tr:hover td {
+        background: #f8f9fa;
+    }
+
+    .chart-placeholder {
+        width: 100%;
+        height: 300px;
+        background: #f8f9fa;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+
+    .sales-history {
+        margin-top: 2rem;
+    }
+
+    .sales-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .sales-history-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .sales-history-search, .table-history-search {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .search-input {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+
+    .search-btn {
+        padding: 0.5rem 0.75rem;
+        background: #1a1a1a;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .search-btn:hover {
+        background-color: #000000;
+    }
+
+    .sales-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .sales-table th {
+        background: #f8f9fa;
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.875rem;
+        cursor: pointer;
+    }
+
+    .sales-table th:hover {
+        background: #e5e7eb;
+    }
+
+    .sales-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1a1a1a;
+    }
+
+    .sales-table tr:hover td {
+        background: #f8f9fa;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 1rem 0rem;
+    }
+
+    .page-btn {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: #374151;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .page-btn:hover {
+        border-color: #1a1a1a;
+        color: #1a1a1a;
+    }
+
+    .page-btn.active {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+    }
+
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .chart-toggle, .table-toggle {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .table-toggle {
+        margin-bottom: 1rem;
+    }
+
+    .toggle-btn {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: #374151;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .toggle-btn:hover {
+        border-color: #1a1a1a;
+        color: #1a1a1a;
+    }
+
+    .toggle-btn.active {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+    }
+
+    .chart-container, .table-container {
+        display: none;
+    }
+
+    .chart-container.active, .table-container.active {
+        display: block;
+    }
+</style>
+
+<div class="summary-container">
+    <!-- KPI Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-title">Ventas Totales (Mes)</div>
+            <!-- <div class="stat-value">${{ monthly_sales|default:"0.00" }}</div> -->
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                12.5% vs mes anterior
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Ventas Totales (Hoy)</div>
+            <!-- <div class="stat-value">${{ daily_sales|default:"0.00" }}</div> -->
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                5.2% vs ayer
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Productos Vendidos (Mes)</div>
+            <!-- <div class="stat-value">{{ monthly_products|default:"0" }}</div> -->
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                8.3% vs mes anterior
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Ticket Promedio</div>
+            <!-- <div class="stat-value">${{ average_ticket|default:"0.00" }}</div> -->
+            <div class="stat-change negative">
+                <i class="fas fa-arrow-down"></i>
+                2.1% vs mes anterior
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Ventas en el Tiempo</h3>
+                <div class="chart-period">
+                    <button class="period-btn">7D</button>
+                    <button class="period-btn active">30D</button>
+                    <button class="period-btn">90D</button>
+                    <button class="period-btn">1A</button>
+                </div>
+            </div>
+            <div class="chart-placeholder">
+                Gráfico de ventas en el tiempo
+            </div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Ventas por </h3>
+                <div class="chart-toggle">
+                    <button class="toggle-btn active" data-chart="category">Categoría</button>
+                    <button class="toggle-btn" data-chart="subcategory">Subcategoría</button>
+                </div>
+            </div>
+            <div class="chart-container active" id="category-chart">
+                <div class="chart-placeholder">
+                    Gráfico circular de categorías
+                </div>
+            </div>
+            <div class="chart-container" id="subcategory-chart">
+                <div class="chart-placeholder">
+                    Gráfico circular de subcategorías
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Section -->
+    <div class="table-toggle">
+        <button class="toggle-btn active" data-table="best-selling">Productos Más Vendidos</button>
+        <button class="toggle-btn" data-table="sales-history">Historial de Ventas</button>
+    </div>
+
+    <div class="table-container active" id="best-selling-table">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Productos Más Vendidos</h3>
+                <div class="table-history-search">
+                    <input type="text" class="search-input" placeholder="Buscar productos...">
+                </div>
+            </div>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Unidades Vendidas</th>
+                        <th>Ingresos</th>
+                        <th>Tendencia</th>
+                    </tr>
+                </thead>
+                <!-- <tbody>
+                    {% for product in top_products %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category }}</td>
+                        <td>{{ product.units_sold }}</td>
+                        <td>${{ product.revenue }}</td>
+                        <td>
+                            {% if product.trend > 0 %}
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> {{ product.trend }}%
+                            </span>
+                            {% else %}
+                            <span class="stat-change negative">
+                                <i class="fas fa-arrow-down"></i> {{ product.trend }}%
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not top_products %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: #6B7280;">
+                            No hay datos disponibles
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody> -->
+            </table>
+            <div class="pagination">
+                <!-- <button class="page-btn" {% if not sales.has_previous %}disabled{% endif %}>
+                    <i class="fas fa-chevron-left"></i>
+                </button> -->
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <!-- <button class="page-btn" {% if not sales.has_next %}disabled{% endif %}>
+                    <i class="fas fa-chevron-right"></i>
+                </button> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container" id="sales-history-table">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Historial de Ventas</h3>
+                <div class="sales-history-search">
+                    <input type="text" class="search-input" placeholder="Buscar ventas...">
+                </div>
+            </div>
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th data-sort="id">ID Venta</th>
+                        <th data-sort="date">Fecha</th>
+                        <th data-sort="total">Total</th>
+                        <th data-sort="items">Ítems</th>
+                        <th data-sort="payment">Método de Pago</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <!-- <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>#{{ sale.id }}</td>
+                        <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
+                        <td>${{ sale.total_amount }}</td>
+                        <td>{{ sale.items_count }}</td>
+                        <td>{{ sale.payment_method }}</td>
+                        <td>
+                            <a href="{% url 'sale_detail' sale.id %}" class="btn-icon-only" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not sales %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #6B7280;">
+                            No hay ventas registradas
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody> -->
+            </table>
+            <div class="pagination">
+                <!-- <button class="page-btn" {% if not sales.has_previous %}disabled{% endif %}>
+                    <i class="fas fa-chevron-left"></i>
+                </button> -->
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <!-- <button class="page-btn" {% if not sales.has_next %}disabled{% endif %}>
+                    <i class="fas fa-chevron-right"></i>
+                </button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráficos de ventas en el tiempo
+    // Este código es solo un marcador de posición y no actualizará realmente los datos del gráfico
+    const periodButtons = document.querySelectorAll('.period-btn');
+    const chartPlaceholders = document.querySelectorAll('.chart-placeholder');
+
+    periodButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            periodButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Acá normalmente actualizarías los datos del gráfico
+            
+        });
+    });
+
+    // Gráficos de categoría/subcategoría
+    // Este código es solo un marcador de posición y no actualizará realmente los datos del gráfico
+    const chartToggleButtons = document.querySelectorAll('.chart-toggle .toggle-btn');
+    const chartContainers = document.querySelectorAll('.chart-container');
+
+    chartToggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const chartType = button.getAttribute('data-chart');
+            chartToggleButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            chartContainers.forEach(container => {
+                container.classList.remove('active');
+                if (container.id === `${chartType}-chart`) {
+                    container.classList.add('active');
+                }
+            });
+            
+            // Acá normalmente actualizarías los datos del gráfico
+        });
+    });
+
+    // Tablas de productos más vendidos e historial de ventas
+    // Este código es solo un marcador de posición y no actualizará realmente los datos de la tabla
+    const tableToggleButtons = document.querySelectorAll('.table-toggle .toggle-btn');
+    const tableContainers = document.querySelectorAll('.table-container');
+
+    tableToggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tableType = button.getAttribute('data-table');
+            tableToggleButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            tableContainers.forEach(container => {
+                container.classList.remove('active');
+                if (container.id === `${tableType}-table`) {
+                    container.classList.add('active');
+                }
+            });
+            console.log(`Switching to ${tableType} table`);
+        });
+    });
+
+    // Acá va el resto del JavaScript (ordenamiento, búsqueda, paginación)
+});
+</script>
+{% endblock %}
