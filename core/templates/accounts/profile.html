@@ -110,7 +110,7 @@
             </div>
             <div class="info-group">
                 <div class="info-label">Tipo de negocio</div>
-                <div class="info-value">{{ user.business_type }}</div>
+                <div class="info-value">{{ user.business_type|capfirst }}</div>
             </div>
             <div class="info-group">
                 <div class="info-label">Negocio</div>
@@ -118,11 +118,11 @@
             </div>
             <div class="info-group">
                 <div class="info-label">Nombre</div>
-                <div class="info-value">{{ user.first_name }}</div>
+                <div class="info-value">{{ user.first_name|capfirst }}</div>
             </div>
             <div class="info-group">
                 <div class="info-label">Apellido</div>
-                <div class="info-value">{{ user.last_name }}</div>
+                <div class="info-value">{{ user.last_name|capfirst }}</div>
             </div>
         </div>
     </div>

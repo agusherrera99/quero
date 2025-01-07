@@ -8,6 +8,10 @@ class Subcategory(models.Model):
     class Meta:
         db_table = 'subcategories'
 
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        return super(Subcategory, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
@@ -17,6 +21,10 @@ class Category(models.Model):
 
     class Meta:
         db_table = 'categories'
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        return super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -41,6 +49,11 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'products'
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        self.uom = self.uom.lower()
+        return super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name

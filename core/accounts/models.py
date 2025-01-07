@@ -9,5 +9,9 @@ class CustomUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.shop_name = self.shop_name.lower()
+        return super(CustomUser, self).save(*args, **kwargs)
+
     def __str__(self):
         return f"Perfil de {self.username}"

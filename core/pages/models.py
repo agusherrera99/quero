@@ -6,5 +6,10 @@ class BusinessType(models.Model):
     description = models.TextField(null=True, blank=True)
     category_list = models.ManyToManyField('stock.Category', related_name='business_types', default=1)
 
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        self.description = self.description.lower()
+        return super(BusinessType, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.name
