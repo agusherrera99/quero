@@ -12,7 +12,11 @@ def home(request):
 @login_required
 def business_type_selection(request):
     business_types = scipts.generate_business_types()
-    return render(request, 'pages/business_type_selection.html', {'business_types': business_types})
+    
+    context = {
+        'business_types': business_types
+    }
+    return render(request, 'pages/business_type_selection.html', context)
 
 @login_required
 def select_business_type(request):

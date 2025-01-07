@@ -34,7 +34,11 @@ def login_view(request):
     else:
         form = UserLoginForm()
 
-    return render(request, 'registration/login.html', {'form': form})
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'registration/login.html', context)
 
 
 
@@ -59,5 +63,9 @@ def registration_view(request):
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'registration/register.html', {'form': form})
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'registration/register.html', context)
 

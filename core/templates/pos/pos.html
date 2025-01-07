@@ -1,0 +1,540 @@
+{% extends 'base.html' %}
+
+{% block title %}Punto de Venta - Quero{% endblock %}
+
+{% block content %}
+<style>
+    .cash-machine {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .category-btn {
+        padding: 0.75rem 1rem;
+        background: #f8f9fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        color: #374151;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .category-btn:hover {
+        border-color: #1a1a1a;
+        background: #f3f4f6;
+    }
+
+    .category-btn.selected {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+    }
+
+    .category-btn.selected:hover {
+        background: #000000;
+    }
+
+    .products-grid {
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .product-card {
+        background: #f8f9fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .product-card:hover {
+        border-color: #1a1a1a;
+        background: #f3f4f6;
+    }
+
+    .product-card.selected {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+    }
+
+    .product-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .product-price {
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+
+    .product-card.selected .product-price {
+        color: #e5e7eb;
+    }
+
+    .product-btn {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #1a1a1a;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
+    }
+
+    .product-btn:hover {
+        border-color: #1a1a1a;
+        background: #f3f4f6;
+    }
+
+    .product-btn:active {
+        background: #e5e7eb;
+        transform: translateY(1px);
+    }
+
+    .product-btn.function {
+        background: #e5e7eb;
+        font-size: 1rem;
+    }
+
+    .product-btn.enter {
+        background: #1a1a1a;
+        color: white;
+        border-color: #1a1a1a;
+        grid-column: span 2;
+        aspect-ratio: 2;
+    }
+
+    .product-btn.enter:hover {
+        background: #000000;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+
+    .search-product {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .quick-categories {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .sales-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .sales-table th, .sales-table td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sales-table th {
+        font-size: 0.875rem;
+        font-weight: 500;
+        background: #f8f9fa;
+        color: #374151;
+    }
+
+    .sales-table td {
+        font-size: 0.875rem;
+        color: #1a1a1a;
+    }
+
+    .sales-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .sales-footer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        padding: 1rem;
+        border-top: 1px solid #e5e7eb;
+        background: #f8f9fa;
+    }
+
+    .sales-section {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sales-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sales-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .quantity-cell {
+        width: 100px;
+    }
+
+    .quantity-cell input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 0.375rem;
+        font-size: 1rem;
+        background-position: 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1rem;
+    }
+
+    .price-cell {
+        width: 120px;
+        text-align: right;
+    }
+
+    .actions-cell {
+        width: 100px;
+        text-align: center;
+    }
+
+    .btn-remove {
+        color: #DC2626;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+    }
+
+    .btn-remove:hover {
+        color: #B91C1C;
+    }
+
+    .payment-actions {
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .payment-btn {
+        padding: 1rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .payment-btn i {
+        font-size: 1.125rem;
+    }
+
+    .total-amount {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        text-align: right;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pos-container {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 1.5rem;
+        height: calc(100vh - 4rem);
+        padding: 1rem;
+    }
+</style>
+
+<div class="pos-container">
+    <div class="sales-section">
+        <div class="sales-header">
+            <h2 class="sales-title">Venta en curso</h2>
+            <button class="btn-remove" title="Cancelar venta" id="clearCartBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Producto</th>
+                    <th class="quantity-cell">Cantidad</th>
+                    <th class="price-cell">Precio</th>
+                    <th class="actions-cell">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="table-body" id="cartItems">
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                    <tr data-product-id="{{ item.product_id }}">
+                        <td>{{ item.name }}</td>
+                        <td class="quantity-cell">
+                            <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" 
+                                   data-product-id="{{ item.product_id }}" data-price="{{ item.price }}">
+                        </td>
+                        <td class="price-cell">${{ item.total_price }}</td>
+                        <td class="actions-cell">
+                            <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr id="emptyCart">
+                        <td colspan="4" style="text-align: center; padding: 1rem;">
+                            No hay productos en la venta actual
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <div class="sales-footer">
+            <div class="total-amount">
+                Total: $<span id="totalAmount">{{ total_amount }}</span>
+            </div>
+            <button class="payment-btn" id="confirmSaleBtn">
+                <i class="fas fa-check"></i>
+                Confirmar venta
+            </button>
+        </div>
+    </div>
+
+    <div class="cash-machine">
+        <div class="search-product">
+            <input type="text" class="search-input" id="searchProduct" placeholder="Buscar producto..." autofocus>
+        </div>
+
+        <div class="quick-categories">
+            <button class="category-btn active" data-category-id="0">Todos</button>
+            {% for category in categories %}
+            <button class="category-btn" data-category-id="{{ category.id }}">{{ category.name }}</button>
+            {% endfor %}
+        </div>
+        
+        <div class="products-grid" id="productsGrid">
+            {% for product in products %}
+            <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}">
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-price">${{ product.price }}</div>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Buscador de productos
+        const searchProduct = document.getElementById('searchProduct');
+        searchProduct.addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                if (productName.includes(searchValue)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Selección de categoría
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                categoryButtons.forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const categoryId = this.dataset.categoryId;
+                const productCards = document.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    if (categoryId == 0 || card.dataset.categoryId == categoryId) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Selección de productos
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.addEventListener('click', function() {
+                AddToCart(this)
+            });
+        });
+
+        // Limpiar el carrito de compras
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        clearCartBtn.addEventListener('click', function() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = `
+                <tr id="emptyCart">
+                    <td colspan="4" style="text-align: center; padding: 1rem;">
+                        No hay productos en la venta actual
+                    </td>
+                </tr>
+            `;
+            updateTotalAmount();
+        });
+
+        // Añaadir un producto al carrito
+        function AddToCart(productCard) {
+            const productId = productCard.dataset.productId;
+            const productName = productCard.querySelector('.product-name').textContent;
+            const productPrice = parseFloat(productCard.querySelector('.product-price').textContent.replace('$', ''));
+
+            // Chequear si el producto ya está en el carrito
+            const cartItems = document.getElementById('cartItems');
+            const existingItem = cartItems.querySelector(`tr[data-product-id="${productId}"]`);
+
+            if (existingItem) {
+                // Actualizar la cantidad del producto existente
+                const quantityInput = existingItem.querySelector('.quantity-input');
+                const newQuantity = parseInt(quantityInput.value) + 1;
+                quantityInput.value = newQuantity;
+
+                updateRowTotal(existingItem, newQuantity, productPrice);  // Se pasa el precio correctamente
+            } else {
+                // Elimina el mensaje de carrito vacío si está presente
+                const emptyCart = document.getElementById('emptyCart');
+                if (emptyCart) {
+                    emptyCart.remove();
+                }
+
+                // Añadir una nueva fila al carrito
+                const newRow = document.createElement('tr');
+                newRow.dataset.productId = productId;
+                newRow.innerHTML = `
+                    <td>${productName}</td>
+                    <td class="quantity-cell">
+                        <input type="number" class="quantity-input" value="1" min="1" 
+                            data-product-id="${productId}" data-price="${productPrice}">
+                    </td>
+                    <td class="price-cell">$${productPrice}</td> <!-- Se muestra el precio de manera correcta -->
+                    <td class="actions-cell">
+                        <button class="btn-remove" title="Eliminar producto" data-product-id="${productId}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                cartItems.appendChild(newRow);
+
+                // Añadir manejadores de eventos para la nueva fila
+                setupRowEventListeners(newRow);
+            }
+            updateTotalAmount();
+        }
+
+        // Actualiza el total de una fila en el carrito
+        function updateRowTotal(row, quantity, price) {
+            const totalPrice = quantity * price;
+            row.querySelector('.price-cell').textContent = `$${totalPrice.toFixed(2)}`;
+            updateTotalAmount(); // Esta función recalcula el total de todos los productos en el carrito
+        }
+
+        // Actualiza el total de todos los productos en el carrito
+        function updateTotalAmount() {
+            const cartItems = document.getElementById('cartItems');
+            const rows = cartItems.querySelectorAll('tr[data-product-id]');
+            let total = 0;
+            
+            rows.forEach(row => {
+                const price = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
+                total += price;
+            });
+            
+            const totalAmountSpan = document.getElementById('totalAmount');
+            totalAmountSpan.textContent = total.toFixed(2);
+        }
+
+        // Agrega manejadores de eventos a las filas del carrito
+        function setupRowEventListeners(row) {
+            // Evento que se dispara cuando se cambia la cantidad de un producto en el carrito
+            const quantityInput = row.querySelector('.quantity-input');
+            quantityInput.addEventListener('change', function() {
+                const price = parseFloat(quantityInput.dataset.price);
+                const newQuantity = parseInt(this.value);
+
+                updateRowTotal(row, newQuantity, price);
+                updateTotalAmount();
+            });
+            
+            // Evento que se dispara cuando se elimina un producto del carrito
+            const removeButton = row.querySelector('.btn-remove');
+            removeButton.addEventListener('click', function() {
+                row.remove();
+                updateTotalAmount();
+                
+                // Show empty cart message if no items left
+                if (!cartItems.querySelector('tr[data-product-id]')) {
+                    cartItems.innerHTML = `
+                        <tr id="emptyCart">
+                            <td colspan="4" style="text-align: center; padding: 1rem;">
+                                No hay productos en la venta actual
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        // Esto se ejecuta cuando la página se carga por primera vez
+        const existingRows = cartItems.querySelectorAll('tr[data-product-id]');
+        existingRows.forEach(setupRowEventListeners); // Esto agrega los manejadores de eventos a los productos ya en el carrito
+    });
+</script>
+{% endblock %}

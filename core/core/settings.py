@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'pages.apps.PagesConfig',
     'stock.apps.StockConfig',
+    'pos.apps.PosConfig',
 ]
 
 MIDDLEWARE = [

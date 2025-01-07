@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
@@ -126,7 +127,10 @@ def add_stock(request):
     else:
         form = forms.AddProductForm(request=request)
     
-    return render(request, 'stock/add_stock.html', {'form': form})
+    context = {
+        'form': form
+    }
+    return render(request, 'stock/add_stock.html', context)
 
 def edit_stock(request, pk):
     product = get_object_or_404(models.Product, pk=pk)
@@ -146,7 +150,10 @@ def edit_stock(request, pk):
     else:
         form = forms.AddProductForm(instance=product, request=request)
 
-    return render(request, 'stock/edit_stock.html', {'form': form})
+    context = {
+        'form': form,
+    }
+    return render(request, 'stock/edit_stock.html', context)
 
 
 def delete_stock(request, pk):
@@ -161,7 +168,10 @@ def delete_stock(request, pk):
         messages.info(request, 'Producto eliminado correctamente.')
         return redirect('stock:stock')
 
-    return render(request, 'stock/delete_stock.html', {'product': product})
+    context = {
+        'product': product
+    }
+    return render(request, 'stock/delete_stock.html', context)
 
 def load_subcategories(request):
     category_id = request.GET.get('category_id')

@@ -254,7 +254,7 @@
                     <i class="fa-solid fa-cubes fa-2x"></i>
                     Inventario
                 </a>
-                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'sales' %}active{% endif %}">
+                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'sales' %}active{% endif %}" href="{% url 'pos:pos' %}">
                     <i class="fa-solid fa-dollar-sign fa-2x"></i>
                     Venta
                 </a>
