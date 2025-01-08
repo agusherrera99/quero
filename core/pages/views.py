@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import redirect, render
 
 from . import scipts
@@ -19,6 +20,7 @@ def business_type_selection(request):
     return render(request, 'pages/business_type_selection.html', context)
 
 @login_required
+@transaction.atomic
 def select_business_type(request):
     if request.method == 'POST':
         business_type = request.POST.get('business_type')

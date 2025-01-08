@@ -58,6 +58,7 @@ def sales_confirmation(request):
         return redirect('pos:pos')
 
 @login_required
+@transaction.atomic
 def process_sale(request):
     # Obtener el carrito y la fecha del POST
     cart_json = request.POST.get('cart', [])

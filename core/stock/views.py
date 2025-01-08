@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Sum, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -113,6 +114,7 @@ def stock(request):
     return render(request, 'stock/stock.html', context)
 
 @login_required
+@transaction.atomic
 def add_stock(request):
     if request.method == 'POST':
         form = AddProductForm(data=request.POST, request=request)
@@ -145,6 +147,8 @@ def add_stock(request):
     }
     return render(request, 'stock/add_stock.html', context)
 
+@login_required
+@transaction.atomic
 def edit_stock(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
@@ -169,6 +173,7 @@ def edit_stock(request, pk):
     return render(request, 'stock/edit_stock.html', context)
 
 @login_required
+@transaction.atomic
 def delete_stock(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
