@@ -19,7 +19,6 @@
     .search-input {
         width: 100%;
         padding: 0.75rem 1rem;
-        padding-left: 2.5rem;
         border: 1px solid #E5E7EB;
         border-radius: 0.375rem;
         font-size: 0.875rem;
@@ -225,7 +224,7 @@
     .btn-icon-only {
         padding: 0.5rem;
         border-radius: 0.375rem;
-        color: #666;
+        color: #1a1a1a;
         background: transparent;
         border: none;
         cursor: pointer;
@@ -235,7 +234,6 @@
 
     .btn-icon-only:hover {
         background: #f3f4f6;
-        color: #1a1a1a;
     }
 
     @media (max-width: 768px) {
@@ -270,7 +268,6 @@
         <h2 class="table-title">Productos</h2>
         <div class="search-container">
             <form method="get" class="search-form">
-                <i class="fas fa-search search-icon"></i>
                 <input 
                     type="text" 
                     name="query" 
@@ -303,19 +300,27 @@
         </thead>
         <tbody>
             {% if query %}
-                {% for product in results %}
+                {% if not results %}
                     <tr>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.subcategory.category.name }}</td>
-                        <td>{{ product.subcategory.name }}</td>
-                        <td>${{ product.price }} ({{ product.uom }})</td>
-                        <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
-                        <td class="actions">
-                            <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen fa-lg"></i></a>
-                            <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash fa-lg"></i></a>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #6B7280;">
+                            No hay resultados para "{{ query }}"
                         </td>
                     </tr>
-                {% endfor %}
+                {% else %}
+                    {% for product in results %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.subcategory.category.name }}</td>
+                            <td>{{ product.subcategory.name }}</td>
+                            <td>${{ product.price }} ({{ product.uom }})</td>
+                            <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
+                            <td class="actions">
+                                <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen fa-lg"></i></a>
+                                <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash fa-lg"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
             {% else %}
                 {% for product in products %}
                 <tr>
@@ -387,22 +392,44 @@
 {% endif %}
 
 <script>
-    function clearSearch(button) {
-        const form = button.closest('form');
-        const input = form.querySelector('input[name="query"]');
-        input.value = '';
-        form.submit();
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-input');
+    const clearButton = document.querySelector('.search-clear');
+    
+    // Función para mostrar u ocultar el botón de limpiar
+    function toggleClearButton() {
+        if (searchInput.value.trim() !== '') {
+            clearButton.style.display = 'block'; // Muestra el botón
+        } else {
+            clearButton.style.display = 'none'; // Oculta el botón
+        }
     }
 
-    // Auto-submit form on input change after a delay
-    const searchInput = document.querySelector('.search-input');
+    // Llama a la función al cargar la página para verificar si debe mostrarse
+    toggleClearButton();
+
+    // Detectar cambios en el input
+    searchInput.addEventListener('input', function() {
+        toggleClearButton(); // Muestra u oculta el botón según el contenido
+    });
+
+    // Limpiar el campo de búsqueda y enviar el formulario
+    clearButton.addEventListener('click', function() {
+        searchInput.value = ''; // Limpia el input
+        toggleClearButton(); // Oculta el botón
+        searchInput.focus(); // Opcional: vuelve a enfocar el campo de búsqueda
+        searchInput.closest('form').submit(); // Envía el formulario
+    });
+
+    // Auto envía el formulario después de 1000ms de inactividad
     let timeout = null;
-    
     searchInput.addEventListener('input', function() {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             this.closest('form').submit();
-        }, 500);
+        }, 1000);
     });
+});
+
 </script>
 {% endblock %}

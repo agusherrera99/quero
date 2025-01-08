@@ -8,8 +8,8 @@ from django.db.models import Sum, F
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 
-from . import forms
-from . import models
+from .forms import AddProductForm, SearchForm
+from .models import Product, Subcategory
 
 
 def calculate_percentage_change(current, previous):
@@ -26,7 +26,7 @@ def calculate_percentage_change(current, previous):
 
 @login_required
 def stock(request):
-    products = models.Product.objects.filter(user=request.user).order_by('-created_at')
+    products = Product.objects.filter(user=request.user).order_by('-created_at')
 
     # Fecha actual, primer día del mes actual y primer día del mes anterior
     today = datetime.today()
@@ -61,17 +61,29 @@ def stock(request):
     stock_formatted_value = "{:,.2f}".format(stock_value).replace(",", "X").replace(".", ",").replace("X", ".")
 
     # Buscador de productos
-    search_form = forms.SearchForm()
+    search_form = SearchForm()
     query = None
     results = []
 
     if 'query' in request.GET:
-        search_form = forms.SearchForm(request.GET)
+        search_form = SearchForm(request.GET)
         if search_form.is_valid():
             query = search_form.cleaned_data['query']
             results = (
                 products.annotate(search=SearchVector('name')).filter(search=query)
             )
+
+    if not results:
+        # Paginación de Ventas (también debes realizar la paginación sobre sales si no hay filtro de búsqueda)
+        products_paginator = Paginator(products, 10)
+        page_number = request.GET.get('page')
+        products = products_paginator.get_page(page_number)
+    else:
+        # Paginamos los resultados de búsqueda si los hay
+        products_paginator = Paginator(results, 10)
+        page_number = request.GET.get('page')
+        results = products_paginator.get_page(page_number)
+
 
     # Paginación de productos
     paginator = Paginator(products, 10)
@@ -102,7 +114,7 @@ def stock(request):
 @login_required
 def add_stock(request):
     if request.method == 'POST':
-        form = forms.AddProductForm(data=request.POST, request=request)
+        form = AddProductForm(data=request.POST, request=request)
 
         if form.is_valid():
             name = form.cleaned_data.get('name')
@@ -111,7 +123,7 @@ def add_stock(request):
             uom = form.cleaned_data.get('uom')
             subcategory = form.cleaned_data.get('subcategory')
 
-            product = models.Product(
+            product = Product(
                 name=name,
                 quantity=quantity,
                 price=price,
@@ -125,7 +137,7 @@ def add_stock(request):
         else:
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
-        form = forms.AddProductForm(request=request)
+        form = AddProductForm(request=request)
     
     context = {
         'form': form
@@ -133,14 +145,14 @@ def add_stock(request):
     return render(request, 'stock/add_stock.html', context)
 
 def edit_stock(request, pk):
-    product = get_object_or_404(models.Product, pk=pk)
+    product = get_object_or_404(Product, pk=pk)
 
     if product.user != request.user:
         messages.error(request, 'No tienes permisos para editar este producto.')
         return redirect('stock:stock')
 
     if request.method == 'POST':
-        form = forms.AddProductForm(data=request.POST, instance=product, request=request)
+        form = AddProductForm(data=request.POST, instance=product, request=request)
         if form.is_valid():
             form.save()
             messages.info(request, 'Producto actualizado correctamente.')
@@ -148,7 +160,7 @@ def edit_stock(request, pk):
         else:
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
-        form = forms.AddProductForm(instance=product, request=request)
+        form = AddProductForm(instance=product, request=request)
 
     context = {
         'form': form,
@@ -157,7 +169,7 @@ def edit_stock(request, pk):
 
 
 def delete_stock(request, pk):
-    product = get_object_or_404(models.Product, pk=pk)
+    product = get_object_or_404(Product, pk=pk)
 
     if product.user != request.user:
         messages.error(request, 'No tienes permisos para eliminar este producto.')
@@ -175,7 +187,7 @@ def delete_stock(request, pk):
 
 def load_subcategories(request):
     category_id = request.GET.get('category_id')
-    subcategories = models.Subcategory.objects.filter(category_id=category_id).order_by('name')
+    subcategories = Subcategory.objects.filter(category_id=category_id).order_by('name')
 
     # Creamos un diccionario con las subcategorías que vamos a devolver
     subcategory_data = [{"id": subcategory.id, "name": subcategory.name} for subcategory in subcategories]

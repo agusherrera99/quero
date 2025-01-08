@@ -1,4 +1,8 @@
+from time import localtime
+
 from django.db import models
+from django.forms import ValidationError
+from django.utils import timezone
 
 
 class Subcategory(models.Model):
@@ -50,9 +54,28 @@ class Product(models.Model):
     class Meta:
         db_table = 'products'
 
+    def clean(self):
+        if self.quantity < 0:
+            raise ValidationError('La cantidad no puede ser negativa')
+        if self.price < 0:
+            raise ValidationError('El precio no puede ser negativo')
+
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
         self.uom = self.uom.lower()
+
+        if self.created_at is None:
+            self.created_at = localtime(timezone.now())
+
+        if self.updated_at is None:
+            self.updated_at = localtime(timezone.now())
+
+        if self.price < 0:
+            raise ValidationError('El precio no puede ser negativo')
+
+        if self.quantity < 0:
+            raise ValidationError('La cantidad no puede ser negativa')
+
         return super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
