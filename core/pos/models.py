@@ -17,6 +17,9 @@ class Sale(models.Model):
         if self.quantity < 0:
             raise ValidationError('La cantidad no puede ser negativa')
         
+        if self.total_price < 0:
+            raise ValidationError('El precio total no puede ser negativo')
+        
     def save(self, *args, **kwargs):
         self.full_clean()  # This will call the clean method and validate the instance
         super().save(*args, **kwargs)

@@ -615,9 +615,6 @@
         <div class="table-card">
             <div class="table-header">
                 <h3 class="table-title">Productos Más Vendidos</h3>
-                <div class="table-history-search">
-                    <input type="text" class="search-input" placeholder="Buscar productos...">
-                </div>
             </div>
             <table class="summary-table">
                 <thead>
@@ -626,73 +623,61 @@
                         <th>Categoría</th>
                         <th>Unidades Vendidas</th>
                         <th>Ingresos</th>
-                        <th>Tendencia</th>
                     </tr>
                 </thead>
-                <!-- <tbody>
-                    {% for product in top_products %}
+                <tbody>
+                    {% for sale in top_sales %}
                     <tr>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.category }}</td>
-                        <td>{{ product.units_sold }}</td>
-                        <td>${{ product.revenue }}</td>
-                        <td>
-                            {% if product.trend > 0 %}
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> {{ product.trend }}%
-                            </span>
-                            {% else %}
-                            <span class="stat-change negative">
-                                <i class="fas fa-arrow-down"></i> {{ product.trend }}%
-                            </span>
-                            {% endif %}
-                        </td>
+                        <td>{{ sale.product__name}}</td>
+                        <td>{{ sale.product__subcategory__category__name }}</td>
+                        <td>{{ sale.total_quantity }}</td>
+                        <td>${{ sale.total_price }}</td>
                     </tr>
                     {% endfor %}
-                    {% if not top_products %}
+                    {% if not top_sales %}
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 2rem; color: #6B7280;">
                             No hay datos disponibles
                         </td>
                     </tr>
                     {% endif %}
-                </tbody> -->
+                </tbody>
             </table>
-            <!-- <div class="pagination">
+            <div class="pagination">
                 <span class="pagination-info">
-                    Página {{ most_sale_products.number }} de {{ most_sale_products.paginator.num_pages }}
+                    Página {{ top_sales.number }} de {{ top_sales.paginator.num_pages }}
                 </span>
                 
-                {% if most_sale_products.has_previous %}
+                {% if top_sales.has_previous %}
                     <a href="?page=1" class="pagination-button prev">
                         <i class="fas fa-angle-double-left"></i>
                         Primera
                     </a>
-                    <a href="?page={{ most_sale_products.previous_page_number }}" class="pagination-button prev">
+                    <a href="?page={{ top_sales.previous_page_number }}" class="pagination-button prev">
                         <i class="fas fa-angle-left"></i>
                         Anterior
                     </a>
                 {% endif %}
             
-                {% for num in most_sale_products.paginator.page_range %}
-                    {% if most_sale_products.number == num %}
+                {% for num in top_sales.paginator.page_range %}
+                    {% if top_sales.number == num %}
                         <a href="?page={{ num }}" class="pagination-button active">{{ num }}</a>
-                    {% elif num > most_sale_products.number|add:'-3' and num < most_sale_products.number|add:'3' %}
+                    {% elif num > top_sales.number|add:'-3' and num < top_sales.number|add:'3' %}
                         <a href="?page={{ num }}" class="pagination-button">{{ num }}</a>
                     {% endif %}
                 {% endfor %}
             
-                {% if most_sale_products.has_next %}
-                    <a href="?page={{ most_sale_products.next_page_number }}" class="pagination-button next">
+                {% if top_sales.has_next %}
+                    <a href="?page={{ top_sales.next_page_number }}" class="pagination-button next">
                         Siguiente
                         <i class="fas fa-angle-right"></i>
                     </a>
-                    <a href="?page={{ most_sale_products.paginator.num_pages }}" class="pagination-button next">
+                    <a href="?page={{ top_sales.paginator.num_pages }}" class="pagination-button next">
                         Última
                         <i class="fas fa-angle-double-right"></i>
                     </a>
                 {% endif %}
-            </div> -->
+            </div>
         </div>
     </div>
 </div>
