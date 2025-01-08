@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Venta - Quero{% endblock %}
+
+{% block content %}
+<style>
+    .confirmation-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .confirmation-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .confirmation-datetime {
+        font-size: small;
+    }
+
+    .product-list {
+        margin-bottom: 2rem;
+    }
+
+    .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .product-item:last-child {
+        border-bottom: none;
+    }
+
+    .product-details {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .product-quantity {
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+
+    .product-price {
+        font-size: 0.875rem;
+        color: #1a1a1a;
+    }
+
+    .total-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.5rem 0;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .total-label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #1a1a1a;
+        margin-right: 0.5rem;
+    }
+
+    .total-amount {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        width: 100%;
+    }
+
+    .btn-confirm {
+        background-color: #10B981;
+        color: white;
+        justify-content: center;
+    }
+
+    .btn-confirm:hover {
+        background-color: #059669;
+    }
+
+    .btn-cancel {
+        background-color: #EF4444;
+        color: white;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background-color: #DC2626;
+    }
+
+    .quantity-indicator {
+        color: #6B7280;
+        font-size: 0.75rem;
+        margin-right: 0.5rem;
+    }
+
+    .price-indicator {
+        color: #6B7280;
+        font-size: 0.75rem;
+        margin-right: 0.25rem;
+    }
+</style>
+
+<div class="confirmation-container">
+    <h2 class="confirmation-title">Confirmar Venta</h2>
+
+    <div class="product-list">
+        {% for item in cart_items %}
+        <div class="product-item">
+            <span class="product-name">{{ item.product_name }}</span>
+            <div class="product-details">
+                <span class="quantity-indicator">x{{ item.quantity }}</span>
+                <span class="price-indicator">$</span>
+                <span class="product-price">{{ item.price }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="total-section">
+        <div class="confirmation-datetime">
+            <span class="datetime-label">Fecha y Hora:</span>
+            <span class="datetime-value">{{ current_datetime|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div>
+            <span class="total-label">Total:</span>
+            <span class="total-amount">$ {{ total_amount }}</span>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <form method="post" action="{% url 'pos:process_sale' %}" style="margin: 0;">
+            {% csrf_token %}
+            <input type="hidden" name="cart" value="{{ cart_items }}">
+            <input type="hidden" name="current_datetime" value="{{ current_datetime }}">
+            <button type="submit" class="btn btn-confirm">Confirmar Venta</button>
+        </form>
+        <a href="{% url 'pos:cancel_sale' %}" class="btn btn-cancel">Cancelar Venta</a>
+    </div>
+</div>
+<!-- Mensajes de éxito o error -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

@@ -376,6 +376,8 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Mensajes de éxito o error -->
 {% if messages %}
     {% for message in messages %}
         <div class="toast toast-{{ message.tags }}">
@@ -383,6 +385,7 @@
         </div>
     {% endfor %}
 {% endif %}
+
 <script>
     function clearSearch(button) {
         const form = button.closest('form');

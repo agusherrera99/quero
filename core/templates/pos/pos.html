@@ -4,6 +4,11 @@
 
 {% block content %}
 <style>
+    .added-to-cart {
+        background-color: #e5e7eb;
+        transition: background-color 0.3s ease;
+    }
+
     .cash-machine {
         background: white;
         border-radius: 0.5rem;
@@ -323,7 +328,7 @@
                         </td>
                         <td class="price-cell">${{ item.total_price }}</td>
                         <td class="actions-cell">
-                            <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}">
+                            <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}" aria-label="Eliminar {{ item.name }}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -343,10 +348,15 @@
             <div class="total-amount">
                 Total: $<span id="totalAmount">{{ total_amount }}</span>
             </div>
-            <button class="payment-btn" id="confirmSaleBtn">
-                <i class="fas fa-check"></i>
-                Confirmar venta
-            </button>
+            <form action="{% url 'pos:sales_confirmation' %}" method="POST" id="confirmSaleForm">
+                {% csrf_token %}
+                <input type="hidden" name="cart" id="cartInput">
+                <input type="hidden" name="total_amount" id="totalAmountInput">
+                <button type="submit" class="btn btn-primary payment-btn">
+                    <i class="fas fa-check"></i>
+                    Confirmar venta
+                </button>
+            </form>                       
         </div>
     </div>
 
@@ -372,6 +382,15 @@
         </div>
     </div>
 </div>
+
+<!-- Mensajes de éxito o error -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -420,18 +439,20 @@
         // Limpiar el carrito de compras
         const clearCartBtn = document.getElementById('clearCartBtn');
         clearCartBtn.addEventListener('click', function() {
-            const cartItems = document.getElementById('cartItems');
-            cartItems.innerHTML = `
-                <tr id="emptyCart">
-                    <td colspan="4" style="text-align: center; padding: 1rem;">
-                        No hay productos en la venta actual
-                    </td>
-                </tr>
-            `;
-            updateTotalAmount();
+            if (!confirm('¿Estás seguro de que deseas cancelar la venta actual?')) {
+                const cartItems = document.getElementById('cartItems');
+                cartItems.innerHTML = `
+                    <tr id="emptyCart">
+                        <td colspan="4" style="text-align: center; padding: 1rem;">
+                            No hay productos en la venta actual
+                        </td>
+                    </tr>
+                `;
+                updateTotalAmount();
+            }
         });
 
-        // Añaadir un producto al carrito
+        // Añadir un producto al carrito
         function AddToCart(productCard) {
             const productId = productCard.dataset.productId;
             const productName = productCard.querySelector('.product-name').textContent;
@@ -466,7 +487,7 @@
                     </td>
                     <td class="price-cell">$${productPrice}</td> <!-- Se muestra el precio de manera correcta -->
                     <td class="actions-cell">
-                        <button class="btn-remove" title="Eliminar producto" data-product-id="${productId}">
+                        <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}" aria-label="Eliminar {{ item.name }}">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -476,6 +497,11 @@
                 // Añadir manejadores de eventos para la nueva fila
                 setupRowEventListeners(newRow);
             }
+            
+            // Feedback visual (efecto de destello rápido)
+            productCard.classList.add('added-to-cart');
+            setTimeout(() => productCard.classList.remove('added-to-cart'), 300);
+
             updateTotalAmount();
         }
 
@@ -506,9 +532,13 @@
             // Evento que se dispara cuando se cambia la cantidad de un producto en el carrito
             const quantityInput = row.querySelector('.quantity-input');
             quantityInput.addEventListener('change', function() {
-                const price = parseFloat(quantityInput.dataset.price);
                 const newQuantity = parseInt(this.value);
+                if (newQuantity < 1) {
+                    this.value = 1;
+                    newQuantity = 1;
+                }
 
+                const price = parseFloat(quantityInput.dataset.price);
                 updateRowTotal(row, newQuantity, price);
                 updateTotalAmount();
             });
@@ -535,6 +565,37 @@
         // Esto se ejecuta cuando la página se carga por primera vez
         const existingRows = cartItems.querySelectorAll('tr[data-product-id]');
         existingRows.forEach(setupRowEventListeners); // Esto agrega los manejadores de eventos a los productos ya en el carrito
+
+        // Confirmar venta
+        const confirmSaleForm = document.getElementById('confirmSaleForm');
+        confirmSaleForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const cartItems = document.getElementById('cartItems');
+            const rows = cartItems.querySelectorAll('tr[data-product-id]');
+
+            if (rows.length === 0) {
+                alert('No hay productos en el carrito. Por favor, agrega productos antes de confirmar la venta.');
+                return;
+            }
+
+            const cart = [];
+            rows.forEach(row => {
+                const productId = row.dataset.productId;
+                const productName = row.querySelector('td').textContent;
+                const quantity = row.querySelector('.quantity-input').value;
+                const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
+                cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice });
+            });
+            
+            // Serializacón y envío de datos
+            const cartInput = document.getElementById('cartInput');
+            const totalAmountInput = document.getElementById('totalAmountInput');
+            cartInput.value = JSON.stringify(cart);
+            totalAmountInput.value = document.getElementById('totalAmount').textContent;
+
+            this.submit();
+        });
     });
 </script>
 {% endblock %}

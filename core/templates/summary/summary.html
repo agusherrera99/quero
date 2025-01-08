@@ -392,11 +392,68 @@
 
     <!-- Tables Section -->
     <div class="table-toggle">
-        <button class="toggle-btn active" data-table="best-selling">Productos Más Vendidos</button>
-        <button class="toggle-btn" data-table="sales-history">Historial de Ventas</button>
+        <button class="toggle-btn active" data-table="sales-history">Historial de Ventas</button>
+        <button class="toggle-btn" data-table="best-selling">Productos Más Vendidos</button>
     </div>
 
-    <div class="table-container active" id="best-selling-table">
+    <div class="table-container active" id="sales-history-table">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Historial de Ventas</h3>
+                <div class="sales-history-search">
+                    <input type="text" class="search-input" placeholder="Buscar ventas...">
+                </div>
+            </div>
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th data-sort="id">ID Venta</th>
+                        <th data-sort="date">Fecha</th>
+                        <th data-sort="total">Total</th>
+                        <th data-sort="items">Ítems</th>
+                        <th data-sort="payment">Método de Pago</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>#{{ sale.id }}</td>
+                        <td>{{ sale.created_at|date:"d/m/Y" }}</td>
+                        <td>${{ sale.total_amount }}</td>
+                        <td>{{ sale.items_count }}</td>
+                        <td>{{ sale.payment_method }}</td>
+                        <td>
+                            <a class="btn-icon-only" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not sales %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #6B7280;">
+                            No hay ventas registradas
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <div class="pagination">
+                <!-- <button class="page-btn" {% if not sales.has_previous %}disabled{% endif %}>
+                    <i class="fas fa-chevron-left"></i>
+                </button> -->
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <!-- <button class="page-btn" {% if not sales.has_next %}disabled{% endif %}>
+                    <i class="fas fa-chevron-right"></i>
+                </button> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container" id="best-selling-table">
         <div class="table-card">
             <div class="table-header">
                 <h3 class="table-title">Productos Más Vendidos</h3>
@@ -438,63 +495,6 @@
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 2rem; color: #6B7280;">
                             No hay datos disponibles
-                        </td>
-                    </tr>
-                    {% endif %}
-                </tbody> -->
-            </table>
-            <div class="pagination">
-                <!-- <button class="page-btn" {% if not sales.has_previous %}disabled{% endif %}>
-                    <i class="fas fa-chevron-left"></i>
-                </button> -->
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <!-- <button class="page-btn" {% if not sales.has_next %}disabled{% endif %}>
-                    <i class="fas fa-chevron-right"></i>
-                </button> -->
-            </div>
-        </div>
-    </div>
-
-    <div class="table-container" id="sales-history-table">
-        <div class="table-card">
-            <div class="table-header">
-                <h3 class="table-title">Historial de Ventas</h3>
-                <div class="sales-history-search">
-                    <input type="text" class="search-input" placeholder="Buscar ventas...">
-                </div>
-            </div>
-            <table class="sales-table">
-                <thead>
-                    <tr>
-                        <th data-sort="id">ID Venta</th>
-                        <th data-sort="date">Fecha</th>
-                        <th data-sort="total">Total</th>
-                        <th data-sort="items">Ítems</th>
-                        <th data-sort="payment">Método de Pago</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <!-- <tbody>
-                    {% for sale in sales %}
-                    <tr>
-                        <td>#{{ sale.id }}</td>
-                        <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
-                        <td>${{ sale.total_amount }}</td>
-                        <td>{{ sale.items_count }}</td>
-                        <td>{{ sale.payment_method }}</td>
-                        <td>
-                            <a href="{% url 'sale_detail' sale.id %}" class="btn-icon-only" title="Ver detalles">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% if not sales %}
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 2rem; color: #6B7280;">
-                            No hay ventas registradas
                         </td>
                     </tr>
                     {% endif %}
