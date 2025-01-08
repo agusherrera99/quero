@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from pos.models import Sale
 from .forms import SalesForm
@@ -45,3 +46,26 @@ def summary(request):
     }
 
     return render(request, 'summary/summary.html', context)
+
+@login_required
+def delete_sale(request, pk):
+    sale = get_object_or_404(Sale, pk=pk)
+
+    if sale.user != request.user:
+        messages.error(request, 'No tienes permiso para eliminar esta venta.')
+        return redirect('stock:stock')
+
+    if request.method == 'POST':
+        # Actualizar el stock del producto
+        product = sale.product
+        product.quantity += sale.quantity
+        product.save()
+        
+        sale.delete()
+        messages.info(request, 'Producto eliminado correctamente.')
+        return redirect('summary:summary')
+
+    context = {
+        'sale': sale
+    }
+    return render(request, 'summary/delete_sale.html', context)

@@ -1,5 +1,3 @@
-from time import localtime
-
 from django.db import models
 from django.forms import ValidationError
 from django.utils import timezone
@@ -65,10 +63,10 @@ class Product(models.Model):
         self.uom = self.uom.lower()
 
         if self.created_at is None:
-            self.created_at = localtime(timezone.now())
+            self.created_at = timezone.localtime(timezone.now())  
 
         if self.updated_at is None:
-            self.updated_at = localtime(timezone.now())
+            self.updated_at = timezone.localtime(timezone.now())  
 
         if self.price < 0:
             raise ValidationError('El precio no puede ser negativo')

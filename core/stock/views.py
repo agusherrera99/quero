@@ -6,10 +6,11 @@ from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
 from django.db.models import Sum, F
 from django.http import JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import AddProductForm, SearchForm
 from .models import Product, Subcategory
+from pos.models import Sale
 
 
 def calculate_percentage_change(current, previous):
@@ -167,7 +168,7 @@ def edit_stock(request, pk):
     }
     return render(request, 'stock/edit_stock.html', context)
 
-
+@login_required
 def delete_stock(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
@@ -176,6 +177,10 @@ def delete_stock(request, pk):
         return redirect('stock:stock')
     
     if request.method == 'POST':
+        # Eliminar ventas asociadas al producto
+        sale = Sale.objects.filter(product=product)
+        sale.delete()
+
         product.delete()
         messages.info(request, 'Producto eliminado correctamente.')
         return redirect('stock:stock')

@@ -1,5 +1,3 @@
-from time import localtime
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -15,7 +13,7 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         self.shop_name = self.shop_name.lower()
         if self.created_at is None:
-            self.created_at = localtime(timezone.now())
+            self.created_at = timezone.localtime(timezone.now())  
         return super(CustomUser, self).save(*args, **kwargs)
 
     def __str__(self):

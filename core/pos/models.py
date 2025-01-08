@@ -1,8 +1,5 @@
-from time import localtime
-
 from django.db import models
 from django.forms import ValidationError
-from django.utils import timezone
 
 
 
@@ -21,11 +18,8 @@ class Sale(models.Model):
             raise ValidationError('La cantidad no puede ser negativa')
         
     def save(self, *args, **kwargs):
-        if self.created_at is None:
-            self.created_at = localtime(timezone.now())
-
-        if self.quatity < 0:
-            raise ValidationError('La cantidad no puede ser negativa')
+        self.full_clean()  # This will call the clean method and validate the instance
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.product.name + ' - ' + str(self.quantity) + ' - ' + str(self.created_at)
+        return f'[{self.created_at}] {self.product.name} x {self.quantity} - Total: ${self.total_price}'

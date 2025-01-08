@@ -375,7 +375,7 @@
         <div class="products-grid" id="productsGrid">
             {% for product in products %}
             <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}">
-                <div class="product-name">{{ product.name }}</div>
+                <div class="product-name">{{ product.name }} ({{ product.quantity}})</div>
                 <div class="product-price">${{ product.price }}</div>
             </button>
             {% endfor %}

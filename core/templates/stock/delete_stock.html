@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Producto</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         .delete-container {
@@ -87,15 +88,14 @@
             font-size: 0.875rem;
         }
 
-        .actions {
+        .action-buttons {
             display: flex;
             gap: 1rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .btn {
-            flex: 1;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 0.375rem;
             font-size: 0.875rem;
@@ -103,32 +103,31 @@
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
-            text-decoration: none;
+            width: 100%;
         }
 
-        .btn-danger {
-            background-color: #DC2626;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-delete {
+            background-color: #EF4444;
             color: white;
         }
 
-        .btn-danger:hover {
-            background-color: #B91C1C;
-        }
-
-        .btn-danger:disabled {
-            background-color: #D1D5DB; /* Color gris claro */
-            color: #A1A1AA; /* Color de texto gris */
-            cursor: not-allowed; /* Cambia el cursor */
-            opacity: 0.6; /* Reduce la opacidad para indicar que está deshabilitado */
+        .btn-delete:hover:not(:disabled) {
+            background-color: #DC2626;
         }
 
         .btn-cancel {
-            background-color: #E5E7EB;
-            color: #1a1a1a;
+            background-color: #9CA3AF;
+            color: white;
+            text-decoration: none;
         }
 
         .btn-cancel:hover {
-            background-color: #D1D5DB;
+            background-color: #6B7280;
         }
 
         .input-confirm {
@@ -158,16 +157,6 @@
         <div class="delete-warning">
             ¡Atención! Esta acción no se puede deshacer
         </div>
-
-        <div class="product-info">
-            <div class="product-name">{{ product.name }}</div>
-            <div class="product-details">
-                Categoría: {{ product.category }}<br>
-                Precio: ${{ product.price }}<br>
-                Stock: {{ product.quantity }}
-            </div>
-        </div>
-
         <div class="consequences">
             <div class="consequences-title">Esta acción causará:</div>
             <ul class="consequences-list">
@@ -178,19 +167,35 @@
             </ul>
         </div>
 
-        <form method="post">
+        <div class="product-info">
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-details">
+                Categoría: {{ product.category }}<br>
+                Precio: ${{ product.price }}<br>
+                Stock: {{ product.quantity }}
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'stock:delete_stock' product.id %}">
             {% csrf_token %}
-            <input 
+            <div style="display: flex;">
+                <input 
                 type="text" 
                 class="input-confirm" 
-                placeholder="Escribe 'ELIMINAR' para confirmar" 
-                pattern="ELIMINAR" 
                 required
-            >
+                placeholder="Escribe 'ELIMINAR' para confirmar" 
+                pattern="ELIMINAR"
+                oninput="document.getElementById('deleteButton').disabled = this.value !== 'ELIMINAR'">  
+            </div>
             
-            <div class="actions">
+            <div class="action-buttons">
+                <button type="submit" 
+                        class="btn btn-delete" 
+                        id="deleteButton" 
+                        disabled>
+                    Eliminar Producto
+                </button>
                 <a href="{% url 'stock:stock' %}" class="btn btn-cancel">Cancelar</a>
-                <button type="submit" class="btn btn-danger" disabled>Eliminar Permanentemente</button>
             </div>
         </form>
     </div>

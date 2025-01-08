@@ -58,7 +58,6 @@ def sales_confirmation(request):
         return redirect('pos:pos')
 
 @login_required
-@transaction.atomic
 def process_sale(request):
     # Obtener el carrito y la fecha del POST
     cart_json = request.POST.get('cart', [])
@@ -66,7 +65,6 @@ def process_sale(request):
     if not cart_json:
         messages.error(request, 'No se ha recibido el carrito de la compra')
         return redirect('pos:pos')
-
 
     # Guardar venta en la base de datos y actualizar el stock
     cart_json = cart_json.replace("'", '"')
@@ -85,20 +83,23 @@ def process_sale(request):
             messages.error(request, 'La cantidad no puede ser negativa')
             return redirect('pos:pos')
 
-        # Validar que haya suficiente stock
+        errors = []
+        if request.user != product.user:
+            errors.append('No puedes vender productos que no te pertenecen')
+        if quantity <= 0:
+            errors.append('La cantidad no puede ser negativa')
         if product.quantity < quantity:
-            messages.error(request, 'No hay suficiente stock para el producto ' + product.name)
+            errors.append(f'No hay suficiente stock para el producto {product.name}')
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
             return redirect('pos:pos')
         
         total_price = item.get('price', 0)
 
         # Crear la venta y guardarla en la base de datos
-        sale = Sale(
-            product=product,
-            quantity=quantity,
-            total_price=total_price,
-            user=request.user
-        )
+        sale = Sale(product=product, quantity=quantity, total_price=total_price, user=request.user)
         sale.save()
         
         # Actualizar el stock del producto
@@ -108,7 +109,7 @@ def process_sale(request):
     # Limpiar el carrito
     request.session['cart'] = []
 
-    messages.success(request, 'Venta realizada correctamente')
+    # messages.success(request, 'Venta realizada correctamente')
     return redirect('pos:pos')
 
 @login_required
