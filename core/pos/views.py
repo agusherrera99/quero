@@ -62,14 +62,11 @@ def sales_confirmation(request):
 def process_sale(request):
     # Obtener el carrito y la fecha del POST
     cart_json = request.POST.get('cart', [])
-    current_datetime = request.POST.get('current_datetime', None)
 
     if not cart_json:
         messages.error(request, 'No se ha recibido el carrito de la compra')
         return redirect('pos:pos')
 
-    if not current_datetime:
-        current_datetime = datetime.now()
 
     # Guardar venta en la base de datos y actualizar el stock
     cart_json = cart_json.replace("'", '"')
@@ -99,11 +96,9 @@ def process_sale(request):
         sale = Sale(
             product=product,
             quantity=quantity,
-            created_at=current_datetime,
             total_price=total_price,
             user=request.user
         )
-        print(sale)
         sale.save()
         
         # Actualizar el stock del producto

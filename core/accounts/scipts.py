@@ -1,3 +1,6 @@
+import logging
+
+
 def create_default_data(apps, schema_editor):
     # Obtén los modelos de la base de datos usando apps.get_model
     BusinessType = apps.get_model('pages', 'BusinessType')
@@ -61,7 +64,7 @@ def create_default_data(apps, schema_editor):
             category = Category.objects.get(name=category_name)
             Subcategory.objects.get_or_create(id=id, name=name, category=category)
         except Category.DoesNotExist:
-            print(f"Categoría '{category_name}' no encontrada.")
+            logging.info(f"Categoría '{category_name}' no encontrada.")
 
     # Crear BusinessType predeterminados si no existen
     business_types_data = [
@@ -88,4 +91,4 @@ def create_default_data(apps, schema_editor):
         # Asignar las categorías al ManyToManyField
         business_type.category_list.set(categories)  # Usa set para reemplazar o add si quieres agregar sin eliminar
 
-        print(f"BusinessType '{business_type.name}' {'created' if created else 'retrieved'}, categories set.")
+        logging.info(f"BusinessType '{business_type.name}' {'created' if created else 'retrieved'}, categories set.")

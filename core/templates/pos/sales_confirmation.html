@@ -162,7 +162,6 @@
         <form method="post" action="{% url 'pos:process_sale' %}" style="margin: 0;">
             {% csrf_token %}
             <input type="hidden" name="cart" value="{{ cart_items }}">
-            <input type="hidden" name="current_datetime" value="{{ current_datetime }}">
             <button type="submit" class="btn btn-confirm">Confirmar Venta</button>
         </form>
         <a href="{% url 'pos:cancel_sale' %}" class="btn btn-cancel">Cancelar Venta</a>

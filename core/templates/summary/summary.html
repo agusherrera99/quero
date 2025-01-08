@@ -141,7 +141,7 @@
     .summary-table th {
         background: #f8f9fa;
         padding: 0.75rem 1.5rem;
-        text-align: left;
+        text-align: center;
         font-weight: 500;
         color: #374151;
         font-size: 0.875rem;
@@ -151,6 +151,11 @@
         padding: 1rem 1.5rem;
         border-bottom: 1px solid #e5e7eb;
         color: #1a1a1a;
+        text-align: center;
+    }
+
+    .summary-table td a {
+        cursor: pointer;
     }
 
     .summary-table tr:hover td {
@@ -221,7 +226,7 @@
     .sales-table th {
         background: #f8f9fa;
         padding: 0.75rem 1rem;
-        text-align: left;
+        text-align: center;
         font-weight: 500;
         color: #374151;
         font-size: 0.875rem;
@@ -236,6 +241,11 @@
         padding: 1rem;
         border-bottom: 1px solid #e5e7eb;
         color: #1a1a1a;
+        text-align: center;
+    }
+
+    .sales-table td a {
+        cursor: pointer;
     }
 
     .sales-table tr:hover td {
@@ -408,10 +418,10 @@
                 <thead>
                     <tr>
                         <th data-sort="id">ID Venta</th>
-                        <th data-sort="date">Fecha</th>
+                        <th data-sort="payment">Producto</th>
+                        <th data-sort="items">Cantidad</th>
                         <th data-sort="total">Total</th>
-                        <th data-sort="items">Ítems</th>
-                        <th data-sort="payment">Método de Pago</th>
+                        <th data-sort="date">Fecha</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -419,13 +429,13 @@
                     {% for sale in sales %}
                     <tr>
                         <td>#{{ sale.id }}</td>
-                        <td>{{ sale.created_at|date:"d/m/Y" }}</td>
-                        <td>${{ sale.total_amount }}</td>
-                        <td>{{ sale.items_count }}</td>
-                        <td>{{ sale.payment_method }}</td>
+                        <td>{{ sale.product.name }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>${{ sale.total_price }}</td>
+                        <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
                         <td>
-                            <a class="btn-icon-only" title="Ver detalles">
-                                <i class="fas fa-eye"></i>
+                            <a class="btn-icon-only" title="Eliminar venta del historial">
+                                <i class="fas fa-trash"></i>
                             </a>
                         </td>
                     </tr>
