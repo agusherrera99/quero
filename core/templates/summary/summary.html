@@ -102,20 +102,20 @@
         margin-top: 0.5rem;
     }
 
-    .chart-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 1.5rem;
+    .chart-flex {
+        display: flex;
+        flex-direction: column;
         margin-bottom: 2rem;
     }
 
     @media (max-width: 1024px) {
-        .chart-grid {
+        .chart-flex {
             grid-template-columns: 1fr;
         }
     }
 
     .chart-card {
+        width: 100%;
         background: white;
         border-radius: 0.5rem;
         padding: 1.5rem;
@@ -138,28 +138,18 @@
     .chart-period {
         display: flex;
         gap: 0.5rem;
+        margin-bottom: 1rem;
     }
 
-    .period-btn {
+    .toggle-btn, .period-btn, .chart-btn, .chart-type-btn {
         padding: 0.5rem 0.75rem;
         border: 1px solid #e5e7eb;
         border-radius: 0.375rem;
         font-size: 0.875rem;
-        color: #6B7280;
+        color: #374151;
         background: white;
         cursor: pointer;
         transition: all 0.2s ease;
-    }
-
-    .period-btn:hover {
-        border-color: #1a1a1a;
-        color: #1a1a1a;
-    }
-
-    .period-btn.active {
-        background: #1a1a1a;
-        color: white;
-        border-color: #1a1a1a;
     }
 
     .table-card {
@@ -376,23 +366,12 @@
         margin-bottom: 1rem;
     }
 
-    .toggle-btn {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        color: #374151;
-        background: white;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .toggle-btn:hover {
+    .toggle-btn:hover, .period-btn:hover, .chart-btn:hover, .chart-type-btn:hover {
         border-color: #1a1a1a;
         color: #1a1a1a;
     }
 
-    .toggle-btn.active {
+    .toggle-btn.active, .period-btn.active, .chart-btn.active, .chart-type-btn.active {
         background: #1a1a1a;
         color: white;
         border-color: #1a1a1a;
@@ -420,12 +399,18 @@
         font-size: 0.875rem;
     }
     
-    .chart-container, .table-container {
+    .chart-container, .chart-type-container, .table-container {
         display: none;
     }
 
-    .chart-container.active, .table-container.active {
+    .chart-container.active, .chart-type-container.active, .table-container.active {
         display: block;
+    }
+
+    .chart-type {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
     }
 </style>
 
@@ -519,37 +504,44 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="chart-grid">
+    <div class="chart-flex">
         <div class="chart-card">
             <div class="chart-header">
-                <h3 class="chart-title">Ventas en el Tiempo</h3>
-                <div class="chart-period">
-                    <button class="period-btn">7D</button>
-                    <button class="period-btn active">30D</button>
-                    <button class="period-btn">90D</button>
-                    <button class="period-btn">1A</button>
-                </div>
-            </div>
-            <div class="chart-placeholder">
-                Gráfico de ventas en el tiempo
-            </div>
-        </div>
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3 class="chart-title">Ventas por </h3>
+                <h2 class="chart title">Gráficos</h2>
                 <div class="chart-toggle">
-                    <button class="toggle-btn active" data-chart="category">Categoría</button>
-                    <button class="toggle-btn" data-chart="subcategory">Subcategoría</button>
+                    <button class="chart-btn active">Ventas en el tiempo</button>
+                    <button class="chart-btn">Ventas por categorias/subcategorias</button>
                 </div>
             </div>
-            <div class="chart-container active" id="category-chart">
+            
+            <!-- Gráficos de ventas en el tiempo -->
+            <div class="chart-container active" id="ventas en el tiempo-chart">
+                <div class="chart-period">
+                    <button class="period-btn" data-period-chart="7D">7D</button>
+                    <button class="period-btn active" data-period-chart="30D">30D</button>
+                    <button class="period-btn" data-period-chart="90D">90D</button>
+                    <button class="period-btn" data-period-chart="1A">1A</button>
+                </div>
                 <div class="chart-placeholder">
-                    {{ category_graph_html|safe }}
+                    {{ time_series_graph_html|safe }}
                 </div>
             </div>
-            <div class="chart-container" id="subcategory-chart">
-                <div class="chart-placeholder">
-                    {{  subcategory_graph_html|safe }}
+            
+            <!-- Gráficos de ventas por categorias/subcategorias -->
+            <div class="chart-container" id="ventas por categorias/subcategorias-chart">
+                <div class="chart-type">
+                    <button class="chart-type-btn active" data-type-chart="category">Categoría</button>
+                    <button class="chart-type-btn" data-type-chart="subcategory">Subcategoría</button>
+                </div>
+                <div class="chart-type-container active" id="category-chart">
+                    <div class="chart-placeholder">
+                        {{ category_graph_html|safe }}
+                    </div>
+                </div>
+                <div class="chart-type-container" id="subcategory-chart">
+                    <div class="chart-placeholder">
+                        {{ subcategory_graph_html|safe }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -752,39 +744,69 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Gráficos de ventas en el tiempo
-    // Este código es solo un marcador de posición y no actualizará realmente los datos del gráfico
+    // Gráficos principales
+    const chartToggleButtons = document.querySelectorAll('.chart-toggle .chart-btn');
+    const chartContainers = document.querySelectorAll('.chart-container');
+
+    // Funcion para alternar entre los gráficos principales
+    chartToggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const chartType = button.getAttribute('data-chart');
+
+            chartToggleButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const selectedChart = button.textContent.trim().toLowerCase();
+
+            chartContainers.forEach(container => {
+                container.classList.remove('active');
+
+                if (container.id === `${selectedChart}-chart`) {
+                    container.classList.add('active');
+                }
+            });
+        });
+    });
+
+    // Inicializar la interfaz para mostrar el primer gráfico por defecto (Ventas en el tiempo)
+    chartToggleButtons[0].classList.add('active'); // Activa el primer botón "Ventas en el tiempo" por defecto
+    chartContainers[0].classList.add('active'); // Muestra el gráfico de ventas en el tiempo por defecto
+
+    // Ventas en el tiempo
+    // Función para alternar entre los periodos de tiempo
     const periodButtons = document.querySelectorAll('.period-btn');
-    const chartPlaceholders = document.querySelectorAll('.chart-placeholder');
+    const timeSeriesGraph = document.getElementById('ventas en el tiempo-chart');
 
     periodButtons.forEach(button => {
         button.addEventListener('click', () => {
             periodButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-            
-            // Acá normalmente actualizarías los datos del gráfico
+
+            const period = button.getAttribute('data-period');
+
+            // Actualizar el gráfico con el nuevo periodo
             
         });
     });
 
-    // Gráficos de categoría/subcategoría
-    // Este código es solo un marcador de posición y no actualizará realmente los datos del gráfico
-    const chartToggleButtons = document.querySelectorAll('.chart-toggle .toggle-btn');
-    const chartContainers = document.querySelectorAll('.chart-container');
+    // Ventas por categorias/subcategorias
+    // Función para alternar entre las categorías y subcategorías
+    const categorySubcategoriesButtons = document.querySelectorAll('.chart-type-btn');
+    const categorySubcategoriesContainer = document.querySelectorAll('.chart-type-container');
 
-    chartToggleButtons.forEach(button => {
+    categorySubcategoriesButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const chartType = button.getAttribute('data-chart');
-            chartToggleButtons.forEach(btn => btn.classList.remove('active'));
+            const chartType = button.getAttribute('data-type-chart');
+            
+            categorySubcategoriesButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-            chartContainers.forEach(container => {
+
+            categorySubcategoriesContainer.forEach(container => {
                 container.classList.remove('active');
                 if (container.id === `${chartType}-chart`) {
                     container.classList.add('active');
                 }
             });
-            
-            // Acá normalmente actualizarías los datos del gráfico
         });
     });
 
@@ -804,7 +826,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     container.classList.add('active');
                 }
             });
-            console.log(`Switching to ${tableType} table`);
         });
     });
 

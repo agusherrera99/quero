@@ -24,6 +24,33 @@ def calculate_percentage_change(current, previous):
         return 0, "Igual", "gray"
     else:
         return percentage_change, f"{percentage_change:.2f}%", 'green'
+    
+def get_sales_data_for_period(sales, perios):
+    today = datetime.today()
+
+    if perios == '7D':
+        start_date = today - timedelta(days=7)
+    elif perios == '30D':
+        start_date = today - timedelta(days=30)
+    elif perios == '90D':
+        start_date = today - timedelta(days=90)
+    elif perios == '365D':
+        start_date = today - timedelta(days=365)
+    else:
+        start_date = today - timedelta(days=30) # Default: 30D
+
+    # Agrupar ventas por fecha
+    sales_data = sales.filter(created_at__gte=start_date)\
+        .values('created_at__date')\
+        .annotate(total_sales=Sum('total_price'))\
+        .order_by('created_at')
+    
+    # Preparar los datos para el gráfico
+    sales_dates = [sale['created_at__date'] for sale in sales_data][:100]
+    sales_values = [sale['total_sales'] for sale in sales_data][:100]
+
+    return sales_dates, sales_values
+    
 
 @login_required
 def summary(request):
@@ -57,7 +84,6 @@ def summary(request):
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
     
     # Gráfico de Ventas por Categoría (Pie Chart)
-    
     # Ventas totales por Categoría
     category_sales = Sale.objects.values('product__subcategory__category__name')\
         .annotate(total_sales=Sum('total_price'))\
@@ -83,7 +109,6 @@ def summary(request):
     category_graph_html = category_fig.to_html(full_html=False)
 
     # Gráfico de Ventas por Subcategoría (Pie Chart)
-
     # Ventas totales por Subcategoría
     subcategory_sales = Sale.objects.values('product__subcategory__name')\
         .annotate(total_sales=Sum('total_price'))\
@@ -108,6 +133,33 @@ def summary(request):
     subcategory_fig = go.Figure(data=[subcategory_pie], layout=subcategory_layout)
     subcategory_graph_html = subcategory_fig.to_html(full_html=False)
 
+    # Establecer el periodo de tiempo por defecto (30 días)
+    period = request.GET.get('period', '30D')
+
+    # Obtener los datos de ventas para el periodo seleccionado
+    sales_dates, sales_values = get_sales_data_for_period(sales, period)
+
+    # Gráfico de lines (Ventas en el tiempo)
+    time_series_chart = go.Figure()
+    time_series_chart.add_trace(
+        go.Scatter(
+            x=sales_dates,
+            y=sales_values,
+            mode='lines+markers',
+            name='Ventas',
+            line=dict(color='blue')
+        )
+    )
+
+    time_series_chart.update_layout(
+        title=f'Ventas en los últimos {period}',
+        xaxis_title='Fecha',
+        yaxis_title='Ventas ($)',
+        showlegend=True,
+        autosize=True,
+    )
+    time_series_graph_html = time_series_chart.to_html(full_html=False)
+
     # Buscador de ventas
     sale_search_form = SalesForm()
     sale_query = None
@@ -120,20 +172,12 @@ def summary(request):
             sale_query = sale_search_form.cleaned_data['sale_query']
             sales_results = sales.annotate(
             search=SearchVector('product__name')
-        ).filter(search=sale_query)
+        ).filter(search__icontains=sale_query)
 
     # Si no hay búsqueda, simplemente paginamos las ventas
-    if not sales_results:
-        # Paginación de Ventas (también debes realizar la paginación sobre sales si no hay filtro de búsqueda)
-        sales_paginator = Paginator(sales, 10)
-        page_number = request.GET.get('page')
-        sales = sales_paginator.get_page(page_number)
-    else:
-        # Paginamos los resultados de búsqueda si los hay
-        sales_paginator = Paginator(sales_results, 10)
-        page_number = request.GET.get('page')
-        sales_results = sales_paginator.get_page(page_number)
-
+    sales_paginator = Paginator(sales_results if sales_results else sales, 10)
+    page_number = request.GET.get('page')
+    sales = sales_paginator.get_page(page_number)
 
     # Agrupar por 'product_id' para que las ventas de un mismo producto se sumen correctamente
     top_sales = Sale.objects.values('product__id', 'product__name', 'product__subcategory__category__name')\
@@ -172,6 +216,9 @@ def summary(request):
 
         'category_graph_html': category_graph_html,
         'subcategory_graph_html': subcategory_graph_html,
+
+        'time_series_graph_html': time_series_graph_html,
+        'period': period,
 
         'sales': sales,  
         'sales_results': sales_results, 
