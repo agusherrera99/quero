@@ -4,9 +4,26 @@
 
 {% block content %}
 <style>
+    .actions-cell {
+        width: 100px;
+        text-align: center;
+    }
+
     .added-to-cart {
         background-color: #e5e7eb;
         transition: background-color 0.3s ease;
+    }
+
+    .btn-remove {
+        color: #1a1a1a;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+    }
+
+    .btn-remove:hover {
+        background: #f3f4f6;
     }
 
     .cash-machine {
@@ -47,13 +64,41 @@
         background: #000000;
     }
 
-    .products-grid {
+    .payment-actions {
         padding: 1rem;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
-        max-height: 400px;
-        overflow-y: auto;
+    }
+
+    .payment-btn {
+        padding: 1rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .payment-btn i {
+        font-size: 1.125rem;
+    }
+
+    .price-cell {
+        width: 120px;
+        text-align: right;
+    }
+
+    .pos-container {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 1.5rem;
+        height: calc(100vh - 4rem);
+        padding: 1rem;
     }
 
     .product-card {
@@ -77,6 +122,25 @@
         border-color: #1a1a1a;
     }
 
+    .product-card.selected .product-price {
+        color: #e5e7eb;
+    }
+
+    .products-grid {
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .product-info {
+        display: flex;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
     .product-name {
         font-size: 0.875rem;
         font-weight: 500;
@@ -86,10 +150,6 @@
     .product-price {
         font-size: 0.875rem;
         color: #6B7280;
-    }
-
-    .product-card.selected .product-price {
-        color: #e5e7eb;
     }
 
     .product-btn {
@@ -108,19 +168,9 @@
         padding: 0;
     }
 
-    .product-btn:hover {
-        border-color: #1a1a1a;
-        background: #f3f4f6;
-    }
-
     .product-btn:active {
         background: #e5e7eb;
         transform: translateY(1px);
-    }
-
-    .product-btn.function {
-        background: #e5e7eb;
-        font-size: 1rem;
     }
 
     .product-btn.enter {
@@ -135,6 +185,16 @@
         background: #000000;
     }
 
+    .product-btn.function {
+        background: #e5e7eb;
+        font-size: 1rem;
+    }
+
+    .product-btn:hover {
+        border-color: #1a1a1a;
+        background: #f3f4f6;
+    }
+
     .search-input {
         width: 100%;
         padding: 0.75rem 1rem;
@@ -146,14 +206,6 @@
     .search-product {
         padding: 1rem;
         border-bottom: 1px solid #e5e7eb;
-    }
-
-    .quick-categories {
-        padding: 1rem;
-        border-bottom: 1px solid #e5e7eb;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 0.75rem;
     }
 
     .sales-table {
@@ -217,6 +269,21 @@
         color: #1a1a1a;
     }
 
+    .total-amount {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        text-align: right;
+    }
+
+    .quick-categories {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+
     .quantity-cell {
         width: 100px;
     }
@@ -232,75 +299,15 @@
         background-size: 1rem;
     }
 
-    .price-cell {
-        width: 120px;
-        text-align: right;
-    }
-
-    .actions-cell {
-        width: 100px;
-        text-align: center;
-    }
-
-    .btn-remove {
-        color: #1a1a1a;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0.25rem;
-    }
-
-    .btn-remove:hover {
-        background: #f3f4f6;
-    }
-
-    .payment-actions {
-        padding: 1rem;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-    }
-
-    .payment-btn {
-        padding: 1rem;
-        border: none;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .payment-btn i {
-        font-size: 1.125rem;
-    }
-
-    .total-amount {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        text-align: right;
-    }
-
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
-    }
-
-    .pos-container {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        gap: 1.5rem;
-        height: calc(100vh - 4rem);
-        padding: 1rem;
     }
 </style>
 
 <div class="pos-container">
     <div class="sales-section">
+        <!-- Titulo -->
         <div class="sales-header">
             <h2 class="sales-title">Venta en curso</h2>
             <button class="btn-remove" title="Limpiar ventas" id="clearCartBtn">
@@ -308,6 +315,7 @@
             </button>
         </div>
 
+        <!-- Tabla de ventas -->
         <table class="sales-table">
             <thead>
                 <tr>
@@ -344,6 +352,7 @@
             </tbody>
         </table>
 
+        <!-- Pie de página de ventas -->
         <div class="sales-footer">
             <div class="total-amount">
                 Total: $<span id="totalAmount">{{ total_amount }}</span>
@@ -360,6 +369,7 @@
         </div>
     </div>
 
+    <!-- Caja registradora -->
     <div class="cash-machine">
         <div class="search-product">
             <input type="text" class="search-input" id="searchProduct" placeholder="Buscar producto..." autofocus>
@@ -375,7 +385,10 @@
         <div class="products-grid" id="productsGrid">
             {% for product in products %}
             <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}">
-                <div class="product-name">{{ product.name }} ({{ product.quantity}})</div>
+                <div class="product-info">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-stock">({{ product.quantity }})</div>
+                </div>
                 <div class="product-price">${{ product.price }}</div>
             </button>
             {% endfor %}

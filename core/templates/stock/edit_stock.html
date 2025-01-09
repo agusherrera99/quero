@@ -129,6 +129,7 @@
             <a href="{% url 'stock:stock' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
             <h2>Edita el producto</h2>
         </div>
+        <!-- Formulario de edición -->
         <form method="post">
             {% csrf_token %}
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
@@ -194,6 +195,7 @@
 
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
+        // Cargar las subcategorías al seleccionar una categoría
         var categoryId = document.getElementById('id_category').value;
         if (categoryId) {
             fetch(`/stock/load-subcategories/?category_id=${categoryId}`)

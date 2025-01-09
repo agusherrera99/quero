@@ -7,6 +7,69 @@
     <title>Eliminar Producto</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            background-color: #9CA3AF;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-cancel:hover {
+            background-color: #6B7280;
+        }
+
+        .btn-delete {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .btn-delete:hover:not(:disabled) {
+            background-color: #DC2626;
+        }
+
+        .consequences {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-left: 4px solid #F59E0B;
+            background-color: #FEF3C7;
+        }
+
+        .consequences-list {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            color: #4B5563;
+            font-size: 0.875rem;
+        }
+
+        .consequences-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
         .delete-container {
             max-width: 500px;
             margin: 2rem auto;
@@ -14,22 +77,6 @@
             background: white;
             border-radius: 0.5rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .warning-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #FEE2E2;
-            border-radius: 50%;
-        }
-
-        .warning-icon i {
-            font-size: 32px;
-            color: #DC2626;
         }
 
         .delete-title {
@@ -50,86 +97,6 @@
             text-align: center;
         }
 
-        .product-info {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background-color: #F3F4F6;
-            border-radius: 0.375rem;
-        }
-
-        .product-name {
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-details {
-            color: #4B5563;
-            font-size: 0.875rem;
-        }
-
-        .consequences {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            border-left: 4px solid #F59E0B;
-            background-color: #FEF3C7;
-        }
-
-        .consequences-title {
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .consequences-list {
-            list-style-type: disc;
-            margin-left: 1.5rem;
-            color: #4B5563;
-            font-size: 0.875rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            width: 100%;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-delete {
-            background-color: #EF4444;
-            color: white;
-        }
-
-        .btn-delete:hover:not(:disabled) {
-            background-color: #DC2626;
-        }
-
-        .btn-cancel {
-            background-color: #9CA3AF;
-            color: white;
-            text-decoration: none;
-        }
-
-        .btn-cancel:hover {
-            background-color: #6B7280;
-        }
-
         .input-confirm {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -144,6 +111,40 @@
             border-color: #DC2626;
             box-shadow: 0 0 0 1px #DC2626;
         }
+
+        .product-details {
+            color: #4B5563;
+            font-size: 0.875rem;
+        }
+
+        .product-info {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #F3F4F6;
+            border-radius: 0.375rem;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #FEE2E2;
+            border-radius: 50%;
+        }
+
+        .warning-icon i {
+            font-size: 32px;
+            color: #DC2626;
+        }
     </style>
 </head>
 <body>
@@ -151,9 +152,9 @@
         <div class="warning-icon">
             <i class="fas fa-exclamation-triangle"></i>
         </div>
-        
         <h2 class="delete-title">Eliminar Producto</h2>
         
+        <!-- Mensaje de advertencia -->
         <div class="delete-warning">
             ¡Atención! Esta acción no se puede deshacer
         </div>
@@ -167,6 +168,7 @@
             </ul>
         </div>
 
+        <!-- Información del producto -->
         <div class="product-info">
             <div class="product-name">{{ product.name }}</div>
             <div class="product-details">
@@ -176,6 +178,7 @@
             </div>
         </div>
 
+        <!-- Formulario de confirmación -->
         <form method="post" action="{% url 'stock:delete_stock' product.id %}">
             {% csrf_token %}
             <div style="display: flex;">

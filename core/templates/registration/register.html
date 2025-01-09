@@ -42,12 +42,6 @@
             margin-bottom: 1rem;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
         .form-group input {
             width: 100%;
             padding: 0.75rem;
@@ -62,6 +56,28 @@
         .form-group input:focus {
             outline: none;
             border-color: #666;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .footer-text a {
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
         }
 
         .input-icon {
@@ -81,6 +97,12 @@
             width: 100%;
         }
 
+        .readonly-input {
+            background-color: #f0f0f0;
+            opacity: 0.7; /* Para hacerlo ver más desactivado */
+            pointer-events: none; /* Deshabilita la interacción */
+        }
+
         .submit-button {
             width: 100%;
             padding: 0.75rem;
@@ -97,40 +119,19 @@
             background: #333;
         }
 
-        .footer-text {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: #666;
-        }
-
-        .footer-text a {
-            color: #1a1a1a;
-            text-decoration: none;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
-
         .terms-text {
             text-align: center;
             margin-top: 1rem;
             font-size: 0.75rem;
             color: #666;
         }
-
-        /* Estilos para el campo de username cuando está deshabilitado visualmente */
-        .readonly-input {
-            background-color: #f0f0f0;
-            opacity: 0.7; /* Para hacerlo ver más desactivado */
-            pointer-events: none; /* Deshabilita la interacción */
-        }
     </style>
 </head>
 <body>
     <div class="card">
         <h1>Crea tu cuenta</h1>
+
+        <!-- Mostrar mensajes de error -->
         {% if messages %}
             {% for message in messages %}
                 <div class="toast toast-{{ message.tags }}">
@@ -138,6 +139,8 @@
                 </div>
             {% endfor %}
         {% endif %}
+
+        <!-- Formulario de registro -->
         <form method="post">
             {% csrf_token %}
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
@@ -235,7 +238,7 @@
     </div>
 
     <script>
-        // JavaScript para actualizar el campo username automáticamente
+        // Asignar el valor del email al campo username
         document.getElementById('id_email').addEventListener('input', function() {
             var email = this.value;
             var username = email.split('@')[0]; // Obtener la parte antes del '@'

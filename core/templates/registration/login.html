@@ -14,16 +14,16 @@
             font-family: system-ui, -apple-system, sans-serif;
         }
 
+        a {
+            cursor: pointer;
+        }
+
         body {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #f8f9fa;
-        }
-
-        a {
-            cursor: pointer;
         }
 
         .card {
@@ -42,34 +42,18 @@
             font-size: 1.5rem;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-            background-position: 0.75rem center;
-            background-repeat: no-repeat;
-            background-size: 1rem;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #666;
-        }
-
         .input-icon {
             position: relative;
+        }
+
+        .input-icon .eye-icon {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+            visibility: hidden;
         }
 
         .input-icon i {
@@ -85,16 +69,6 @@
             width: 100%;
         }
 
-        .input-icon .eye-icon {
-            position: absolute;
-            right: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #aaa;
-            visibility: hidden;
-        }
-
         .forgot-password {
             display: block;
             text-align: right;
@@ -106,6 +80,48 @@
         }
 
         .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            background-position: 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .footer-text a {
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
             text-decoration: underline;
         }
 
@@ -124,27 +140,12 @@
         .submit-button:hover {
             background: #333;
         }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: #666;
-        }
-
-        .footer-text a {
-            color: #1a1a1a;
-            text-decoration: none;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
     <div class="card">
         <h1>Iniciar sesión</h1>
+        <!-- Mensajes de error -->
         {% if messages %}
             {% for message in messages %}
                 <div class="toast toast-{{ message.tags }}">
@@ -152,6 +153,8 @@
                 </div>
             {% endfor %}
         {% endif %}
+
+        <!-- Formulario de inicio de sesión -->
         <form method="post" style="margin-top: 1rem;">
             {% csrf_token %}
             <div class="form-group">
@@ -183,11 +186,11 @@
         </form>
     </div>
 
-    <!-- Incluir el script de JavaScript -->
     <script>
         var passwordInput = document.getElementById('password-input');
         var eyeIcon = document.getElementById('toggle-password');
         
+        // Función para mostrar u ocultar la contraseña
         function togglePassword() {
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';  // Mostrar la contraseña
@@ -207,10 +210,10 @@
             }
         }
 
-        // Llamamos a la función cada vez que el valor del input cambia
+        // Llamado a la función para mostrar u ocultar el ícono al escribir en el campo
         passwordInput.addEventListener('input', toggleEyeIcon);
 
-        // También ocultamos el ícono al cargar la página si no hay texto en el campo
+        // Oculta el ícono al cargar la página si no hay texto en el campo
         toggleEyeIcon();
     </script>
 </body>

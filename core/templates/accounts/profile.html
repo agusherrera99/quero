@@ -4,16 +4,16 @@
 
 {% block content %}
 <style>
+    .action_btns form button{
+        width: 180px;
+        height: 50px;
+    }
+
     .account-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
         height: fit-content;
-    }
-
-    .action_btns form button{
-        width: 180px;
-        height: 50px;
     }
 
     .card {
@@ -33,6 +33,27 @@
         color: #666;
         font-size: 0.875rem;
         margin-bottom: 1.5rem;
+    }
+
+    .info-group {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        width: 220px; 
+        height: 70px;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: #1a1a1a;
+        font-weight: 500;
     }
 
     .logout-btn {
@@ -58,27 +79,6 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    .info-group {
-        margin-bottom: 1rem;
-        padding: 1rem;
-        width: 220px; 
-        height: 70px;
-        background: #f8f9fa;
-        border-radius: 0.5rem;
-    }
-
-    .info-label {
-        font-size: 0.875rem;
-        color: #666;
-        margin-bottom: 0.5rem;
-    }
-
-    .info-value {
-        font-size: 1rem;
-        color: #1a1a1a;
-        font-weight: 500;
-    }
-
     @media (max-width: 768px) {
         .account-grid {
             grid-template-columns: 1fr;
@@ -87,6 +87,7 @@
 </style>
 
 <div class="account-grid">
+    <!-- Información personal -->
     <div class="card">
         <h2>Información personal</h2>
         <p>Actualiza tu información.</p>
@@ -127,6 +128,7 @@
         </div>
     </div>
 
+    <!-- Acciones de cuenta -->
     <div class="card">
         <h2>Acciones de Cuenta</h2>
         <p>Gestiona tu cuenta.</p>

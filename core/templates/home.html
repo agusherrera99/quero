@@ -19,26 +19,14 @@
             font-family: system-ui, -apple-system, sans-serif;
         }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-        }
-
-        .logo {
-            display: flex;
+        .badge {
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            text-decoration: none;
-            color: black;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
         }
 
         .btn {
@@ -54,6 +42,17 @@
             transition: all 0.2s ease;
         }
 
+        /* Danger button */
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
         /* Default (transparent/white) button */
         .btn-default {
             background-color: white;
@@ -67,26 +66,11 @@
             color: #1a1a1a;
         }
 
-        /* Primary button */
-        .btn-primary {
-            background-color: #1a1a1a;
-            color: white;
-            border-color: #1a1a1a;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        /* Danger button */
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-            border-color: #ef4444;
-        }
-
-        .btn-danger:hover {
-            opacity: 0.9;
+        /* Disabled state */
+        .btn:disabled,
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Ghost button */
@@ -100,17 +84,6 @@
             color: #1a1a1a;
         }
 
-        /* Button sizes */
-        .btn-sm {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-lg {
-            padding: 0.875rem 1.5rem;
-            font-size: 1rem;
-        }
-
         /* Button with icon */
         .btn-icon {
             display: inline-flex;
@@ -122,47 +95,27 @@
             font-size: 1.25em;
         }
 
-        /* Disabled state */
-        .btn:disabled,
-        .btn[disabled] {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .btn-lg {
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
         }
 
-        .hero {
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            padding: 0rem 2rem;
-            text-align: center;
-            min-height: 50vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        /* Primary button */
+        .btn-primary {
+            background-color: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
         }
 
-        .badge {
-            background-color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            margin-bottom: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .btn-primary:hover {
+            opacity: 0.9;
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            max-width: 800px;
+        /* Button sizes */
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
         }
-
-        .hero p {
-            color: #666;
-            font-size: 1.25rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
 
         .features {
             max-width: 1200px;
@@ -189,6 +142,12 @@
                         0 12px 18px rgba(0, 0, 0, 0.1);
         }
 
+        .feature-description {
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
         .feature-icon {
             font-size: 2rem;
             margin-bottom: 1.5rem;
@@ -209,12 +168,6 @@
             font-weight: 600;
         }
 
-        .feature-description {
-            color: #4b5563;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
         footer {
             padding: 2rem;
             display: flex;
@@ -231,20 +184,65 @@
             gap: 0.5rem;
             cursor: pointer;
         }
+
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 0rem 2rem;
+            text-align: center;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .hero p {
+            color: #666;
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: black;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
     </style>
 </head>
 <body>
+    <!-- Barra de navegación -->
     <nav class="navbar">
-        <a class="logo">
-            <!-- <img src="{% static 'img/logo.svg' %}" alt="quero" width="40" height="40"> -->
-            Quero
-        </a>
+        <a class="logo" href="{% url 'pages:home' %}">Quero</a>
         <div class="nav-buttons">
             <a class="btn btn-primary" href="{% url 'accounts:register' %}">Registrarse</a>
             <a class="btn btn-default" href="{% url 'login' %}" >Iniciar Sesión</a>
         </div>
     </nav>
 
+    <!-- Sección del Hero -->
     <section class="hero">
         <div class="badge">
             🚀 En desarrollo - Gratis por tiempo limitado
@@ -253,6 +251,7 @@
         <p>quero es un potente programa de gestión diseñado específicamente para almacenes y quioscos. Agiliza tus operaciones, ahorra tiempo y aumenta tus ganancias.</p>
     </section>
 
+    <!-- Sección de características -->
     <section class="features">
         <div class="feature-card">
             <div class="feature-icon">
@@ -285,6 +284,7 @@
         </div>
     </section>
 
+    <!-- Pie de página -->
     <footer>
         <p>© 2025 Quero, Inc</p>
         <a class="footer-link">

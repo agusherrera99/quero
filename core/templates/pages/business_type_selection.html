@@ -4,36 +4,35 @@
 
 {% block content %}
 <style>
-    .business-selection {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0rem 1rem;
-    }
-
-    .page-header {
+    .category-item {
+        color: #4B5563;
+        font-size: 0.875rem;
+        padding: 0.25rem 0;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        text-align: center;
     }
 
-    .page-title {
-        font-size: 2rem;
+    .category-item:before {
+        content: "•";
+        color: #9CA3AF;
+        margin-right: 0.5rem;
+    }
+
+    .category-section {
+        margin-bottom: 1rem;
+    }
+
+    .category-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .category-title {
         font-weight: 600;
         color: #1a1a1a;
         margin-bottom: 0.5rem;
-    }
-
-    .page-description {
-        color: #4B5563;
-        font-size: 1.125rem;
-    }
-
-    .business-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1rem;
+        font-size: 0.875rem;
     }
 
     .business-card {
@@ -57,13 +56,6 @@
         flex-grow: 1;
     }
 
-    .business-type {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-    }
-
     .business-description {
         color: #4B5563;
         font-size: 0.875rem;
@@ -71,35 +63,43 @@
         line-height: 1.5;
     }
 
-    .category-section {
-        margin-bottom: 1rem;
+    .business-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
     }
 
-    .category-title {
+    .business-selection {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0rem 1rem;
+    }
+
+    .business-type {
+        font-size: 1.25rem;
         font-weight: 600;
         color: #1a1a1a;
         margin-bottom: 0.5rem;
-        font-size: 0.875rem;
     }
 
-    .category-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .category-item {
+    .page-description {
         color: #4B5563;
-        font-size: 0.875rem;
-        padding: 0.25rem 0;
-        display: flex;
-        align-items: center;
+        font-size: 1.125rem;
     }
 
-    .category-item:before {
-        content: "•";
-        color: #9CA3AF;
-        margin-right: 0.5rem;
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
     }
 
     .select-button {
@@ -127,6 +127,18 @@
         overflow: hidden;
     }
 
+    .warning-banner-content {
+        padding: 1rem;
+        color: #92400E;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .warning-banner-icon {
+        color: #92400E;
+        font-size: 0.875rem;
+    }
+
     .warning-banner-header {
         background-color: #FCD34D;
         padding: 0.75rem 1rem;
@@ -140,20 +152,9 @@
         color: #92400E;
         font-size: 0.875rem;
     }
-
-    .warning-banner-icon {
-        color: #92400E;
-        font-size: 0.875rem;
-    }
-
-    .warning-banner-content {
-        padding: 1rem;
-        color: #92400E;
-        font-size: 0.875rem;
-        line-height: 1.5;
-    }
 </style>
 
+<!-- Seleccionar el tipo de negocio -->
 <div class="business-selection">
     <div class="page-header">
         <h1 class="page-title">Selecciona tu tipo de negocio</h1>
@@ -170,6 +171,7 @@
         </div>
     </div>
 
+    <!-- Mostrar los tipos de negocio disponibles -->
     <div class="business-grid">
         {% for business in business_types %}
         <div class="business-card">

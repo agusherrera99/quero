@@ -62,14 +62,6 @@
             margin-bottom: 1rem;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
         .form-group input {
             width: 100%;
             padding: 0.75rem;
@@ -84,6 +76,14 @@
         .form-group input:focus {
             outline: none;
             border-color: #666;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
         }
 
         .form-group select {
@@ -125,10 +125,13 @@
 </head>
 <body>
     <div class="form-container">
+        <!-- Titutlo -->
         <div class="header-container">
             <a href="{% url 'stock:stock' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
             <h2>Añade un producto</h2>
         </div>
+
+        <!-- Formulario -->
         <form method="post">
             {% csrf_token %}
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
@@ -192,34 +195,33 @@
         </form>
     </div>
 
-    <script type="text/javascript">
-        // Cuando se cambie la categoría, hacer una petición AJAX para cargar las subcategorías correspondientes
+    <script>
         document.getElementById('id_category').addEventListener('change', function () {
             var categoryId = this.value;
             
             // Verifica que se haya seleccionado una categoría
             if (categoryId) {
                 fetch(`/stock/load-subcategories/?category_id=${categoryId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Limpiar las opciones actuales del campo subcategoría
-                        var subcategoryField = document.getElementById('id_subcategory');
-                        subcategoryField.innerHTML = '';
-    
-                        // Añadir una opción por defecto (vacía)
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiar las opciones actuales del campo subcategoría
+                    var subcategoryField = document.getElementById('id_subcategory');
+                    subcategoryField.innerHTML = '';
+
+                    // Añadir una opción por defecto (vacía)
+                    var option = document.createElement('option');
+                    option.value = '';
+                    option.text = 'Seleccione una subcategoría';
+                    subcategoryField.appendChild(option);
+
+                    // Añadir las nuevas opciones de subcategorías
+                    data.subcategories.forEach(function (subcategory) {
                         var option = document.createElement('option');
-                        option.value = '';
-                        option.text = 'Seleccione una subcategoría';
+                        option.value = subcategory.id;
+                        option.text = subcategory.name;
                         subcategoryField.appendChild(option);
-    
-                        // Añadir las nuevas opciones de subcategorías
-                        data.subcategories.forEach(function (subcategory) {
-                            var option = document.createElement('option');
-                            option.value = subcategory.id;
-                            option.text = subcategory.name;
-                            subcategoryField.appendChild(option);
-                        });
                     });
+                });
             }
         });
     </script>
