@@ -9,6 +9,9 @@ class Subcategory(models.Model):
 
     class Meta:
         db_table = 'subcategories'
+        indexes = [
+            models.Index(fields=['name'], name='subcategory_name_idx'),
+        ]
 
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
@@ -23,6 +26,9 @@ class Category(models.Model):
 
     class Meta:
         db_table = 'categories'
+        indexes = [
+            models.Index(fields=['name'], name='category_name_idx'),
+        ]
 
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
@@ -51,6 +57,14 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'products'
+        indexes = [
+            models.Index(fields=['name'], name='product_name_idx'),
+            models.Index(fields=['quantity'], name='product_quantity_idx'),
+            models.Index(fields=['price'], name='product_price_idx'),
+            models.Index(fields=['uom'], name='product_uom_idx'),
+            models.Index(fields=['created_at'], name='product_created_at_idx'),
+            models.Index(fields=['updated_at'], name='product_updated_at_idx'),
+        ]
 
     def clean(self):
         if self.quantity < 0:

@@ -12,6 +12,9 @@ class Sale(models.Model):
 
     class Meta:
         db_table = 'sales'
+        indexes = [
+            models.Index(fields=['created_at'], name='sale_created_at_idx'),
+        ]
 
     def clean(self):
         if self.quantity < 0:

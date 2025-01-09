@@ -10,6 +10,12 @@ class CustomUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['username'], name='username_idx'),
+            models.Index(fields=['shop_name'], name='shop_name_idx'),
+        ]
+
     def save(self, *args, **kwargs):
         self.shop_name = self.shop_name.lower()
         if self.created_at is None:
