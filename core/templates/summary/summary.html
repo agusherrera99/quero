@@ -96,6 +96,12 @@
         color: #DC2626;
     }
 
+    .status {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+    }
+
     .chart-grid {
         display: grid;
         grid-template-columns: 2fr 1fr;
@@ -417,35 +423,87 @@
     <!-- KPI Stats -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-title">Ventas Totales (Mes)</div>
-            <!-- <div class="stat-value">${{ monthly_sales|default:"0.00" }}</div> -->
-            <div class="stat-change positive">
-                <i class="fas fa-arrow-up"></i>
-                12.5% vs mes anterior
+            <div class="stat-title">Ventas Totales (Hoy)</div>
+            <div class="stat-value">${{ daily_sales|default:"0.00" }}</div>
+            <div class="status" style="color: {{ daily_sales_percentage_color }};">
+                {% if daily_sales_percentage_change %}
+                    {% if daily_sales_percentage_color == "red" %}
+                        <i class="fas fa-arrow-down"></i>
+                    {% elif daily_sales_percentage_color == "green" %}
+                        <i class="fas fa-arrow-up"></i>
+                    {% else %}
+                        <i class="fas fa-equals"></i>
+                    {% endif %}
+                {% endif %}
+
+                {% if daily_sales_percentage_text == 'No disponible' %}
+                    No disponible
+                {% else %}
+                    {{ daily_sales_percentage_text }} vs ayer
+                {% endif %}
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-title">Ventas Totales (Hoy)</div>
-            <!-- <div class="stat-value">${{ daily_sales|default:"0.00" }}</div> -->
-            <div class="stat-change positive">
-                <i class="fas fa-arrow-up"></i>
-                5.2% vs ayer
+            <div class="stat-title">Productos Vendidos (Hoy)</div>
+            <div class="stat-value">{{ daily_products_sold|default:"0" }}</div>
+            <div class="status" style="color: {{ daily_products_sold_percentage_color }};">
+                {% if daily_products_sold_percentage_change %}
+                    {% if daily_products_sold_percentage_color == "red" %}
+                        <i class="fas fa-arrow-down"></i>
+                    {% elif daily_products_sold_percentage_color == "green" %}
+                        <i class="fas fa-arrow-up"></i>
+                    {% else %}
+                        <i class="fas fa-equals"></i>
+                    {% endif %}
+                {% endif %}
+                
+                {% if daily_products_sold_percentage_text == 'No disponible' %}
+                    No disponible
+                {% else %}
+                    {{ daily_products_sold_percentage_text }} vs ayer
+                {% endif %}
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Ventas Totales (Mes)</div>
+            <div class="stat-value">${{ monthly_sales|default:"0.00" }}</div>
+            <div class="status" style="color: {{ monthly_sales_percentage_color }};">
+                {% if monthly_sales_percentage_change %}
+                    {% if monthly_sales_percentage_color == "red" %}
+                        <i class="fas fa-arrow-down"></i>
+                    {% elif monthly_sales_percentage_color == "green" %}
+                        <i class="fas fa-arrow-up"></i>
+                    {% else %}
+                        <i class="fas fa-equals"></i>
+                    {% endif %}
+                {% endif %}
+
+                {% if monthly_sales_percentage_text == 'No disponible' %}
+                    No disponible
+                {% else %}
+                    {{ monthly_sales_percentage_text }} vs mes anterior
+                {% endif %}
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-title">Productos Vendidos (Mes)</div>
-            <!-- <div class="stat-value">{{ monthly_products|default:"0" }}</div> -->
-            <div class="stat-change positive">
-                <i class="fas fa-arrow-up"></i>
-                8.3% vs mes anterior
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-title">Ticket Promedio</div>
-            <!-- <div class="stat-value">${{ average_ticket|default:"0.00" }}</div> -->
-            <div class="stat-change negative">
-                <i class="fas fa-arrow-down"></i>
-                2.1% vs mes anterior
+            <div class="stat-value">{{ monthly_products_sold|default:"0" }}</div>
+            <div class="status" style="color: {{ monthly_products_sold_percentage_color }};">
+                {% if monthly_products_sold_percentage_change %}
+                    {% if monthly_products_sold_percentage_color == "red" %}
+                        <i class="fas fa-arrow-down"></i>
+                    {% elif monthly_products_sold_percentage_color == "green" %}
+                        <i class="fas fa-arrow-up"></i>
+                    {% else %}
+                        <i class="fas fa-equals"></i>
+                    {% endif %}
+                {% endif %}
+
+                {% if monthly_products_sold_percentage_text == 'No disponible' %}
+                    No disponible
+                {% else %}
+                    {{ monthly_products_sold_percentage_text }} vs mes anterior
+                {% endif %}
             </div>
         </div>
     </div>

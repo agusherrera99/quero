@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
@@ -9,10 +11,48 @@ from django.shortcuts import get_object_or_404, redirect, render
 from pos.models import Sale
 from .forms import SalesForm
 
+def calculate_percentage_change(current, previous):
+    if previous is None or previous == 0:
+        return None, 'No disponible', 'gray'
+    
+    percentage_change = ((current - previous) / previous) * 100
+    if percentage_change < 0:
+        return abs(percentage_change), f"{abs(percentage_change):.2f}%", 'red'
+    elif percentage_change == 0:
+        return 0, "Igual", "gray"
+    else:
+        return percentage_change, f"{percentage_change:.2f}%", 'green'
+
 @login_required
 def summary(request):
     # Obtener las ventas del usuario
     sales = Sale.objects.filter(user=request.user).order_by('-created_at')
+
+    # Calcula el primer día del mes actual y el día anterior
+    today = datetime.today()
+    first_day_current_month = today.replace(day=1)
+    yesterday = today - timedelta(days=1)
+    first_day_last_month = (first_day_current_month - timedelta(days=1)).replace(day=1)
+
+    # Ventas Totales (Hoy)
+    daily_sales = sales.filter(created_at__date=today).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+    daily_sales_yesterday = sales.filter(created_at__date=yesterday).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+    daily_sales_percentage, daily_sales_percentage_text, daily_sales_percentage_color = calculate_percentage_change(daily_sales, daily_sales_yesterday)
+
+    # Productos vendidos (Hoy)
+    daily_products_sold = sales.filter(created_at__date=today).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    daily_products_sold_yesterday = sales.filter(created_at__date=yesterday).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    daily_products_sold_percentage, daily_products_sold_percentage_text, daily_products_sold_percentage_color = calculate_percentage_change(daily_products_sold, daily_products_sold_yesterday)
+
+    # Ventas Totales (Mes)
+    monthly_sales = sales.filter(created_at__date__gte=first_day_current_month).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+    monthly_sales_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+    monthly_sales_percentage, monthly_sales_percentage_text, monthly_sales_percentage_color = calculate_percentage_change(monthly_sales, monthly_sales_last_month)
+
+    # Productos vendidos (Mes)
+    monthly_products_sold = sales.filter(created_at__date__gte=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    monthly_products_sold_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
     
     # Buscador de ventas
     sale_search_form = SalesForm()
@@ -47,6 +87,7 @@ def summary(request):
             total_quantity=Sum('quantity'),
             total_price=Sum('total_price')  # Sumar el total de dinero por cada producto
         )\
+        .filter(user=request.user)\
         .order_by('-total_quantity')[:10]
     
     # Paginación de los productos más vendidos
@@ -55,10 +96,30 @@ def summary(request):
     top_sales = top_sales_paginator.get_page(page_number)
 
     context = {
-        'sales': sales,  # ventas paginadas (o resultados de búsqueda paginados)
-        'sales_results': sales_results,  # resultados de búsqueda
-        'sale_search_form': sale_search_form,  # formulario de búsqueda
-        'sale_query': sale_query,  # consulta de búsqueda
+        'daily_sales': daily_sales,
+        'daily_sales_percentage': daily_sales_percentage,
+        'daily_sales_percentage_text': daily_sales_percentage_text,
+        'daily_sales_percentage_color': daily_sales_percentage_color,
+
+        'daily_products_sold': daily_products_sold,
+        'daily_products_sold_percentage': daily_products_sold_percentage,
+        'daily_products_sold_percentage_text': daily_products_sold_percentage_text,
+        'daily_products_sold_percentage_color': daily_products_sold_percentage_color,
+
+        'monthly_sales': monthly_sales,
+        'monthly_sales_percentage': monthly_sales_percentage,
+        'monthly_sales_percentage_text': monthly_sales_percentage_text,
+        'monthly_sales_percentage_color': monthly_sales_percentage_color,
+
+        'monthly_products_sold': monthly_products_sold,
+        'monthly_products_sold_percentage': monthly_products_sold_percentage,
+        'monthly_products_sold_percentage_text': monthly_products_sold_percentage_text,
+        'monthly_products_sold_percentage_color': monthly_products_sold_percentage_color,
+
+        'sales': sales,  
+        'sales_results': sales_results, 
+        'sale_search_form': sale_search_form,
+        'sale_query': sale_query, 
         'top_sales': top_sales
     }
 

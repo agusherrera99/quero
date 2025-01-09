@@ -20,11 +20,11 @@ def calculate_percentage_change(current, previous):
     
     percentage_change = ((current - previous) / previous) * 100
     if percentage_change < 0:
-        return abs(percentage_change), f"{abs(percentage_change):.2f}% Menor", 'red'
+        return abs(percentage_change), f"{abs(percentage_change):.2f}%", 'red'
     elif percentage_change == 0:
         return 0, "Igual", "gray"
     else:
-        return percentage_change, f"{percentage_change:.2f}% Mayor", 'green'
+        return percentage_change, f"{percentage_change:.2f}%", 'green'
 
 @login_required
 def stock(request):
@@ -49,7 +49,7 @@ def stock(request):
     last_month_stock_value = last_month_products.aggregate(stock_value=Sum(F('quantity') * F('price')))['stock_value'] or 0
 
     # Calcular el porcentaje de cambio
-    unique_percentage, unique_percentage_text, unique_percentage_color = calculate_percentage_change(current_month_products.count(), last_month_products.count())
+    unique_products_percentage, unique_products_percentage_text, unique_products_percentage_color = calculate_percentage_change(current_month_products.count(), last_month_products.count())
     total_quantity_percentage, total_quantity_percentage_text, total_quantity_percentage_color = calculate_percentage_change(current_month_products.aggregate(total_quantity=Sum('quantity'))['total_quantity'], last_month_products.aggregate(total_quantity=Sum('quantity'))['total_quantity'])
     stock_percentage, stock_percentage_text, stock_percentage_color = calculate_percentage_change(current_month_stock_value, last_month_stock_value)
 
@@ -93,19 +93,22 @@ def stock(request):
     products = paginator.get_page(page_number)
 
     context = {
-        'products': products,
         'unique_products': unique_products,
-        'unique_percentage': unique_percentage,
-        'unique_percentage_text': unique_percentage_text,
-        'unique_percentage_color': unique_percentage_color,
+        'unique_products_percentage': unique_products_percentage,
+        'unique_products_percentage_text': unique_products_percentage_text,
+        'unique_products_percentage_color': unique_products_percentage_color,
+
         'total_quantity': total_quantity,
         'total_quantity_percentage': total_quantity_percentage,
         'total_quantity_percentage_text': total_quantity_percentage_text,
         'total_quantity_percentage_color': total_quantity_percentage_color,
+
         'stock_formatted_value': stock_formatted_value,
         'stock_percentage': stock_percentage,
         'stock_percentage_text': stock_percentage_text,
         'stock_percentage_color': stock_percentage_color,
+
+        'products': products,
         'search_form': search_form,
         'query': query,
         'results': results

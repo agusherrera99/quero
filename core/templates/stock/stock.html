@@ -92,22 +92,23 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    .stat-card .value {
-        font-size: 2rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-card .label {
-        color: #666;
-        font-size: 0.875rem;
-    }
-
     .stat-card .status {
         font-size: 1rem;
         color: #6b7280;
         margin-top: 0.5rem;
+    }
+
+    .stat-title {
+        font-size: 0.875rem;
+        color: #6B7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
     }
 
     .table-container {
@@ -247,19 +248,68 @@
 
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="value">{{ unique_products }}</div>
-        <div class="label">Productos únicos</div>
-        <div class="status" style="color: {{ unique_percentage_color }};">{{ unique_percentage_text }} desde el último mes</div>
+        <div class="stat-title">Productos únicos</div>
+        <div class="stat-value">{{ unique_products|default:"0.00" }}</div>
+        <div class="status" style="color: {{ unique_products_percentage_color }};">
+            {% if unique_products_percentage_change %}
+                {% if unique_products_percentage_color == "red" %}
+                    <i class="fas fa-arrow-down"></i>
+                {% elif unique_products_percentage_color == "green" %}
+                    <i class="fas fa-arrow-up"></i>
+                {% else %}
+                    <i class="fas fa-equals"></i>
+                {% endif %}
+            {% endif %}
+
+            {% if unique_products_percentage_text == 'No disponible' %}
+                No disponible
+            {% else %}
+                {{ unique_products_percentage_text }} vs mes anterior
+            {% endif %}
+        </div>
     </div>
     <div class="stat-card">
-        <div class="value">{{ total_quantity }}</div>
-        <div class="label">Productos totales</div>
-        <div class="status" style="color: {{ total_quantity_percentage_color }};">{{ total_quantity_percentage_text }} desde el último mes</div>
+        <div class="stat-title">Productos totales</div>
+        <div class="stat-value">{{ total_quantity|default:"0" }}</div>
+        <div class="status" style="color: {{ total_quantity_percentage_color }};">
+            {% if total_quantity_percentage_change %}
+                {% if total_quantity_percentage_color == "red" %}
+                    <i class="fas fa-arrow-down"></i>
+                {% elif total_quantity_percentage_color == "green" %}
+                    <i class="fas fa-arrow-up"></i>
+                {% else %}
+                    <i class="fas fa-equals"></i>
+                {% endif %}
+            {% endif %}
+            
+            {% if total_quantity_percentage_text == 'No disponible' %}
+                No disponible
+            {% else %}
+                {{ total_quantity_percentage_text }} vs mes anterior
+            {% endif %}
+        </div>
     </div>
+    
     <div class="stat-card">
-        <div class="value">${{ stock_formatted_value }}</div>
-        <div class="label">Valor del Stock</div>
-        <div class="status" style="color: {{ stock_percentage_color }};">{{ stock_percentage_text }} desde el último mes</div>
+        <div class="stat-title">Valor del inventario</div>
+        <div class="stat-value">${{ stock_formatted_value|default:"0.00" }}</div>
+        <div class="status" style="color: {{ stock_percentage_color }};">
+            {% if stock_percentage_change %}
+                {% if stock_percentage_color == "red" %}
+                    <i class="fas fa-arrow-down"></i>
+                {% elif stock_percentage_color == "green" %}
+                    <i class="fas fa-arrow-up"></i>
+                {% else %}
+                    <i class="fas fa-equals"></i>
+                {% endif %}
+            {% endif %}
+
+            {% if stock_percentage_text == 'No disponible' %}
+                No disponible
+            {% else %}
+                {{ stock_percentage_text }} vs mes anterior
+            {% endif %}
+        </div>
     </div>
 </div>
 
