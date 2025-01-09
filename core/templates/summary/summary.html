@@ -208,18 +208,6 @@
         background: #f8f9fa;
     }
 
-    .chart-placeholder {
-        width: 100%;
-        height: 300px;
-        background: #f8f9fa;
-        border-radius: 0.375rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #6B7280;
-        font-size: 0.875rem;
-    }
-
     .sales-history {
         margin-top: 2rem;
     }
@@ -410,6 +398,28 @@
         border-color: #1a1a1a;
     }
 
+    .chart-container {
+        width: 100%;   /* Hace que el contenedor ocupe todo el ancho disponible */
+        height: 100%;  /* Hace que el contenedor ocupe todo el alto disponible */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative; /* Asegura que el contenedor mantenga su tamaño y pueda contener el gráfico */
+    }
+
+    .chart-placeholder {
+        width: 100%;
+        height: 90%;
+        position: relative;
+        background: #f8f9fa;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+    
     .chart-container, .table-container {
         display: none;
     }
@@ -534,12 +544,12 @@
             </div>
             <div class="chart-container active" id="category-chart">
                 <div class="chart-placeholder">
-                    Gráfico circular de categorías
+                    {{ category_graph_html|safe }}
                 </div>
             </div>
             <div class="chart-container" id="subcategory-chart">
                 <div class="chart-placeholder">
-                    Gráfico circular de subcategorías
+                    {{  subcategory_graph_html|safe }}
                 </div>
             </div>
         </div>

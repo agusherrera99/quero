@@ -8,6 +8,8 @@ from django.db import transaction
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
+import plotly.graph_objs as go
+
 from pos.models import Sale
 from .forms import SalesForm
 
@@ -54,6 +56,58 @@ def summary(request):
     monthly_products_sold_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
     
+    # Gráfico de Ventas por Categoría (Pie Chart)
+    
+    # Ventas totales por Categoría
+    category_sales = Sale.objects.values('product__subcategory__category__name')\
+        .annotate(total_sales=Sum('total_price'))\
+        .filter(user=request.user)\
+        .order_by('-total_sales')
+    
+    category_sales_labels = [category['product__subcategory__category__name'] for category in category_sales]
+    category_sales_values = [category['total_sales'] for category in category_sales]
+
+    category_pie = go.Pie(
+        labels=category_sales_labels,
+        values=category_sales_values,
+        name='Ventas por Categoría',
+        hole=0.3
+    )
+
+    category_layout = go.Layout(
+        title='Ventas por Categoría',
+        showlegend=True,
+        autosize=True
+    )
+    category_fig = go.Figure(data=[category_pie], layout=category_layout)
+    category_graph_html = category_fig.to_html(full_html=False)
+
+    # Gráfico de Ventas por Subcategoría (Pie Chart)
+
+    # Ventas totales por Subcategoría
+    subcategory_sales = Sale.objects.values('product__subcategory__name')\
+        .annotate(total_sales=Sum('total_price'))\
+        .filter(user=request.user)\
+        .order_by('-total_sales')
+    
+    subcategory_sales_labels = [subcategory['product__subcategory__name'] for subcategory in subcategory_sales]
+    subcategory_sales_values = [subcategory['total_sales'] for subcategory in subcategory_sales]
+
+    subcategory_pie = go.Pie(
+        labels=subcategory_sales_labels,
+        values=subcategory_sales_values,
+        name='Ventas por Subcategoría',
+        hole=0.3
+    )
+
+    subcategory_layout = go.Layout(
+        title='Ventas por Subcategoría',
+        showlegend=True,
+        autosize=True
+    )
+    subcategory_fig = go.Figure(data=[subcategory_pie], layout=subcategory_layout)
+    subcategory_graph_html = subcategory_fig.to_html(full_html=False)
+
     # Buscador de ventas
     sale_search_form = SalesForm()
     sale_query = None
@@ -115,6 +169,9 @@ def summary(request):
         'monthly_products_sold_percentage': monthly_products_sold_percentage,
         'monthly_products_sold_percentage_text': monthly_products_sold_percentage_text,
         'monthly_products_sold_percentage_color': monthly_products_sold_percentage_color,
+
+        'category_graph_html': category_graph_html,
+        'subcategory_graph_html': subcategory_graph_html,
 
         'sales': sales,  
         'sales_results': sales_results, 
