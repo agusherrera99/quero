@@ -2,11 +2,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import cache_page
 
 from .forms import UserLoginForm, UserRegistrationForm
 
 
 @login_required
+@cache_page(60 * 5)
 def profile(request):
     return render(request, 'accounts/profile.html')
 
@@ -39,8 +41,6 @@ def login_view(request):
     }
 
     return render(request, 'registration/login.html', context)
-
-
 
 def registration_view(request):
     if request.method == 'POST':

@@ -140,3 +140,10 @@ LOGOUT_REDIRECT_URL = 'pages:home'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # Cache en memoria, ideal para desarrollo
+        'LOCATION': 'unique-snowflake',
+    }
+}

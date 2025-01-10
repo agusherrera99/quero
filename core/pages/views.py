@@ -33,4 +33,4 @@ def select_business_type(request):
 
         messages.success(request, 'Tipo de negocio seleccionado con éxito.')
         return redirect('accounts:profile')
-    return render('pages/business_type_selection')
+    return render('pages/business_type_selection.html')
