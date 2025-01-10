@@ -614,7 +614,18 @@
                                 <tr>
                                     <td>#{{ sale.id }}</td>
                                     <td>{{ sale.product.name }}</td>
-                                    <td>{{ sale.quantity }}</td>
+                                    <!--Cambiar etiqueta segun el uom-->
+                                    {% if sale.product.uom == 'unidad' %}
+                                        <td>{{ sale.quantity }}</td>
+                                    {% elif sale.product.uom == 'kilogramo' %}
+                                        <td>{{ sale.quantity }} Kg</td>
+                                    {% elif sale.product.uom == 'gramo' %}
+                                        <td>{{ sale.quantity }} g</td>
+                                    {% elif sale.product.uom == 'litro' %}
+                                        <td>{{ sale.quantity }} L</td>
+                                    {% elif sale.product.uom == 'mililitro' %}
+                                        <td>{{ sale.quantity }} ml</td>
+                                    {% endif %}
                                     <td>${{ sale.total_price }}</td>
                                     <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
                                     <td>
@@ -630,7 +641,18 @@
                             <tr>
                                 <td>#{{ sale.id }}</td>
                                 <td>{{ sale.product.name }}</td>
-                                <td>{{ sale.quantity }}</td>
+                                <!--Cambiar etiqueta segun el uom-->
+                                {% if sale.product.uom == 'unidad' %}
+                                    <td>{{ sale.quantity }}</td>
+                                {% elif sale.product.uom == 'kilogramo' %}
+                                    <td>{{ sale.quantity }} Kg</td>
+                                {% elif sale.product.uom == 'gramo' %}
+                                    <td>{{ sale.quantity }} g</td>
+                                {% elif sale.product.uom == 'litro' %}
+                                    <td>{{ sale.quantity }} L</td>
+                                {% elif sale.product.uom == 'mililitro' %}
+                                    <td>{{ sale.quantity }} ml</td>
+                                {% endif %}
                                 <td>${{ sale.total_price }}</td>
                                 <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
                                 <td>
@@ -707,7 +729,18 @@
                     <tr>
                         <td>{{ sale.product__name}}</td>
                         <td>{{ sale.product__subcategory__category__name }}</td>
-                        <td>{{ sale.total_quantity }}</td>
+                        <!--Cambiar etiqueta segun el uom-->
+                        {% if sale.product__uom == 'unidad' %}
+                            <td>{{ sale.total_quantity }}</td>
+                        {% elif sale.product__uom == 'kilogramo' %}
+                            <td>{{ sale.total_quantity }} Kg</td>
+                        {% elif sale.product__uom == 'gramo' %}
+                            <td>{{ sale.total_quantity }} g</td>
+                        {% elif sale.product__uom == 'litro' %}
+                            <td>{{ sale.total_quantity }} L</td>
+                        {% elif sale.product__uom == 'mililitro' %}
+                            <td>{{ sale.total_quantity }} ml</td>
+                        {% endif %}
                         <td>${{ sale.total_price }}</td>
                     </tr>
                     {% endfor %}

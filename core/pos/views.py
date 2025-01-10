@@ -44,7 +44,6 @@ def sales_confirmation(request):
         total_amount = Decimal(total_amount)
 
         current_datetime = datetime.now()
-        print(cart)
         context = {
             'cart_items': cart,
             'total_amount': total_amount,
