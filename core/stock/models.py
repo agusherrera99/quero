@@ -42,12 +42,13 @@ class Product(models.Model):
     UNIT_CHOICES = [
         ('unidad', 'Unidad'),
         ('kilogramo', 'Kilogramo'),
-        ('miligramo', 'Miligramo'),
-        ('mililitros', 'Mililitros'),
+        ('gramo', 'Gramo'),
+        ('litro', 'Litro'),
+        ('mililitro', 'Mililitro'),
     ]
 
     name = models.CharField(max_length=100, null=False, default='sin nombre')
-    quantity = models.IntegerField(null=False, default=0)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
     uom = models.CharField(max_length=30, choices=UNIT_CHOICES, null=False, default='unidad')
     subcategory = models.ForeignKey('Subcategory', on_delete=models.CASCADE, default=1)

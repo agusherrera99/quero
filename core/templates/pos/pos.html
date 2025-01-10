@@ -95,7 +95,7 @@
 
     .pos-container {
         display: grid;
-        grid-template-columns: 1fr 400px;
+        grid-template-columns: 1fr 420px;
         gap: 1.5rem;
         height: calc(100vh - 4rem);
         padding: 1rem;
@@ -332,7 +332,7 @@
                         <td>{{ item.name }}</td>
                         <td class="quantity-cell">
                             <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" 
-                                   data-product-id="{{ item.product_id }}" data-price="{{ item.price }}">
+                                   data-product-id="{{ item.product_id }}" data-price="{{ item.price }}" data-uom="{{ item.uom }}">
                         </td>
                         <td class="price-cell">${{ item.total_price }}</td>
                         <td class="actions-cell">
@@ -384,10 +384,10 @@
         
         <div class="products-grid" id="productsGrid">
             {% for product in products %}
-            <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}">
+            <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}" data-uom="{{ product.uom }}">
                 <div class="product-info">
                     <div class="product-name">{{ product.name }}</div>
-                    <div class="product-stock">({{ product.quantity }})</div>
+                    <div class="product-stock">({{ product.quantity|floatformat:2 }})</div>
                 </div>
                 <div class="product-price">${{ product.price }}</div>
             </button>
@@ -465,11 +465,56 @@
             }
         });
 
+        // Función para actualizar el total de la fila
+        function updateRowTotal(row, quantity, price, uom) {
+            let totalPrice;
+
+            if (uom === 'unidad') {
+                totalPrice = quantity * price;
+            } else if (uom === 'kilogramo' || uom === 'litro') {
+                totalPrice = quantity * price;
+            } else if (uom === 'gramo' || uom === 'mililitro') {
+                // Convertimos gramos o mililitros a la unidad base (kilogramo o litro)
+                totalPrice = (quantity / 1000) * price; // Conversión a kilos o litros
+            } else {
+                totalPrice = 0;
+            }
+
+            row.querySelector('.price-cell').textContent = `$${totalPrice.toFixed(2)}`;
+            updateTotalAmount(); // Actualizamos el total general del carrito
+        }
+
+        // Actualiza el total de todos los productos en el carrito
+        function updateTotalAmount() {
+            const cartItems = document.getElementById('cartItems');
+            const rows = cartItems.querySelectorAll('tr[data-product-id]');
+            let total = 0;
+
+            rows.forEach(row => {
+                const quantityInput = row.querySelector('.quantity-input');
+                const price = parseFloat(quantityInput.dataset.price);
+                const quantity = parseFloat(quantityInput.value);
+                const uom = quantityInput.dataset.uom;
+
+                let rowTotal = quantity * price; // Calculamos el total de la fila
+
+                if (uom === 'gramo' || uom === 'mililitro') {
+                    rowTotal = (quantity / 1000) * price; // Ajuste para gramos/mililitros
+                }
+
+                total += rowTotal;
+            });
+
+            const totalAmountSpan = document.getElementById('totalAmount');
+            totalAmountSpan.textContent = total.toFixed(2);
+        }
+
         // Añadir un producto al carrito
         function AddToCart(productCard) {
             const productId = productCard.dataset.productId;
             const productName = productCard.querySelector('.product-name').textContent;
             const productPrice = parseFloat(productCard.querySelector('.product-price').textContent.replace('$', ''));
+            const productUom = productCard.dataset.uom;
 
             // Chequear si el producto ya está en el carrito
             const cartItems = document.getElementById('cartItems');
@@ -481,7 +526,7 @@
                 const newQuantity = parseInt(quantityInput.value) + 1;
                 quantityInput.value = newQuantity;
 
-                updateRowTotal(existingItem, newQuantity, productPrice);  // Se pasa el precio correctamente
+                updateRowTotal(existingItem, newQuantity, productPrice, productUom);  // Se pasa el precio correctamente
             } else {
                 // Elimina el mensaje de carrito vacío si está presente
                 const emptyCart = document.getElementById('emptyCart');
@@ -496,7 +541,7 @@
                     <td>${productName}</td>
                     <td class="quantity-cell">
                         <input type="number" class="quantity-input" value="1" min="1" 
-                            data-product-id="${productId}" data-price="${productPrice}">
+                            data-product-id="${productId}" data-price="${productPrice}" data-uom="${productUom}">
                     </td>
                     <td class="price-cell">$${productPrice}</td> <!-- Se muestra el precio de manera correcta -->
                     <td class="actions-cell">
@@ -518,42 +563,18 @@
             updateTotalAmount();
         }
 
-        // Actualiza el total de una fila en el carrito
-        function updateRowTotal(row, quantity, price) {
-            const totalPrice = quantity * price;
-            row.querySelector('.price-cell').textContent = `$${totalPrice.toFixed(2)}`;
-            updateTotalAmount(); // Esta función recalcula el total de todos los productos en el carrito
-        }
-
-        // Actualiza el total de todos los productos en el carrito
-        function updateTotalAmount() {
-            const cartItems = document.getElementById('cartItems');
-            const rows = cartItems.querySelectorAll('tr[data-product-id]');
-            let total = 0;
-            
-            rows.forEach(row => {
-                const price = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
-                total += price;
-            });
-            
-            const totalAmountSpan = document.getElementById('totalAmount');
-            totalAmountSpan.textContent = total.toFixed(2);
-        }
-
         // Agrega manejadores de eventos a las filas del carrito
         function setupRowEventListeners(row) {
-            // Evento que se dispara cuando se cambia la cantidad de un producto en el carrito
-            const quantityInput = row.querySelector('.quantity-input');
-            quantityInput.addEventListener('change', function() {
-                const newQuantity = parseInt(this.value);
-                if (newQuantity < 1) {
-                    this.value = 1;
-                    newQuantity = 1;
-                }
+            // Actualiza la cantidad cuando se cambia el input de cantidad
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+            quantityInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const quantity = parseFloat(this.value);
+                    const price = parseFloat(this.dataset.price);
+                    const uom = this.dataset.uom;
 
-                const price = parseFloat(quantityInput.dataset.price);
-                updateRowTotal(row, newQuantity, price);
-                updateTotalAmount();
+                    updateRowTotal(this.closest('tr'), quantity, price, uom);
+                });
             });
             
             // Evento que se dispara cuando se elimina un producto del carrito
@@ -598,7 +619,9 @@
                 const productName = row.querySelector('td').textContent;
                 const quantity = row.querySelector('.quantity-input').value;
                 const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
-                cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice });
+                // Agregar uom del producto
+                const productUom = row.querySelector('.quantity-input').dataset.uom;
+                cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom });
             });
             
             // Serializacón y envío de datos

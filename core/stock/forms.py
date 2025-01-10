@@ -25,8 +25,9 @@ class AddProductForm(forms.ModelForm):
     UNIT_CHOICES = [
         ('unidad', 'Unidad'),
         ('kilogramo', 'Kilogramo'),
-        ('miligramo', 'Miligramo'),
-        ('mililitros', 'Mililitros'),
+        ('gramo', 'Gramo'),
+        ('litro', 'Litro'),
+        ('mililitro', 'Mililitro'),
     ]
 
     name = forms.CharField(

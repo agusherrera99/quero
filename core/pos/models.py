@@ -1,3 +1,5 @@
+from decimal import Decimal, ROUND_DOWN
+
 from django.db import models
 from django.forms import ValidationError
 
@@ -5,7 +7,7 @@ from django.forms import ValidationError
 
 class Sale(models.Model):
     product = models.ForeignKey('stock.Product', on_delete=models.CASCADE)
-    quantity = models.PositiveBigIntegerField(default=0)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, null=True)
@@ -24,6 +26,7 @@ class Sale(models.Model):
             raise ValidationError('El precio total no puede ser negativo')
         
     def save(self, *args, **kwargs):
+        self.total_price = self.total_price.quantize(Decimal('0.01'), rounding=ROUND_DOWN)
         self.full_clean()  # This will call the clean method and validate the instance
         super().save(*args, **kwargs)
 

@@ -140,7 +140,17 @@
         <div class="product-item">
             <span class="product-name">{{ item.product_name }}</span>
             <div class="product-details">
-                <span class="quantity-indicator">x{{ item.quantity }}</span>
+                {% if item.uom == 'unidad' %}
+                    <span class="quantity-indicator">x{{ item.quantity }}</span>
+                {% elif item.uom == 'kilogramo' %}
+                    <span class="quantity-indicator">{{ item.quantity }}Kg</span>
+                {% elif item.uom == 'gramo' %}
+                    <span class="quantity-indicator">{{ item.quantity }}g</span>
+                {% elif item.uom == 'litro' %}
+                    <span class="quantity-indicator">{{ item.quantity }}L</span>
+                {% elif item.uom == 'mililitro' %}
+                    <span class="quantity-indicator">{{ item.quantity }}ml</span>
+                {% endif %}
                 <span class="price-indicator">$</span>
                 <span class="product-price">{{ item.price }}</span>
             </div>

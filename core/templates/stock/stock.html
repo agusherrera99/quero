@@ -367,7 +367,7 @@
                             <td>{{ product.subcategory.category.name }}</td>
                             <td>{{ product.subcategory.name }}</td>
                             <td>${{ product.price }} ({{ product.uom }})</td>
-                            <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
+                            <td>{{ product.quantity|floatformat:2 }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
                             <td class="actions">
                                 <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen"></i></a>
                                 <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>

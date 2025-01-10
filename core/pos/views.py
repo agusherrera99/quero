@@ -23,7 +23,6 @@ def pos(request):
     
     # Obtener todos los productos del usuario
     products = Product.objects.filter(user=request.user).order_by('name')
-    
     context = {
         'categories': BusinessType.objects.get(pk=request.user.business_type.id).category_list.all(),
         'products': products,
@@ -45,7 +44,7 @@ def sales_confirmation(request):
         total_amount = Decimal(total_amount)
 
         current_datetime = datetime.now()
-
+        print(cart)
         context = {
             'cart_items': cart,
             'total_amount': total_amount,
@@ -77,8 +76,9 @@ def process_sale(request):
             messages.error(request, 'No puedes vender productos que no te pertenecen')
             return redirect('pos:pos')
         
-        quantity = item.get('quantity', 0)
-        quantity = int(quantity)
+        
+        quantity = Decimal(item.get('quantity', 0)) 
+        total_price = Decimal(item.get('total_price', 0))
 
         if quantity <= 0:
             messages.error(request, 'La cantidad no puede ser negativa')
@@ -92,12 +92,21 @@ def process_sale(request):
         if product.quantity < quantity:
             errors.append(f'No hay suficiente stock para el producto {product.name}')
 
+        # Verificar la unidad de medida y ajustar el cálculo del precio total
+        if product.uom == 'unidad':
+            total_price = product.price * quantity
+        elif product.uom == 'kilogramo' or product.uom == 'litro':
+            total_price = product.price * Decimal(quantity)
+        elif product.uom == 'gramo' or product.uom == 'mililitro':
+            total_price = product.price * (Decimal(quantity) / 1000)
+        else:
+            messages.error(request, 'Unidad de medida no válida')
+            return redirect('pos:pos')
+
         if errors:
             for error in errors:
                 messages.error(request, error)
             return redirect('pos:pos')
-        
-        total_price = item.get('price', 0)
 
         # Crear la venta y guardarla en la base de datos
         sale = Sale(product=product, quantity=quantity, total_price=total_price, user=request.user)
@@ -110,7 +119,7 @@ def process_sale(request):
     # Limpiar el carrito
     request.session['cart'] = []
 
-    # messages.success(request, 'Venta realizada correctamente')
+    messages.success(request, 'Venta realizada correctamente')
     return redirect('pos:pos')
 
 @login_required
