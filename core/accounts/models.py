@@ -9,6 +9,9 @@ class CustomUser(AbstractUser):
     business_type = models.ForeignKey('pages.BusinessType', on_delete=models.CASCADE, null=False, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    is_paid = models.BooleanField(default=False)
+    payment_due = models.DateTimeField(null=True)
 
     class Meta:
         indexes = [
