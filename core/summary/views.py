@@ -34,10 +34,10 @@ def get_sales_data_for_period(sales, perios):
         start_date = today - timedelta(days=30)
     elif perios == '90D':
         start_date = today - timedelta(days=90)
-    elif perios == '365D':
+    elif perios == '1Y':
         start_date = today - timedelta(days=365)
     else:
-        start_date = today - timedelta(days=30) # Default: 30D
+        start_date = today - timedelta(days=7) # Default: 7D
 
     # Agrupar ventas por fecha
     sales_data = sales.filter(created_at__gte=start_date)\
@@ -133,32 +133,87 @@ def summary(request):
     subcategory_fig = go.Figure(data=[subcategory_pie], layout=subcategory_layout)
     subcategory_graph_html = subcategory_fig.to_html(full_html=False)
 
-    # Establecer el periodo de tiempo por defecto (30 días)
-    period = request.GET.get('period', '30D')
+    # Obtener los datos de ventas para el gráfico de series temporales
+    daily_sales_date, daily_sales_values = get_sales_data_for_period(sales, '7D')
+    monthly_sales_date, monthly_sales_values = get_sales_data_for_period(sales, '30D')
+    quarterly_sales_date, quarterly_sales_values = get_sales_data_for_period(sales, '90D')
+    yearly_sales_date, yearly_sales_values = get_sales_data_for_period(sales, '1Y')
 
-    # Obtener los datos de ventas para el periodo seleccionado
-    sales_dates, sales_values = get_sales_data_for_period(sales, period)
-
-    # Gráfico de lines (Ventas en el tiempo)
-    time_series_chart = go.Figure()
-    time_series_chart.add_trace(
+    # Gráfico de Ventas Diarias
+    daily_series_chart = go.Figure()
+    daily_series_chart.add_trace(
         go.Scatter(
-            x=sales_dates,
-            y=sales_values,
+            x=daily_sales_date,
+            y=daily_sales_values,
             mode='lines+markers',
-            name='Ventas',
-            line=dict(color='blue')
+            name='Ventas Diarias',
         )
     )
-
-    time_series_chart.update_layout(
-        title=f'Ventas en los últimos {period}',
+    daily_series_chart.update_layout(
+        title='Ventas Diarias',
         xaxis_title='Fecha',
         yaxis_title='Ventas ($)',
         showlegend=True,
-        autosize=True,
+        autosize=True
     )
-    time_series_graph_html = time_series_chart.to_html(full_html=False)
+    daily_series_graph_html = daily_series_chart.to_html(full_html=False)
+
+    # Gráfico de Ventas Mensuales
+    monthly_series_chart = go.Figure()
+    monthly_series_chart.add_trace(
+        go.Scatter(
+            x=monthly_sales_date,
+            y=monthly_sales_values,
+            mode='lines+markers',
+            name='Ventas Mensuales',
+        )
+    )
+    monthly_series_chart.update_layout(
+        title='Ventas Mensuales',
+        xaxis_title='Fecha',
+        yaxis_title='Ventas ($)',
+        showlegend=True,
+        autosize=True
+    )
+    monthly_series_graph_html = monthly_series_chart.to_html(full_html=False)
+
+    # Gráfico de Ventas Trimestrales
+    quarterly_series_chart = go.Figure()
+    quarterly_series_chart.add_trace(
+        go.Scatter(
+            x=quarterly_sales_date,
+            y=quarterly_sales_values,
+            mode='lines+markers',
+            name='Ventas Trimestrales',
+        )
+    )
+    quarterly_series_chart.update_layout(
+        title='Ventas Trimestrales',
+        xaxis_title='Fecha',
+        yaxis_title='Ventas ($)',
+        showlegend=True,
+        autosize=True
+    )
+    quarterly_series_graph_html = quarterly_series_chart.to_html(full_html=False)
+
+    # Gráfico de Ventas Anuales
+    yearly_series_chart = go.Figure()
+    yearly_series_chart.add_trace(
+        go.Scatter(
+            x=yearly_sales_date,
+            y=yearly_sales_values,
+            mode='lines+markers',
+            name='Ventas Anuales',
+        )
+    )
+    yearly_series_chart.update_layout(
+        title='Ventas Anuales',
+        xaxis_title='Fecha',
+        yaxis_title='Ventas ($)',
+        showlegend=True,
+        autosize=True
+    )
+    yearly_series_graph_html = yearly_series_chart.to_html(full_html=False)
 
     # Buscador de ventas
     sale_search_form = SalesForm()
@@ -217,8 +272,10 @@ def summary(request):
         'category_graph_html': category_graph_html,
         'subcategory_graph_html': subcategory_graph_html,
 
-        'time_series_graph_html': time_series_graph_html,
-        'period': period,
+        'daily_series_graph_html': daily_series_graph_html,
+        'monthly_series_graph_html': monthly_series_graph_html,
+        'quarterly_series_graph_html': quarterly_series_graph_html,
+        'yearly_series_graph_html': yearly_series_graph_html,
 
         'sales': sales,  
         'sales_results': sales_results, 

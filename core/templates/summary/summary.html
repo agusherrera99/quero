@@ -40,19 +40,19 @@
     }
 
     .chart-container {
-        width: 100%;   /* Hace que el contenedor ocupe todo el ancho disponible */
-        height: 100%;  /* Hace que el contenedor ocupe todo el alto disponible */
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        position: relative; /* Asegura que el contenedor mantenga su tamaño y pueda contener el gráfico */
+        position: relative;
     }
 
-    .chart-container, .chart-type-container, .table-container {
+    .chart-container, .chart-type-container, .chart-period-container, .table-container {
         display: none;
     }
 
-    .chart-container.active, .chart-type-container.active, .table-container.active {
+    .chart-container.active, .chart-type-container.active, .chart-period-container.active, .table-container.active {
         display: block;
     }
 
@@ -517,13 +517,30 @@
             <!-- Gráficos de ventas en el tiempo -->
             <div class="chart-container active" id="ventas en el tiempo-chart">
                 <div class="chart-period">
-                    <button class="period-btn" data-period-chart="7D">7D</button>
-                    <button class="period-btn active" data-period-chart="30D">30D</button>
+                    <button class="period-btn active" data-period-chart="7D">7D</button>
+                    <button class="period-btn" data-period-chart="30D">30D</button>
                     <button class="period-btn" data-period-chart="90D">90D</button>
                     <button class="period-btn" data-period-chart="1A">1A</button>
                 </div>
-                <div class="chart-placeholder">
-                    {{ time_series_graph_html|safe }}
+                <div class="chart-period-container active" id="7D-chart">
+                    <div class="chart-placeholder">
+                        {{ daily_series_graph_html|safe }}
+                    </div>
+                </div>
+                <div class="chart-period-container" id="30D-chart">
+                    <div class="chart-placeholder">
+                        {{ monthly_series_graph_html|safe }}
+                    </div>
+                </div>
+                <div class="chart-period-container" id="90D-chart">
+                    <div class="chart-placeholder">
+                        {{ quarterly_series_graph_html|safe }}
+                    </div>
+                </div>
+                <div class="chart-period-container" id="1A-chart">
+                    <div class="chart-placeholder">
+                        {{ yearly_series_graph_html|safe }}
+                    </div>
                 </div>
             </div>
             
@@ -775,17 +792,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ventas en el tiempo
     // Función para alternar entre los periodos de tiempo
     const periodButtons = document.querySelectorAll('.period-btn');
-    const timeSeriesGraph = document.getElementById('ventas en el tiempo-chart');
+    const periodContainers = document.querySelectorAll('.chart-period-container');
 
     periodButtons.forEach(button => {
         button.addEventListener('click', () => {
+            const period = button.getAttribute('data-period-chart');
             periodButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
-            const period = button.getAttribute('data-period');
-
-            // Actualizar el gráfico con el nuevo periodo
-            
+            periodContainers.forEach(container => {
+                container.classList.remove('active');
+                if (container.id === `${period}-chart`) {
+                    container.classList.add('active');
+                }
+            });
         });
     });
 
