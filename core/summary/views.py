@@ -25,32 +25,16 @@ def calculate_percentage_change(current, previous):
     else:
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
-def get_sales_data_for_period(sales, perios):
-    today = datetime.today()
-
-    if perios == '7D':
-        start_date = today - timedelta(days=7)
-    elif perios == '30D':
-        start_date = today - timedelta(days=30)
-    elif perios == '90D':
-        start_date = today - timedelta(days=90)
-    elif perios == '1Y':
-        start_date = today - timedelta(days=365)
-    else:
-        start_date = today - timedelta(days=7) # Default: 7D
-
-    # Agrupar ventas por fecha
-    sales_data = sales.filter(created_at__gte=start_date)\
-        .values('created_at__date')\
-        .annotate(total_sales=Sum('total_price'))\
-        .order_by('created_at')
+def get_sales_data_for_period(sales, period):
+    sales_data = sales.filter(created_at__gte=datetime.today() - timedelta(days=1), created_at__lte=datetime.today() + timedelta(days=period)).order_by('created_at')
     
-    # Preparar los datos para el gráfico
-    sales_dates = [sale['created_at__date'] for sale in sales_data][:100]
-    sales_values = [sale['total_sales'] for sale in sales_data][:100]
-
-    return sales_dates, sales_values
+    # Si no hay resultados, puedes retornar listas vacías o manejar el caso
+    if sales_data.count() == 0:
+        return [], []
     
+    sales_date = [sale.created_at.strftime('%Y-%m-%d') for sale in sales_data]
+    sales_values = [sale.total_price for sale in sales_data]
+    return sales_date, sales_values
 
 @login_required
 def summary(request):
@@ -138,10 +122,10 @@ def summary(request):
     subcategory_graph_html = subcategory_fig.to_html(full_html=False)
 
     # Obtener los datos de ventas para el gráfico de series temporales
-    daily_sales_date, daily_sales_values = get_sales_data_for_period(sales, '7D')
-    monthly_sales_date, monthly_sales_values = get_sales_data_for_period(sales, '30D')
-    quarterly_sales_date, quarterly_sales_values = get_sales_data_for_period(sales, '90D')
-    yearly_sales_date, yearly_sales_values = get_sales_data_for_period(sales, '1Y')
+    daily_sales_date, daily_sales_values = get_sales_data_for_period(sales, 7)
+    monthly_sales_date, monthly_sales_values = get_sales_data_for_period(sales, 30)
+    quarterly_sales_date, quarterly_sales_values = get_sales_data_for_period(sales, 90)
+    yearly_sales_date, yearly_sales_values = get_sales_data_for_period(sales, 365)
 
     # Gráfico de Ventas Diarias
     daily_series_chart = go.Figure()
