@@ -9,7 +9,6 @@ from django.db import transaction
 from django.shortcuts import redirect, render
 
 from stock.models import Product
-from pages.models import BusinessType
 from .models import Sale
 
 
@@ -22,9 +21,12 @@ def pos(request):
     total_amount = sum(Decimal(item.get('total_price', 0)) for item in cart)
     
     # Obtener todos los productos del usuario
-    products = Product.objects.filter(user=request.user).order_by('name')
+    products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('name')
+
+    business_type = request.user.business_type
+    categories = business_type.category_list.all()
     context = {
-        'categories': BusinessType.objects.get(pk=request.user.business_type.id).category_list.all(),
+        'categories': categories,
         'products': products,
         'cart_items': cart,
         'total_amount': total_amount,

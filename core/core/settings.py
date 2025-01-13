@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'accounts.apps.AccountsConfig',
     'pages.apps.PagesConfig',
     'stock.apps.StockConfig',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -153,3 +155,7 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+
+INTERNAL_IPS = [
+'127.0.0.1',
+]

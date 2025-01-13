@@ -25,4 +25,5 @@ urlpatterns = [
     path('pos/', include('pos.urls', namespace='pos')),
     path('summary/', include('summary.urls', namespace='summary')),
     path('', include('pages.urls', namespace='pages')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
