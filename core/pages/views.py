@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMessage
 from django.db import transaction
 from django.shortcuts import redirect, render
 
@@ -9,6 +11,31 @@ from .models import BusinessType
 
 def home(request):
     return render(request, 'home.html')
+
+def contact(request):
+    return render(request, 'contact.html')
+
+def receive_contact_email(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        email_message = EmailMessage(
+            subject=f'Nuevo mensaje de {name} - Asunto: {subject}',
+            body=f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}',
+            from_email=email,
+            to=[settings.EMAIL_HOST_USER],
+        )
+
+        try:
+            email_message.send(fail_silently=False)
+            messages.success(request, 'Gracias por contactarnos, te responderemos a la brevedad.')
+        except Exception:
+            messages.error(request, 'Ocurrió un error al enviar el mensaje.')
+            
+        return redirect('pages:contact')
 
 @login_required
 def business_type_selection(request):

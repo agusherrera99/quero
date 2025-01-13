@@ -174,7 +174,7 @@ def create_default_data(apps, schema_editor):
         ('dunhill', 81, 'cigarrillos'),
         ('rothmans', 82, 'cigarrillos'),
         ('philip morris', 83, 'cigarrillos'),
-        ('alfajores', 442, 'golosinas')
+        ('alfajores', 443, 'golosinas'),
 
         # Verdulería
         ('frutas cítricas', 84, 'frutas'),
