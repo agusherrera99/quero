@@ -26,7 +26,7 @@ def login_view(request):
                 if user.is_active:
                     login(request, user)
                     messages.success(request, f'Bienvenido, {user.username}!')
-                    return redirect('stock:stock')
+                    return redirect('pos:pos')
                 else:
                     messages.error(request, "Tu cuenta está desactivada.")
             else:

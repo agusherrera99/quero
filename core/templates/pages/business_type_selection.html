@@ -180,7 +180,7 @@
                 <p class="business-description">{{ business.description }}</p>
                 
                 <div class="category-section">
-                    <h3 class="category-title">Categorías comunes (+{{ business.categories|length|add:"-1" }} disponibles):</h3>
+                    <h3 class="category-title">Algunas de las categorias disponibles.</h3>
                     <ul class="category-list">
                         {% for category in business.categories %}
                             <li class="category-item">{{ category|capfirst }}</li>
@@ -189,7 +189,7 @@
                 </div>
 
                 <div class="category-section">
-                    <h3 class="category-title">Subcategorías comunes (+{{ business.categories|length|add:"-1" }} disponibles):</h3>
+                    <h3 class="category-title">Algunas de las subcatgorias disponibles.</h3>
                     <ul class="category-list">
                         {% for subcategory in business.subcategories %}
                             <li class="category-item">{{ subcategory|capfirst }}</li>

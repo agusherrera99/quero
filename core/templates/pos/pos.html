@@ -32,6 +32,7 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         display: flex;
         flex-direction: column;
+        width: 60%;
     }
 
     .category-btn {
@@ -94,11 +95,10 @@
     }
 
     .pos-container {
-        display: grid;
-        grid-template-columns: 1fr 420px;
+        display: flex;
         gap: 1.5rem;
-        height: calc(100vh - 4rem);
         padding: 1rem;
+        height: calc(100vh - 4rem);
     }
 
     .product-card {
@@ -127,11 +127,10 @@
     }
 
     .products-grid {
-        padding: 1rem;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 0.75rem;
-        max-height: 400px;
+        padding: 1rem;
         overflow-y: auto;
     }
 
@@ -210,8 +209,6 @@
 
     .sales-table {
         width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
     }
 
     .sales-table th, .sales-table td {
@@ -236,6 +233,12 @@
         background: #f8f9fa;
     }
 
+    .sales-table-container {
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+
     .sales-footer {
         display: flex;
         flex-direction: row;
@@ -253,6 +256,7 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         display: flex;
         flex-direction: column;
+        width: 40%;
     }
 
     .sales-header {
@@ -316,41 +320,43 @@
         </div>
 
         <!-- Tabla de ventas -->
-        <table class="sales-table">
-            <thead>
-                <tr>
-                    <th style="width: 40%;">Producto</th>
-                    <th class="quantity-cell">Cantidad</th>
-                    <th class="price-cell">Precio</th>
-                    <th class="actions-cell">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="table-body" id="cartItems">
-                {% if cart_items %}
-                    {% for item in cart_items %}
-                    <tr data-product-id="{{ item.product_id }}">
-                        <td>{{ item.name }}</td>
-                        <td class="quantity-cell">
-                            <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" 
-                                   data-product-id="{{ item.product_id }}" data-price="{{ item.price }}" data-uom="{{ item.uom }}">
-                        </td>
-                        <td class="price-cell">${{ item.total_price }}</td>
-                        <td class="actions-cell">
-                            <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}" aria-label="Eliminar {{ item.name }}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
+        <div class="sales-table-container">
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Producto</th>
+                        <th class="quantity-cell">Cantidad</th>
+                        <th class="price-cell">Precio</th>
+                        <th class="actions-cell">Acciones</th>
                     </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr id="emptyCart">
-                        <td colspan="4" style="text-align: center; padding: 1rem;">
-                            No hay productos en la venta actual
-                        </td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="table-body" id="cartItems">
+                    {% if cart_items %}
+                        {% for item in cart_items %}
+                        <tr data-product-id="{{ item.product_id }}">
+                            <td>{{ item.name }}</td>
+                            <td class="quantity-cell">
+                                <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" 
+                                       data-product-id="{{ item.product_id }}" data-price="{{ item.price }}" data-uom="{{ item.uom }}">
+                            </td>
+                            <td class="price-cell">${{ item.total_price }}</td>
+                            <td class="actions-cell">
+                                <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}" aria-label="Eliminar {{ item.name }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr id="emptyCart">
+                            <td colspan="4" style="text-align: center; padding: 1rem;">
+                                No hay productos en la venta actual
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
 
         <!-- Pie de página de ventas -->
         <div class="sales-footer">
@@ -449,20 +455,18 @@
             });
         });
 
-        // Limpiar el carrito de compras
+        // Limpiar el carrito de ventas actual
         const clearCartBtn = document.getElementById('clearCartBtn');
         clearCartBtn.addEventListener('click', function() {
-            if (!confirm('¿Estás seguro de que deseas cancelar la venta actual?')) {
-                const cartItems = document.getElementById('cartItems');
-                cartItems.innerHTML = `
-                    <tr id="emptyCart">
-                        <td colspan="4" style="text-align: center; padding: 1rem;">
-                            No hay productos en la venta actual
-                        </td>
-                    </tr>
-                `;
-                updateTotalAmount();
-            }
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = `
+                <tr id="emptyCart">
+                    <td colspan="4" style="text-align: center; padding: 1rem;">
+                        No hay productos en la venta actual
+                    </td>
+                </tr>
+            `;
+            updateTotalAmount();
         });
 
         // Función para actualizar el total de la fila

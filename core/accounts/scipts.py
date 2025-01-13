@@ -174,6 +174,7 @@ def create_default_data(apps, schema_editor):
         ('dunhill', 81, 'cigarrillos'),
         ('rothmans', 82, 'cigarrillos'),
         ('philip morris', 83, 'cigarrillos'),
+        ('alfajores', 442, 'golosinas')
 
         # Verdulería
         ('frutas cítricas', 84, 'frutas'),
@@ -551,7 +552,7 @@ def create_default_data(apps, schema_editor):
     # Crear BusinessType predeterminados si no existen
     business_types_data = [
         ('sin tipo', 1, 'sin descripción', ['sin categoría']),
-        ('quisco', 2, 'Venta de productos de consumo diario, prensa y artículos variados.', ['almacen', 'bebidas', 'golosinas', 'limpieza', 'perfumeria', 'cigarrillos']),
+        ('quisco', 2, 'Venta de productos de consumo diario, prensa y artículos variados.', ['almacen', 'bebidas', 'golosinas', 'galletitas', 'limpieza', 'perfumeria', 'cigarrillos']),
         ('panadería', 3, 'Elaboración y venta de productos de panadería y pastelería frescos.', ['panes', 'facturas', 'tortas y postres', 'galletitas y bizcochos', 'confitería', 'empanadas', 'pizzas y focaccias', 'panes integrales y saludables', 'bebidas']),
         ('verdulería', 4, 'Venta de frutas y verduras frescas.', ['frutas', 'verduras', 'hortalizas', 'productos animales', 'bebidas']),
         ('ferretería', 5, 'Suministro de herramientas, materiales de construcción y artículos para el hogar.', ['articulos para gas y electricidad', 'buloneria', 'ferreteria en general', 'herrajes y hogar', 'herramientas', 'herramientas electricas', 'insecticidas y jardineria', 'materiales electricos', 'material para la construccion', 'pintureria', 'plomeria', 'quimicos y limpieza', 'sanitarios', 'seguridad', 'sogas y tejidos']),

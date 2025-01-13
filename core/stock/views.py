@@ -78,20 +78,14 @@ def stock(request):
 
     if not results:
         # Paginación de Ventas (también debes realizar la paginación sobre sales si no hay filtro de búsqueda)
-        products_paginator = Paginator(products, 10)
-        page_number = request.GET.get('page')
-        products = products_paginator.get_page(page_number)
+        paginator = Paginator(products, 10)
+        page_number = request.GET.get('page', 1)
+        products = paginator.get_page(page_number)
     else:
         # Paginamos los resultados de búsqueda si los hay
-        products_paginator = Paginator(results, 10)
-        page_number = request.GET.get('page')
-        results = products_paginator.get_page(page_number)
-
-
-    # Paginación de productos
-    paginator = Paginator(products, 10)
-    page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)
+        paginator = Paginator(results, 10)
+        page_number = request.GET.get('page', 1)
+        results = paginator.get_page(page_number)
 
     context = {
         'unique_products': unique_products,
