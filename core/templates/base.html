@@ -121,7 +121,7 @@
             opacity: 0.9;
         }
 
-        .logo {
+        .logo-title {
             padding: 1.5rem;
             display: flex;
             align-items: center;
@@ -130,6 +130,13 @@
             color: black;
             font-size: 1.5rem;
             font-weight: bold;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
         }
 
         .sidebar {
@@ -215,6 +222,91 @@
             flex: 1;
         }
 
+        .notification-badge .fa-bell {
+            transition: color 0.2s ease;
+        }
+
+        .notification-badge button:hover .fa-bell {
+            color: #1a1a1a;
+        }
+
+        .notification-badge .pulse {
+            animation: pulse 0.5s;
+        }
+
+        .notification-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+
+        .notification-counter {
+            background-color: #ef4444;
+            border-radius: 50%;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            height: 1.25rem;
+            width: 1.25rem;
+            position: absolute;
+            top: 1rem;
+            right: 1.45rem;
+            animation: pulse 1s infinite;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 1rem;
+            left: 16rem;
+            width: 250px;
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 0.375rem;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10;
+        }
+
+        .notification-dropdown ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .notification-item .notification-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
         .main-content {
             margin-left: 250px;
             padding: 2rem;
@@ -228,6 +320,12 @@
             to {
                 opacity: 0;
             }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         @keyframes slideIn {
@@ -245,7 +343,29 @@
 <body>
     <!-- Barra lateral -->
     <aside class="sidebar">
-        <a class="logo" href="{% url 'pos:pos' %}">Quero</a>
+        <div class="logo-container">
+            <a class="logo-title" href="{% url 'pos:pos' %}">Quero</a>
+            <div class="notification-badge relative inline-block">
+                <button class="notification-button" id="notificationButton">
+                    <i class="fa-solid fa-bell fa-lg"></i>
+                    <span id="notificationCount" class="notification-counter" style="display: {'inline-flex' if initial_count > 0 else 'none'};">
+                        {{ notification_count }}
+                    </span>
+                </button>
+                <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+                    <ul>
+                        {% for notification in notifications %}
+                            <li class="notification-item">
+                                <p>{{ notification.message }}</p>
+                                <span class="notification-time">{{ notification.timestamp }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="notification-item">No tienes nuevas notificaciones</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
         {% if request.user.is_authenticated %}
             <nav class="nav-menu">
                 <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'pos' %}active{% endif %}" href="{% url 'pos:pos' %}">
@@ -283,6 +403,42 @@
                         toast.remove();
                     }, 500);
                 }, 3000);
+            });
+
+            const notificationButton = document.getElementById('notificationButton');
+            const notificationCount = document.getElementById('notificationCount');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+
+            // Inicialización del contador de notificaciones al cargar la página
+            const initialCount = parseInt(notificationCount.textContent);
+            if (initialCount > 0) {
+                notificationCount.style.display = 'inline-flex';  // Mostrar el contador
+            } else {
+                notificationCount.style.display = 'none';  // Ocultar el contador
+            }
+
+            // Manejo de visibilidad del dropdown de notificaciones
+            notificationButton.addEventListener('click', function() {
+                // Verificar si el dropdown está oculto
+                if (notificationDropdown.style.display === 'none' || notificationDropdown.style.display === '') {
+                    // Mostrar el dropdown
+                    notificationDropdown.style.display = 'block';
+
+                    // Ocultar el contador si tiene notificaciones
+                    if (parseInt(notificationCount.textContent) > 0) {
+                        notificationCount.style.display = 'none';
+                    }
+                } else {
+                    // Ocultar el dropdown
+                    notificationDropdown.style.display = 'none';
+                }
+            });
+
+            // Cerrar el dropdown si se hace clic fuera de él
+            document.addEventListener('click', function(event) {
+                if (!notificationButton.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                    notificationDropdown.style.display = 'none';  // Ocultar el dropdown
+                }
             });
         });
     </script>
