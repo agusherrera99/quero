@@ -64,63 +64,36 @@ def summary(request):
     yesterday = today - timedelta(days=1)
     first_day_last_month = (first_day_current_month - timedelta(days=1)).replace(day=1)
 
-    # Ventas Totales (Hoy)
-    daily_sales_data = sales.annotate(
-        is_today=Case(
-            When(created_at__date=today, then=Value(1)),
-            default=Value(0),
-            output_field=IntegerField()
-        ),
-        is_yesterday=Case(
-            When(created_at__date=yesterday, then=Value(1)),
-            default=Value(0),
-            output_field=IntegerField()
-        )
-    ).values(
-        'is_today', 'is_yesterday'
-    ).annotate(
+    # Ventas Totales de hoy y ayer
+    daily_sales_data = sales.aggregate(
         total_sales_today=Sum(Case(
-            When(is_today=1, then='total_price'),
+            When(created_at__date=today, then='total_price'),
             default=Value(0),
             output_field=IntegerField()
         )),
         total_sales_yesterday=Sum(Case(
-            When(is_yesterday=1, then='total_price'),
+            When(created_at__date=yesterday, then='total_price'),
             default=Value(0),
             output_field=IntegerField()
         ))
-    ).first()
-
+    )
     daily_sales = daily_sales_data.get('total_sales_today', 0) if daily_sales_data else 0
     daily_sales_yesterday = daily_sales_data.get('total_sales_yesterday', 0) if daily_sales_data else 0
     daily_sales_percentage, daily_sales_percentage_text, daily_sales_percentage_color = calculate_percentage_change(daily_sales, daily_sales_yesterday)
 
     # Productos vendidos (Hoy)
-    daily_products_sold_data = sales.annotate(
-        is_today=Case(
-            When(created_at__date=today, then=Value(1)),
-            default=Value(0),
-            output_field=IntegerField()
-        ),
-        is_yesterday=Case(
-            When(created_at__date=yesterday, then=Value(1)),
-            default=Value(0),
-            output_field=IntegerField()
-        )
-    ).values(
-        'is_today', 'is_yesterday'
-    ).annotate(
+    daily_products_sold_data = sales.aggregate(
         total_quantity_today=Sum(Case(
-            When(is_today=1, then='quantity'),
+            When(created_at__date=today, then='quantity'),
             default=Value(0),
             output_field=IntegerField()
         )),
         total_quantity_yesterday=Sum(Case(
-            When(is_yesterday=1, then='quantity'),
+            When(created_at__date=yesterday, then='quantity'),
             default=Value(0),
             output_field=IntegerField()
         ))
-    ).first()
+    )
 
     daily_products_sold = daily_products_sold_data.get('total_quantity_today', 0) if daily_products_sold_data else 0
     daily_products_sold = round(daily_products_sold)
@@ -293,7 +266,7 @@ def summary(request):
             total_price=Sum('total_price')  # Sumar el total de dinero por cada producto
         )\
         .filter(user=request.user)\
-        .order_by('-total_quantity')[:10]
+        .order_by('-total_price')[:10]
     
     # Paginación de los productos más vendidos
     top_sales_paginator = Paginator(top_sales, 10)
