@@ -5,6 +5,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.db import transaction
 from django.shortcuts import redirect, render
 
@@ -24,7 +25,12 @@ def pos(request):
     products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('name')
 
     business_type = request.user.business_type
-    categories = business_type.category_list.all()
+    
+    categories = cache.get('cart_categories')
+    if not categories:
+        categories = business_type.category_list.all()
+        cache.set('cart_categories', categories)
+
     context = {
         'categories': categories,
         'products': products,
