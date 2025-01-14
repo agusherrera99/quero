@@ -113,29 +113,50 @@ def stock(request):
 
 @login_required
 @transaction.atomic
-@cache_page(60 * 15)
+@cache_page(60 * 5)
 def add_stock(request):
     if request.method == 'POST':
         form = AddProductForm(data=request.POST, request=request)
 
         if form.is_valid():
-            name = form.cleaned_data.get('name')
-            quantity = form.cleaned_data.get('quantity')
-            price = form.cleaned_data.get('price')
-            uom = form.cleaned_data.get('uom')
-            subcategory = form.cleaned_data.get('subcategory')
+            action = request.POST.get('action')
 
-            product = Product(
-                name=name,
-                quantity=quantity,
-                price=price,
-                uom=uom,
-                subcategory=subcategory,
-                user=request.user
-            )
-            product.save()
-            messages.success(request, 'Producto añadido correctamente.')
-            return redirect('stock:stock')
+            if action == 'add_and_finish':
+                name = form.cleaned_data.get('name')
+                quantity = form.cleaned_data.get('quantity')
+                price = form.cleaned_data.get('price')
+                uom = form.cleaned_data.get('uom')
+                subcategory = form.cleaned_data.get('subcategory')
+
+                product = Product(
+                    name=name,
+                    quantity=quantity,
+                    price=price,
+                    uom=uom,
+                    subcategory=subcategory,
+                    user=request.user
+                )
+                product.save()
+                messages.success(request, 'Producto añadido correctamente.')
+                return redirect('stock:stock')
+            elif action == 'add_and_continue':
+                name = form.cleaned_data.get('name')
+                name = form.cleaned_data.get('name')
+                quantity = form.cleaned_data.get('quantity')
+                price = form.cleaned_data.get('price')
+                uom = form.cleaned_data.get('uom')
+                subcategory = form.cleaned_data.get('subcategory')
+
+                product = Product(
+                    name=name,
+                    quantity=quantity,
+                    price=price,
+                    uom=uom,
+                    subcategory=subcategory,
+                    user=request.user
+                )
+                product.save()
+                return redirect('stock:add_stock')
         else:
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
@@ -165,11 +186,6 @@ def edit_stock(request, pk):
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
         form = AddProductForm(instance=product, request=request)
-
-        # Deshabilitar campos que no se pueden editar
-        form.fields['category'].widget.attrs['disabled'] = True
-        form.fields['subcategory'].widget.attrs['disabled'] = True
-        form.fields['uom'].widget.attrs['disabled'] = True
 
     context = {
         'form': form,

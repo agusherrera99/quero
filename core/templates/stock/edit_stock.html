@@ -58,6 +58,12 @@
             font-size: 1.5rem;
         }
 
+        .form-content {
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 0.5rem;
+        }
+
         .form-group {
             margin-bottom: 1rem;
         }
@@ -132,7 +138,7 @@
         <!-- Formulario de edición -->
         <form method="post">
             {% csrf_token %}
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+            <div class="form-content">
                 <div class="form-group">
                     <label for="category">Categoría</label>
                     <div>

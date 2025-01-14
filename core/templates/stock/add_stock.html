@@ -106,7 +106,7 @@
             margin-bottom: 1.5rem;
         }
 
-        .submit-button {
+        .add-button {
             width: 100%;
             padding: 0.75rem;
             background: #1a1a1a;
@@ -118,8 +118,24 @@
             margin-top: 1rem;
         }
 
-        .submit-button:hover {
-            background: #333;
+        .add-button:hover {
+            opacity: 0.9;
+        }
+
+        .add-continue-button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #6B7280;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .add-continue-button:hover {
+            background-color: #4B5563;
         }
     </style>
 </head>
@@ -191,7 +207,8 @@
                 </div>
             </div>
             <input type="hidden" name="next" value="{{ next }}" />
-            <button type="submit" class="submit-button">Añadir</button>
+            <button type="submit" name="action" value="add_and_finish" class="add-button">Guardar</button>
+            <button type="submit" name="action" value="add_and_continue" class="add-continue-button"> Guardar y Agregar otro</button>
         </form>
     </div>
 

@@ -163,6 +163,7 @@ def create_default_data(apps, schema_editor):
         ('desodorantes', 70, 'perfumeria'),
         ('espumas y geles', 71, 'perfumeria'),
         ('filos', 72, 'perfumeria'),
+        ('papeleria', 444, 'perfumeria'),
         ('protección femenina', 73, 'perfumeria'),
         ('protección masculina', 74, 'perfumeria'),
         ('protección solar', 75, 'perfumeria'),
