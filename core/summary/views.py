@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Case, IntegerField, Sum, Value, When
+from django.db.models.functions import TruncDate, TruncMonth, TruncQuarter, TruncYear
 from django.shortcuts import get_object_or_404, redirect, render
 
 import plotly.graph_objs as go
@@ -26,20 +27,36 @@ def calculate_percentage_change(current, previous):
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
 def get_sales_data_for_period(sales, period):
-    sales_data = sales.filter(created_at__gte=datetime.today() - timedelta(days=1), created_at__lte=datetime.today() + timedelta(days=period)).order_by('created_at')
-    
-    # Si no hay resultados, puedes retornar listas vacías o manejar el caso
-    if sales_data.count() == 0:
+    # Definir las fechas de inicio y fin basadas en el período
+    today = datetime.today()
+    start_date = today - timedelta(days=period)
+
+    # Agrupar las ventas por diferentes periodos de tiempo (día, mes, trimestre, año)
+    sales_by_day = sales.filter(created_at__gte=start_date).annotate(day=TruncDate('created_at')).values('day').annotate(total_sales=Sum('total_price')).order_by('day')
+    sales_by_month = sales.filter(created_at__gte=start_date).annotate(month=TruncMonth('created_at')).values('month').annotate(total_sales=Sum('total_price')).order_by('month')
+    sales_by_quarter = sales.filter(created_at__gte=start_date).annotate(quarter=TruncQuarter('created_at')).values('quarter').annotate(total_sales=Sum('total_price')).order_by('quarter')
+    sales_by_year = sales.filter(created_at__gte=start_date).annotate(year=TruncYear('created_at')).values('year').annotate(total_sales=Sum('total_price')).order_by('year')
+
+    # Extraer las fechas y los valores de ventas de cada período
+    def extract_sales_data(sales_data):
+        if sales_data:
+            sales_date = [sale['day'] if 'day' in sale else sale['month'] if 'month' in sale else sale['quarter'] if 'quarter' in sale else sale['year'] for sale in sales_data]
+            sales_values = [sale['total_sales'] for sale in sales_data]
+            return sales_date, sales_values
         return [], []
-    
-    sales_date = [sale.created_at.strftime('%Y-%m-%d') for sale in sales_data]
-    sales_values = [sale.total_price for sale in sales_data]
-    return sales_date, sales_values
+
+    # Extraer los datos de ventas por período
+    daily_sales_date, daily_sales_values = extract_sales_data(sales_by_day)
+    monthly_sales_date, monthly_sales_values = extract_sales_data(sales_by_month)
+    quarterly_sales_date, quarterly_sales_values = extract_sales_data(sales_by_quarter)
+    yearly_sales_date, yearly_sales_values = extract_sales_data(sales_by_year)
+
+    return (daily_sales_date, daily_sales_values, monthly_sales_date, monthly_sales_values, quarterly_sales_date, quarterly_sales_values, yearly_sales_date, yearly_sales_values)
 
 @login_required
 def summary(request):
     # Obtener las ventas del usuario
-    sales = Sale.objects.filter(user=request.user).order_by('-created_at')
+    sales = Sale.objects.filter(user=request.user).select_related('product__subcategory__category').order_by('-created_at')
 
     # Calcula el primer día del mes actual y el día anterior
     today = datetime.today()
@@ -48,14 +65,66 @@ def summary(request):
     first_day_last_month = (first_day_current_month - timedelta(days=1)).replace(day=1)
 
     # Ventas Totales (Hoy)
-    daily_sales = sales.filter(created_at__date=today).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
-    daily_sales_yesterday = sales.filter(created_at__date=yesterday).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+    daily_sales_data = sales.annotate(
+        is_today=Case(
+            When(created_at__date=today, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+        is_yesterday=Case(
+            When(created_at__date=yesterday, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+    ).values(
+        'is_today', 'is_yesterday'
+    ).annotate(
+        total_sales_today=Sum(Case(
+            When(is_today=1, then='total_price'),
+            default=Value(0),
+            output_field=IntegerField()
+        )),
+        total_sales_yesterday=Sum(Case(
+            When(is_yesterday=1, then='total_price'),
+            default=Value(0),
+            output_field=IntegerField()
+        ))
+    ).first()
+
+    daily_sales = daily_sales_data.get('total_sales_today', 0) if daily_sales_data else 0
+    daily_sales_yesterday = daily_sales_data.get('total_sales_yesterday', 0) if daily_sales_data else 0
     daily_sales_percentage, daily_sales_percentage_text, daily_sales_percentage_color = calculate_percentage_change(daily_sales, daily_sales_yesterday)
 
     # Productos vendidos (Hoy)
-    daily_products_sold = sales.filter(created_at__date=today).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    daily_products_sold_data = sales.annotate(
+        is_today=Case(
+            When(created_at__date=today, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+        is_yesterday=Case(
+            When(created_at__date=yesterday, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+    ).values(
+        'is_today', 'is_yesterday'
+    ).annotate(
+        total_quantity_today=Sum(Case(
+            When(is_today=1, then='quantity'),
+            default=Value(0),
+            output_field=IntegerField()
+        )),
+        total_quantity_yesterday=Sum(Case(
+            When(is_yesterday=1, then='quantity'),
+            default=Value(0),
+            output_field=IntegerField()
+        ))
+    ).first()
+
+    daily_products_sold = daily_products_sold_data.get('total_quantity_today', 0) if daily_products_sold_data else 0
     daily_products_sold = round(daily_products_sold)
-    daily_products_sold_yesterday = sales.filter(created_at__date=yesterday).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    daily_products_sold_yesterday = daily_products_sold_data.get('total_quantity_yesterday', 0) if daily_products_sold_data else 0
     daily_products_sold_yesterday = round(daily_products_sold_yesterday)
     daily_products_sold_percentage, daily_products_sold_percentage_text, daily_products_sold_percentage_color = calculate_percentage_change(daily_products_sold, daily_products_sold_yesterday)
 
@@ -71,15 +140,18 @@ def summary(request):
     monthly_products_sold_last_month = round(monthly_products_sold_last_month)
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
     
+    # Ventas por Categoría y Subcategoría
+    category_and_subcategory_sales = Sale.objects.values(
+        'product__subcategory__category__name',
+        'product__subcategory__name'
+    ).annotate(
+        total_sales=Sum('total_price')
+    ).filter(user=request.user).order_by('-total_sales')
+
     # Gráfico de Ventas por Categoría (Pie Chart)
     # Ventas totales por Categoría
-    category_sales = Sale.objects.values('product__subcategory__category__name')\
-        .annotate(total_sales=Sum('total_price'))\
-        .filter(user=request.user)\
-        .order_by('-total_sales')
-    
-    category_sales_labels = [category['product__subcategory__category__name'] for category in category_sales]
-    category_sales_values = [category['total_sales'] for category in category_sales]
+    category_sales_labels = [sale['product__subcategory__category__name'] for sale in category_and_subcategory_sales]
+    category_sales_values = [sale['total_sales'] for sale in category_and_subcategory_sales]
 
     category_pie = go.Pie(
         labels=category_sales_labels,
@@ -98,13 +170,8 @@ def summary(request):
 
     # Gráfico de Ventas por Subcategoría (Pie Chart)
     # Ventas totales por Subcategoría
-    subcategory_sales = Sale.objects.values('product__subcategory__name')\
-        .annotate(total_sales=Sum('total_price'))\
-        .filter(user=request.user)\
-        .order_by('-total_sales')
-    
-    subcategory_sales_labels = [subcategory['product__subcategory__name'] for subcategory in subcategory_sales]
-    subcategory_sales_values = [subcategory['total_sales'] for subcategory in subcategory_sales]
+    subcategory_sales_labels = [sale['product__subcategory__name'] for sale in category_and_subcategory_sales]
+    subcategory_sales_values = [sale['total_sales'] for sale in category_and_subcategory_sales]
 
     subcategory_pie = go.Pie(
         labels=subcategory_sales_labels,
@@ -122,10 +189,7 @@ def summary(request):
     subcategory_graph_html = subcategory_fig.to_html(full_html=False)
 
     # Obtener los datos de ventas para el gráfico de series temporales
-    daily_sales_date, daily_sales_values = get_sales_data_for_period(sales, 7)
-    monthly_sales_date, monthly_sales_values = get_sales_data_for_period(sales, 30)
-    quarterly_sales_date, quarterly_sales_values = get_sales_data_for_period(sales, 90)
-    yearly_sales_date, yearly_sales_values = get_sales_data_for_period(sales, 365)
+    daily_sales_date, daily_sales_values, monthly_sales_date, monthly_sales_values, quarterly_sales_date, quarterly_sales_values, yearly_sales_date, yearly_sales_values = get_sales_data_for_period(sales, 365)
 
     # Gráfico de Ventas Diarias
     daily_series_chart = go.Figure()

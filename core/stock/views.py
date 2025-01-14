@@ -29,7 +29,7 @@ def calculate_percentage_change(current, previous):
 
 @login_required
 def stock(request):
-    products = Product.objects.filter(user=request.user).order_by('-created_at')
+    products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('-created_at')
 
     # Fecha actual, primer día del mes actual y primer día del mes anterior
     today = datetime.today()
@@ -149,7 +149,7 @@ def add_stock(request):
 @login_required
 @transaction.atomic
 def edit_stock(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+    product = Product.objects.filter(pk=pk).select_related('subcategory__category').first()
 
     if product.user != request.user:
         messages.error(request, 'No tienes permisos para editar este producto.')
@@ -165,6 +165,11 @@ def edit_stock(request, pk):
             messages.error(request, 'Formulario no válido. Revisa los campos.')
     else:
         form = AddProductForm(instance=product, request=request)
+
+        # Deshabilitar campos que no se pueden editar
+        form.fields['category'].widget.attrs['disabled'] = True
+        form.fields['subcategory'].widget.attrs['disabled'] = True
+        form.fields['uom'].widget.attrs['disabled'] = True
 
     context = {
         'form': form,
