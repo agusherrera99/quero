@@ -207,11 +207,16 @@ footer p {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     text-decoration: none;
     color: black;
     font-size: 1.5rem;
     font-weight: bold;
+    gap: 0.5rem;
+}
+
+.logo-image {
+    width: 3rem;
+    height: 3rem;
 }
 
 .navbar {

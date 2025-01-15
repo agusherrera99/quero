@@ -112,22 +112,26 @@ body {
     opacity: 0.9;
 }
 
+.logo-image {
+    width: 3rem;
+    height: 3rem;
+}
+
 .logo-title {
-    padding: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    padding: 1.5rem 0.5rem;
     text-decoration: none;
     color: black;
     font-size: 1.5rem;
     font-weight: bold;
+    gap: 0.5rem;
 }
 
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1.5rem;
 }
 
 .sidebar {
@@ -138,6 +142,13 @@ body {
     flex-direction: column;
     position: fixed;
     height: 100vh;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
 }
 
 .toast {
