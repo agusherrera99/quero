@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const notificationId = this.getAttribute('data-id');
 
+            // Deshabilitar el botón
+            setTimeout(() => {
+                button.disabled = true;
+            }, 200);
+
             // Enviar una solicitud AJAX para marcar la notificacion como leída
             fetch(`/account/marcar-leida/${notificationId}`, {
                 method: 'GET'

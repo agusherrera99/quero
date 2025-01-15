@@ -334,6 +334,17 @@ body {
     background-color: #f0f9ff;
 }
 
+.mark-read-btn:active {
+    transform: scale(0.95);
+    background-color: #e0f7fa;
+    color: #00695c;
+}
+
+.mark-read-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @keyframes fadeOut {
     from {
         opacity: 1;
