@@ -54,3 +54,8 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.message
+    
+    # Marcar la notificación como leída
+    def mark_as_read(self):
+        self.is_read = True
+        self.delete()

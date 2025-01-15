@@ -2,6 +2,7 @@ from django.db import models
 from django.forms import ValidationError
 from django.utils import timezone
 
+from account.models import Notification
 
 class Subcategory(models.Model):
     name = models.CharField(max_length=100, null=False, default='sin subcategoria')
@@ -47,6 +48,8 @@ class Product(models.Model):
         ('mililitro', 'Mililitro'),
     ]
 
+    LOW_THRESHOLD = 5
+
     name = models.CharField(max_length=100, null=False, default='sin nombre')
     quantity = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
@@ -66,6 +69,25 @@ class Product(models.Model):
             models.Index(fields=['created_at'], name='product_created_at_idx'),
             models.Index(fields=['updated_at'], name='product_updated_at_idx'),
         ]
+
+    def is_low_stock(self):
+        if self.quantity <= self.LOW_THRESHOLD:
+            plural_uom = ""
+            if self.uom == "unidad":
+                plural_uom = "unidades"
+            elif self.uom == "kilogramo":
+                plural_uom = "kilogramos"
+            elif self.uom == "gramo":
+                plural_uom = "gramos"
+            elif self.uom == "litro":
+                plural_uom = "litros"
+            elif self.uom == "mililitro":
+                plural_uom = "mililitros"
+
+            Notification.objects.create(
+                user=self.user,
+                message=f'Stock bajo de {self.name} ({self.quantity} {plural_uom})'
+            )
 
     def clean(self):
         if self.quantity < 0:
@@ -88,6 +110,9 @@ class Product(models.Model):
 
         if self.quantity < 0:
             raise ValidationError('La cantidad no puede ser negativa')
+
+        # Verificar si el producto está en stock bajo
+        self.is_low_stock()
 
         return super(Product, self).save(*args, **kwargs)
 

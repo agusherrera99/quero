@@ -1,9 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 from .forms import UserLoginForm, UserRegistrationForm
+
+from account.models import Notification
 
 
 @login_required
@@ -67,3 +70,17 @@ def registration_view(request):
 
     return render(request, 'registration/register.html', context)
 
+def mark_notification_as_read(request, notification_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Usuario no autenticado'}, status=401)
+
+    try:
+        # Obtener la notificación de la base de datos
+        notification = Notification.objects.get(id=notification_id, user=request.user)
+
+        # Marcarla como leída
+        notification.mark_as_read()
+
+        return JsonResponse({'status': 'success'})
+    except Notification.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Notificación no encontrada'}, status=404)

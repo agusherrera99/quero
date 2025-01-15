@@ -18,8 +18,5 @@ document.getElementById('id_category').addEventListener('change', function () {
                 subcategoryField.appendChild(option);
             });
         })
-        .catch(error => {
-            console.error('Error fetching subcategories:', error);
-        });
     }
 });
