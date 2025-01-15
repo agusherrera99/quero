@@ -37,7 +37,7 @@ def pos(request):
         'cart_items': cart,
         'total_amount': total_amount,
     }
-    return render(request, 'pos/pos.html', context)
+    return render(request, 'pos.html', context)
 
 @login_required
 def sales_confirmation(request):
@@ -58,7 +58,7 @@ def sales_confirmation(request):
             'current_datetime': current_datetime,
         }
 
-        return render(request, 'pos/sales_confirmation.html', context)
+        return render(request, 'sales_confirmation.html', context)
     else:
         messages.error(request, 'No se ha recibido el carrito de la compra')
         return redirect('pos:pos')

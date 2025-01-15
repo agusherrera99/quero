@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inventario - Quero{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/stock.css' %}">
+<!-- Estadísticas del inventario -->
+<div class="stats-grid">    
+    <div class="stat-card">
+        <div class="stat-title">Productos únicos</div>
+        <div class="stat-value">{{ unique_products|default:"0.00" }}</div>
+        <div class="status" style="color: {{ unique_products_percentage_color }};">
+            {% if unique_products_percentage_change %}
+                {% if unique_products_percentage_color == "red" %}
+                    <i class="fas fa-arrow-down"></i>
+                {% elif unique_products_percentage_color == "green" %}
+                    <i class="fas fa-arrow-up"></i>
+                {% else %}
+                    <i class="fas fa-equals"></i>
+                {% endif %}
+            {% endif %}
+
+            {% if unique_products_percentage_text == 'No disponible' %}
+                No disponible
+            {% else %}
+                {{ unique_products_percentage_text }} vs mes anterior
+            {% endif %}
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Productos totales</div>
+        <div class="stat-value">{{ total_quantity|default:"0" }}</div>
+        <div class="status" style="color: {{ total_quantity_percentage_color }};">
+            {% if total_quantity_percentage_change %}
+                {% if total_quantity_percentage_color == "red" %}
+                    <i class="fas fa-arrow-down"></i>
+                {% elif total_quantity_percentage_color == "green" %}
+                    <i class="fas fa-arrow-up"></i>
+                {% else %}
+                    <i class="fas fa-equals"></i>
+                {% endif %}
+            {% endif %}
+            
+            {% if total_quantity_percentage_text == 'No disponible' %}
+                No disponible
+            {% else %}
+                {{ total_quantity_percentage_text }} vs mes anterior
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-title">Valor del inventario</div>
+        <div class="stat-value">${{ stock_formatted_value|default:"0.00" }}</div>
+        <div class="status" style="color: {{ stock_percentage_color }};">
+            {% if stock_percentage_change %}
+                {% if stock_percentage_color == "red" %}
+                    <i class="fas fa-arrow-down"></i>
+                {% elif stock_percentage_color == "green" %}
+                    <i class="fas fa-arrow-up"></i>
+                {% else %}
+                    <i class="fas fa-equals"></i>
+                {% endif %}
+            {% endif %}
+
+            {% if stock_percentage_text == 'No disponible' %}
+                No disponible
+            {% else %}
+                {{ stock_percentage_text }} vs mes anterior
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de productos -->
+<div class="table-container">
+    <div class="table-header">
+        <h2 class="table-title">Productos</h2>
+        <div class="search-container">
+            <form method="get" class="search-form">
+                <input 
+                    type="text" 
+                    name="query" 
+                    class="search-input" 
+                    placeholder="Buscar productos..." 
+                    value="{{ request.GET.query|default:'' }}"
+                    autocomplete="off"
+                >
+                <button type="button" class="search-clear" onclick="clearSearch(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </form>
+        </div>
+        <a class="btn btn-primary btn-icon" href="{% url 'stock:add_stock' %}">
+            <i class="fas fa-plus"></i>
+            Añadir Producto
+        </a>
+    </div>
+
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Subcategoría</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if query %}
+                {% if not results %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #6B7280;">
+                            No hay resultados para "{{ query }}"
+                        </td>
+                    </tr>
+                {% else %}
+                    {% for product in results %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.subcategory.category.name }}</td>
+                            <td>{{ product.subcategory.name }}</td>
+                            <td>${{ product.price }} ({{ product.uom }})</td>
+                            <td>{{ product.quantity|floatformat:2 }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
+                            <td class="actions">
+                                <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen"></i></a>
+                                <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.subcategory.category.name }}</td>
+                    <td>{{ product.subcategory.name }}</td>
+                    <td>${{ product.price }} ({{ product.uom }})</td>
+                    <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
+                    <td class="actions">
+                        <a class="btn-icon-only" href="{% url 'stock:edit_stock' product.id %}" title="Editar"><i class="fas fa-pen"></i></a>
+                        <a class="btn-icon-only" href="{% url 'stock:delete_stock' product.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+            {% if not products %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #666;">
+                        No hay productos en el inventario
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% include 'pagination.html' with page=products %}
+    </div>
+</div>
+
+<!-- Mensajes de éxito o error -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script src="{% static 'js/stock.js' %}" ></script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Venta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/delete_sale.css' %}">
+</head>
+<body>
+    <div class="delete-container">
+        <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2 class="delete-title">Eliminar Venta</h2>
+        
+        <!-- Banner de advertencia -->
+        <div class="delete-warning">
+            ¡Atención! Esta acción no se puede deshacer
+        </div>
+        <div class="consequences">
+            <div class="consequences-title">Esta acción causará:</div>
+            <ul class="consequences-list">
+                <li>Eliminación de la venta de la base de datos.</li>
+                <li>Actualización de la cantidad de productos en stock.</li>
+                <li>Eliminación de datos estadísticos relacionados</li>
+            </ul>
+        </div>
+    
+        <!-- Detalles de la venta -->
+        <div class="sale-details">
+            <div class="sale-info">
+                <span class="sale-label">ID de Venta:</span>
+                <span class="sale-value">#{{ sale.id }}</span>
+            </div>
+            <div class="sale-info">
+                <span class="sale-label">Fecha:</span>
+                <span class="sale-value">{{ sale.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="sale-info">
+                <span class="sale-label">Total:</span>
+                <span class="sale-value">${{ sale.total_price }}</span>
+            </div>
+    
+            <div class="items-list">
+                <div class="item">
+                    <span>{{ sale.product.name }}</span>
+                    <div class="item-details">
+                        <span>x{{ sale.quantity }}</span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Formulario de confirmación -->
+        <form method="post" action="{% url 'summary:delete_sale' sale.id %}" id="deleteForm">
+            {% csrf_token %}
+            <div style="display: flex;">
+                <input type="text" 
+                       class="input-confirm" 
+                       id="confirmationInput" 
+                       required
+                       placeholder="Escribe 'ELIMINAR' para confirmar" 
+                        pattern="ELIMINAR" 
+                       oninput="document.getElementById('deleteButton').disabled = this.value !== 'ELIMINAR'">
+            </div>
+    
+            <div class="action-buttons">
+                <button type="submit" 
+                        class="btn btn-delete" 
+                        id="deleteButton" 
+                        disabled>
+                    Eliminar Venta
+                </button>
+                <a href="{% url 'summary:summary' %}" class="btn btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>    
+

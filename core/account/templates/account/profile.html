@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mi Cuenta - Quero{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<div class="container">
+    <div class="account-grid">
+        <!-- Información personal -->
+        <div class="card">
+            <h2 class="card-title">Información personal</h2>
+            <p class="card-subtitle">Actualiza tu información.</p>
+            
+            <div class="info-grid">
+                <div class="info-group">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ user.email }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Usuario</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Teléfono</div>
+                    <div class="info-value">{{ user.phone }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Creado el</div>
+                    <div class="info-value">{{ user.created_at }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Tipo de negocio</div>
+                    <div class="info-value">{{ user.business_type|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Negocio</div>
+                    <div class="info-value">{{ user.shop_name }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Nombre</div>
+                    <div class="info-value">{{ user.first_name|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Apellido</div>
+                    <div class="info-value">{{ user.last_name|capfirst }}</div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Acciones de cuenta -->
+        <div class="card">
+            <h2 class="card-title">Acciones de Cuenta</h2>
+            <p class="card-subtitle">Gestiona tu cuenta.</p>
+            
+            <div class="actions-grid">
+                <form action="{% url 'password_change' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-default btn-icon" type="submit">
+                        <i class="fa-solid fa-key fa-2x"></i>
+                        Cambiar contraseña
+                    </button>
+                </form>
+                <form action="{% url 'password_reset' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-default btn-icon" type="submit">
+                        <i class="fa-solid fa-unlock fa-2x"></i>
+                        Restablecer contraseña
+                    </button>
+                </form>
+                <form  action="{% url 'pages:business_type_selection' %}" method="post">
+                    {% csrf_token %}
+                        <button class="btn btn-warning btn-icon" type="submit">
+                            <i class="fa-solid fa-store fa-2x"></i>
+                            Cambiar tipo de negocio
+                        </button>
+                </form>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                        <button class="btn btn-danger btn-icon" type="submit">
+                            <i class="fa-solid fa-right-from-bracket fa-2x"></i>
+                            Cerrar Sesión
+                        </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mensajes de éxito o error -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

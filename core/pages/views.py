@@ -6,7 +6,7 @@ from django.db import transaction
 from django.shortcuts import redirect, render
 
 from . import scipts
-from .models import BusinessType
+from account.models import BusinessType
 
 
 def home(request):
@@ -44,7 +44,7 @@ def business_type_selection(request):
     context = {
         'business_types': business_types
     }
-    return render(request, 'pages/business_type_selection.html', context)
+    return render(request, 'business_type_selection.html', context)
 
 @login_required
 @transaction.atomic
@@ -59,5 +59,5 @@ def select_business_type(request):
         request.user.save()
 
         messages.success(request, 'Tipo de negocio seleccionado con éxito.')
-        return redirect('accounts:profile')
-    return render('pages/business_type_selection.html')
+        return redirect('account:profile')
+    return render('business_type_selection.html')

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Selecciona tu tipo de negocio - Quero{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/business_type_selection.css' %}">
+<!-- Seleccionar el tipo de negocio -->
+<div class="business-selection">
+    <div class="page-header">
+        <h1 class="page-title">Selecciona tu tipo de negocio</h1>
+        <p class="page-description">Elige el tipo de negocio que mejor se adapte a tu actividad comercial</p>
+        <div class="warning-banner">
+            <div class="warning-banner-header">
+                <i class="fas fa-exclamation-triangle warning-banner-icon"></i>
+                <span class="warning-banner-title">Acción irreversible</span>
+            </div>
+            <div class="warning-banner-content">
+                Esta acción es irreversible y producirá la eliminación permanente de productos que hayas creado. 
+                Asegúrate de seleccionar el tipo de negocio correcto.
+            </div>
+        </div>
+    </div>
+
+    <!-- Mostrar los tipos de negocio disponibles -->
+    <div class="business-grid">
+        {% for business in business_types %}
+        <div class="business-card">
+            <div class="business-content">
+                <h2 class="business-type">{{ business.type|capfirst }}</h2>
+                <p class="business-description">{{ business.description }}</p>
+                
+                <div class="category-section">
+                    <h3 class="category-title">Algunas de las categorias disponibles.</h3>
+                    <ul class="category-list">
+                        {% for category in business.categories %}
+                            <li class="category-item">{{ category|capfirst }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="category-section">
+                    <h3 class="category-title">Algunas de las subcatgorias disponibles.</h3>
+                    <ul class="category-list">
+                        {% for subcategory in business.subcategories %}
+                            <li class="category-item">{{ subcategory|capfirst }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'pages:select_business_type' %}">
+                {% csrf_token %}
+                <input type="hidden" name="business_type" value="{{ business.type }}">
+                <button type="submit" class="select-button">Seleccionar</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -96,9 +96,17 @@ def summary(request):
     )
 
     daily_products_sold = daily_products_sold_data.get('total_quantity_today', 0) if daily_products_sold_data else 0
-    daily_products_sold = round(daily_products_sold)
+    if daily_products_sold is not None:
+        daily_products_sold = round(daily_products_sold)
+    else: 
+        daily_products_sold = 0
+
     daily_products_sold_yesterday = daily_products_sold_data.get('total_quantity_yesterday', 0) if daily_products_sold_data else 0
-    daily_products_sold_yesterday = round(daily_products_sold_yesterday)
+    if daily_products_sold_yesterday is not None:
+        daily_products_sold_yesterday = round(daily_products_sold_yesterday)
+    else:
+        daily_products_sold_yesterday = 0
+        
     daily_products_sold_percentage, daily_products_sold_percentage_text, daily_products_sold_percentage_color = calculate_percentage_change(daily_products_sold, daily_products_sold_yesterday)
 
     # Ventas Totales (Mes)
@@ -108,7 +116,11 @@ def summary(request):
 
     # Productos vendidos (Mes)
     monthly_products_sold = sales.filter(created_at__date__gte=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
-    monthly_products_sold = round(monthly_products_sold)
+    if monthly_products_sold is not None:
+        monthly_products_sold = round(monthly_products_sold)
+    else:
+        monthly_products_sold = 0
+        
     monthly_products_sold_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
     monthly_products_sold_last_month = round(monthly_products_sold_last_month)
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
@@ -309,7 +321,7 @@ def summary(request):
         'top_sales': top_sales
     }
 
-    return render(request, 'summary/summary.html', context)
+    return render(request, 'summary.html', context)
 
 @login_required
 @transaction.atomic
@@ -333,4 +345,4 @@ def delete_sale(request, pk):
     context = {
         'sale': sale
     }
-    return render(request, 'summary/delete_sale.html', context)
+    return render(request, 'delete_sale.html', context)

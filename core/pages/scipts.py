@@ -1,11 +1,11 @@
 import random
-from . import models
+from account.models import BusinessType
 
 def generate_business_types() -> list:
     business_types_data = []
 
     # Obtén todos los tipos de negocio
-    business_types = models.BusinessType.objects.all()
+    business_types = BusinessType.objects.all()
 
     for business_type in business_types:
         if business_type.name == 'sin tipo':

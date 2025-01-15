@@ -54,7 +54,7 @@ class Product(models.Model):
     subcategory = models.ForeignKey('Subcategory', on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey('account.CustomUser', on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'products'

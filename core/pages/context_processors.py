@@ -1,5 +1,5 @@
 # context_processors.py
-from .models import Notification
+from account.models import Notification
 
 def notification_count(request):
     if request.user.is_authenticated:

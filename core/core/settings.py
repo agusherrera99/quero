@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'accounts.apps.AccountsConfig',
+    'account.apps.AccountsConfig',
     'pages.apps.PagesConfig',
     'stock.apps.StockConfig',
     'pos.apps.PosConfig',
@@ -130,7 +130,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -138,7 +141,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom
-# LOGIN_REDIRECT_URL = 'accounts:profile'
+# LOGIN_REDIRECT_URL = 'account:profile'
 LOGOUT_REDIRECT_URL = 'pages:home'
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -148,7 +151,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = 'account.CustomUser'
 
 CACHES = {
     'default': {

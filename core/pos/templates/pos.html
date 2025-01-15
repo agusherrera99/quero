@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Punto de Venta - Quero{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/pos.css' %}">
+<div class="pos-container">
+    <div class="sales-section">
+        <!-- Titulo -->
+        <div class="sales-header">
+            <h2 class="sales-title">Venta en curso</h2>
+            <button class="btn-remove" title="Limpiar ventas" id="clearCartBtn">
+                <i class="fas fa-broom fa-lg"></i>
+            </button>
+        </div>
+
+        <!-- Tabla de ventas -->
+        <div class="sales-table-container">
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Producto</th>
+                        <th class="quantity-cell">Cantidad</th>
+                        <th class="price-cell">Precio</th>
+                        <th class="actions-cell">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body" id="cartItems">
+                    {% if cart_items %}
+                        {% for item in cart_items %}
+                        <tr data-product-id="{{ item.product_id }}">
+                            <td>{{ item.name }}</td>
+                            <td class="quantity-cell">
+                                <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" 
+                                       data-product-id="{{ item.product_id }}" data-price="{{ item.price }}" data-uom="{{ item.uom }}">
+                            </td>
+                            <td class="price-cell">${{ item.total_price }}</td>
+                            <td class="actions-cell">
+                                <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}" aria-label="Eliminar {{ item.name }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr id="emptyCart">
+                            <td colspan="4" style="text-align: center; padding: 1rem;">
+                                No hay productos en la venta actual
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pie de página de ventas -->
+        <div class="sales-footer">
+            <div class="total-amount">
+                Total: $<span id="totalAmount">{{ total_amount }}</span>
+            </div>
+            <form action="{% url 'pos:sales_confirmation' %}" method="POST" id="confirmSaleForm">
+                {% csrf_token %}
+                <input type="hidden" name="cart" id="cartInput">
+                <input type="hidden" name="total_amount" id="totalAmountInput">
+                <button type="submit" class="btn btn-primary payment-btn">
+                    <i class="fas fa-check"></i>
+                    Confirmar venta
+                </button>
+            </form>                       
+        </div>
+    </div>
+
+    <!-- Caja registradora -->
+    <div class="cash-machine">
+        <div class="search-product">
+            <input type="text" class="search-input" id="searchProduct" placeholder="Buscar producto..." autofocus>
+        </div>
+
+        <div class="quick-categories">
+            <button class="category-btn active" data-category-id="0">Todos</button>
+            {% for category in categories %}
+            <button class="category-btn" data-category-id="{{ category.id }}">{{ category.name }}</button>
+            {% endfor %}
+        </div>
+        
+        <div class="products-grid" id="productsGrid">
+            {% for product in products %}
+            <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}" data-uom="{{ product.uom }}">
+                <div class="product-subcategory-name">{{ product.subcategory.name }}</div>
+                <div class="product-info">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-stock">({{ product.quantity|floatformat:2 }})</div>
+                </div>
+                <div class="product-price">${{ product.price }}</div>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Mensajes de éxito o error -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script src="{% static 'js/pos.js' %}"></script>
+{% endblock %}

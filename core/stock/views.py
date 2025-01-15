@@ -73,7 +73,7 @@ def stock(request):
         if search_form.is_valid():
             query = search_form.cleaned_data['query']
             results = (
-                products.annotate(search=SearchVector('name')).filter(search=query)
+                products.annotate(search=SearchVector('name')).filter(search__icontains=query)
             )
 
     if not results:
@@ -109,7 +109,7 @@ def stock(request):
         'results': results
     }
 
-    return render(request, 'stock/stock.html', context)
+    return render(request, 'stock.html', context)
 
 @login_required
 @transaction.atomic
@@ -165,7 +165,7 @@ def add_stock(request):
     context = {
         'form': form
     }
-    return render(request, 'stock/add_stock.html', context)
+    return render(request, 'add_stock.html', context)
 
 @login_required
 @transaction.atomic
@@ -190,7 +190,7 @@ def edit_stock(request, pk):
     context = {
         'form': form,
     }
-    return render(request, 'stock/edit_stock.html', context)
+    return render(request, 'edit_stock.html', context)
 
 @login_required
 @transaction.atomic
@@ -213,7 +213,7 @@ def delete_stock(request, pk):
     context = {
         'product': product
     }
-    return render(request, 'stock/delete_stock.html', context)
+    return render(request, 'delete_stock.html', context)
 
 def load_subcategories(request):
     category_id = request.GET.get('category_id')
