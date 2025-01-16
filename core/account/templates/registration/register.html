@@ -11,7 +11,10 @@
 </head>
 <body>
     <div class="card">
-        <h1>Crea tu cuenta</h1>
+        <div class="header-container">
+            <a href="{% url 'pages:home' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
+            <h1>Crea tu cuenta</h1>
+        </div>
 
         <!-- Mostrar mensajes de error -->
         {% if messages %}

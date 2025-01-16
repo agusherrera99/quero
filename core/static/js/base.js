@@ -1,5 +1,19 @@
 // Cerrar los toasts después de 3 segundos
 document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+    });
+
+    // Cerrar la barra lateral si se hace clic fuera de ella
+    document.addEventListener('click', function(event) {
+        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+            sidebar.classList.remove('open');
+        }
+    });
+    
     const toasts = document.querySelectorAll('.toast');
     toasts.forEach(toast => {
         setTimeout(() => {

@@ -6,9 +6,11 @@ def notification_count(request):
         notifications = Notification.objects.filter(user=request.user, is_read=False)
         notification_count = notifications.count()
     else:
+        notifications = []  # Define an empty list for unauthenticated users
         notification_count = 0
 
     return {
         'notifications': notifications,
         'notification_count': notification_count
     }
+

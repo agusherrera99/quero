@@ -11,7 +11,10 @@
 </head>
 <body>
     <div class="card">
-        <h1>Iniciar sesión</h1>
+        <div class="header-container">
+            <a href="{% url 'pages:home' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
+            <h1>Iniciar sesión</h1>
+        </div>
         <!-- Mensajes de error -->
         {% if messages %}
             {% for message in messages %}

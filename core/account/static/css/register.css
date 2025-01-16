@@ -5,6 +5,26 @@
     font-family: system-ui, -apple-system, sans-serif;
 }
 
+.back-button {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    color: #4B5563;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+}
+
+.back-button:hover {
+    color: #1a1a1a;
+}
+
+.back-button i {
+    margin-right: 0.5rem;
+}
+
 body {
     min-height: 100vh;
     display: flex;
@@ -27,6 +47,14 @@ body {
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.5rem;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 1.5rem;
 }
 
 .form-group {
@@ -115,4 +143,24 @@ body {
     margin-top: 1rem;
     font-size: 0.75rem;
     color: #666;
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 0.5rem;
+    }
+
+    .card h1 {
+        font-size: 1.25rem;
+    }
+
+    .form-group input {
+        
+        font-size: 0.875rem;
+    }
+
+    .submit-button {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
 }

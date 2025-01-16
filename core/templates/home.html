@@ -12,15 +12,29 @@
 <body>
     <!-- Barra de navegación -->
     <nav class="navbar">
-        <a class="logo" href="{% url 'pages:home' %}">
-            <img class="logo-image" type="image/svg" src="{% static 'images/favicon.svg' %}" alt="Quero">
-            Quero
-        </a>
-        <div class="nav-buttons">
+        <div class="nav-content">
+            <a class="logo" href="{% url 'pages:home' %}">
+                <img class="logo-image" type="image/svg" src="{% static 'images/favicon.svg' %}" alt="Quero">
+                Quero
+            </a>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-buttons">
+                <a class="btn btn-primary" href="{% url 'account:register' %}">Registrarse</a>
+                <a class="btn btn-default" href="{% url 'login' %}" >Iniciar Sesión</a>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Barra lateral (solo visible en mobile) -->
+    <div class="sidebar">
+        <div class="sidebar-content">
             <a class="btn btn-primary" href="{% url 'account:register' %}">Registrarse</a>
             <a class="btn btn-default" href="{% url 'login' %}" >Iniciar Sesión</a>
         </div>
-    </nav>
+    </div>
 
     <!-- Sección del Hero -->
     <section class="hero">
@@ -71,5 +85,7 @@
             ✉️ Contáctanos por correo
         </a>
     </footer>
+
+    <script src="{% static 'js/home.js' %}"></script>
 </body>
 </html>
