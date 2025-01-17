@@ -297,8 +297,8 @@ body {
     height: 1.25rem;
     width: 1.25rem;
     position: absolute;
-    top: 1rem;
-    right: 1.45rem;
+    top: 1.45rem;
+    right: 1.6rem;
     animation: pulse 1s infinite;
 }
 
