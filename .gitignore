@@ -172,3 +172,22 @@ cython_debug/
 
 # KeePass Configuration
 *.kdbx
+
+# Docker
+docker-compose.yml
+Dockerfile
+
+# sh files
+wait-for-it.sh
+
+# data files
+data/
+
+# config files
+config/
+
+# ssl files
+core/ssl/
+
+# sock files
+core/uwsgi_app.sock
