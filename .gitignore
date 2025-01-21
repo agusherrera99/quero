@@ -173,21 +173,12 @@ cython_debug/
 # KeePass Configuration
 *.kdbx
 
-# Docker
+# Docker Config files
 docker-compose.yml
 Dockerfile
 
-# sh files
-wait-for-it.sh
-
-# data files
-data/
-
-# config files
+# UWSGI Config
 config/
 
-# ssl files
-core/ssl/
-
-# sock files
-core/uwsgi_app.sock
+# SSL Config
+ssl/
