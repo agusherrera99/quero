@@ -29,8 +29,10 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = ENVIRONMENT == 'development'
 
 if ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = ['railwaytest-production-ddce.up.railway.app']
-    CRSF_TRUSTED_ORIGINS = ['railwaytest-production-ddce.up.railway.app']
+    ALLOWED_HOSTS = ['quero-production.up.railway.app']
+    CRSF_TRUSTED_ORIGINS = ['https://quero-production.up.railway.app', 'http://quero-production.up.railway.app']
+    USE_X_FORWARDED_HOST = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -145,11 +147,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if ENVIRONMENT == 'production':
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -171,3 +174,8 @@ AUTH_USER_MODEL = 'account.CustomUser'
 INTERNAL_IPS = [
     '127.0.0.1', 'localhost',
 ]
+
+# Security
+if ENVIRONMENT == 'production':
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
