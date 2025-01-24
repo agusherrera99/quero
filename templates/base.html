@@ -14,63 +14,7 @@
     <button id="sidebarToggle" class="sidebar-toggle">
         <i class="fas fa-bars"></i>
     </button>
-    <aside class="sidebar">
-        <div class="title-container">
-            <a class="logo-title" href="{% url 'pos:pos' %}">
-                <img class="logo-image" type="image/svg" src="{% static 'images/favicon.svg' %}" alt="Quero">
-                Quero
-            </a>
-            <div class="notification-badge relative inline-block">
-                <button class="notification-button" id="notificationButton">
-                    <i class="fa-solid fa-bell fa-lg"></i>
-                    <span id="notificationCount" class="notification-counter" style="display: {'inline-flex' if initial_count > 0 else 'none'};">
-                        {{ notification_count }}
-                    </span>
-                </button>
-                <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-                    <ul>
-                        {% if notifications %}
-                            {% for notification in notifications %}
-                                <li class="notification-item">
-                                    <div class="notification-message-container">
-                                        <p>{{ notification.message }}</p>
-                                        {% if not notification.is_read %}
-                                        <button class="mark-read-btn" data-id="{{ notification.id }}">
-                                            <i class="fa-solid fa-square-check fa-lg"></i>
-                                        </button>
-                                    {% endif %}
-                                    </div>
-                                    <span class="notification-time">{{ notification.created_at }}</span>
-                                </li>
-                            {% endfor %}
-                        {% else %}
-                            <li class="notification-item">No tienes nuevas notificaciones</li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        {% if request.user.is_authenticated %}
-            <nav class="nav-menu">
-                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'pos' %}active{% endif %}" href="{% url 'pos:pos' %}">
-                    <i class="fa-solid fa-dollar-sign fa-2x"></i>
-                    Venta
-                </a>
-                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'stock' %}active{% endif %}" href="{% url 'stock:stock' %}">
-                    <i class="fa-solid fa-cubes fa-2x"></i>
-                    Inventario
-                </a>
-                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'summary' %}active{% endif %}" href="{% url 'summary:summary' %}">
-                    <i class="fa-solid fa-book fa-2x"></i>
-                    Resumen
-                </a>
-                <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'account:profile' %}">
-                    <i class="fa-solid fa-user fa-2x"></i>
-                    Cuenta
-                </a>
-            </nav>
-        {% endif %}
-    </aside>
+    {% include 'components/sidebar.html' with notifications=notifications %}
 
     <!-- Contenido principal -->
     <main class="main-content">

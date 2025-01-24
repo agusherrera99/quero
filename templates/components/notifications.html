@@ -1,0 +1,29 @@
+<div class="notification-badge relative inline-block">
+    <button class="notification-button" id="notificationButton">
+        <i class="fa-solid fa-bell fa-lg"></i>
+        <span id="notificationCount" class="notification-counter" style="display: {'inline-flex' if initial_count > 0 else 'none'};">
+            {{ notification_count }}
+        </span>
+    </button>
+    <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+        <ul>
+            {% if notifications %}
+                {% for notification in notifications %}
+                    <li class="notification-item">
+                        <div class="notification-message-container">
+                            <p>{{ notification.message }}</p>
+                            {% if not notification.is_read %}
+                            <button class="mark-read-btn" data-id="{{ notification.id }}">
+                                <i class="fa-solid fa-square-check fa-lg"></i>
+                            </button>
+                        {% endif %}
+                        </div>
+                        <span class="notification-time">{{ notification.created_at }}</span>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="notification-item">No tienes nuevas notificaciones</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
