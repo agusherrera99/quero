@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <form method="post" action="{% url 'pages:select_business_type' %}">
+            <form method="post" action="{% url 'account:select_business_type' %}">
                 {% csrf_token %}
                 <input type="hidden" name="business_type" value="{{ business.type }}">
                 <button type="submit" class="select-button">Seleccionar</button>

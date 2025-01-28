@@ -8,7 +8,6 @@ from django.db import transaction
 from django.db.models import Sum, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import cache_page
 
 from .forms import AddProductForm, SearchForm
 from .models import Product, Subcategory
@@ -113,7 +112,6 @@ def stock(request):
 
 @login_required
 @transaction.atomic
-@cache_page(60 * 5)
 def add_stock(request):
     if request.method == 'POST':
         form = AddProductForm(data=request.POST, request=request)

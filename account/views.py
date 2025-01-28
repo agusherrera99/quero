@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
+from . import scipts
 from .forms import UserLoginForm, UserRegistrationForm
-
-from account.models import Notification
+from account.models import BusinessType, Notification
 
 
 @login_required
@@ -55,7 +56,7 @@ def registration_view(request):
                 messages.success(request, 'Tu cuenta ha sido creada exitosamente.')
                 login(request, user)
                 
-                return redirect('pages:business_type_selection')
+                return redirect('account:business_type_selection')
             except Exception as e:
                 messages.error(request, f"Hubo un problema al registrar tu cuenta: {str(e)}")
         else:
@@ -69,6 +70,34 @@ def registration_view(request):
     }
 
     return render(request, 'registration/register.html', context)
+
+@login_required
+def business_type_selection(request):
+    business_types = scipts.generate_business_types()
+    
+    context = {
+        'business_types': business_types
+    }
+    return render(request, 'account/business_type_selection.html', context)
+
+@login_required
+@transaction.atomic
+def select_business_type(request):
+    if request.method == 'POST':
+        business_type = request.POST.get('business_type')
+        business_type_id = BusinessType.objects.get(name=business_type)
+     
+        request.user.business_type = business_type_id
+        # Eliminar todos los productos del usuario
+        request.user.product_set.all().delete()
+        request.user.save()
+
+        # Refrescar la instancia del usuario para evitar problemas con la caché
+        request.user.refresh_from_db()
+
+        messages.success(request, 'Tipo de negocio seleccionado con éxito.')
+        return redirect('account:profile')
+    return render('account/business_type_selection.html')
 
 def mark_notification_as_read(request, notification_id):
     if not request.user.is_authenticated:

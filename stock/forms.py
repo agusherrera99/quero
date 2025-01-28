@@ -107,19 +107,20 @@ class AddProductForm(forms.ModelForm):
         return price
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        user = self.request.user
+        self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
 
-        if user:
-            self.fields['category'].queryset = user.business_type.category_list.all().order_by('name')
+        if self.request and self.request.user and self.request.user.business_type:
+            self.fields['category'].queryset = self.request.user.business_type.category_list.all().order_by('name')
+        else:
+            self.fields['category'].queryset = models.Category.objects.none()
             
-
         # Si existe un valor para 'category' en los datos del formulario (ya sea al editar o al ser enviado)
         if 'category' in self.data:
             try:
                 # Obtén la categoría seleccionada
-                category_id = self.data.get('category')
+                category_id = int(self.data.get('category'))
+                
                 # Actualiza las subcategorías disponibles según la categoría seleccionada
                 self.fields['subcategory'].queryset = models.Subcategory.objects.filter(category_id=category_id).order_by('name')
             except (ValueError, TypeError):

@@ -1,12 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
-from django.db import transaction
 from django.shortcuts import redirect, render
-
-from . import scipts
-from account.models import BusinessType
 
 
 def home(request):
@@ -82,28 +77,3 @@ def receive_contact_email(request):
             messages.error(request, 'Ocurrió un error al enviar el mensaje.')
             
         return redirect('pages:contact')
-
-@login_required
-def business_type_selection(request):
-    business_types = scipts.generate_business_types()
-    
-    context = {
-        'business_types': business_types
-    }
-    return render(request, 'business_type_selection.html', context)
-
-@login_required
-@transaction.atomic
-def select_business_type(request):
-    if request.method == 'POST':
-        business_type = request.POST.get('business_type')
-        business_type_id = BusinessType.objects.get(name=business_type)
-     
-        request.user.business_type = business_type_id
-        # Eliminar todos los productos del usuario
-        request.user.product_set.all().delete()
-        request.user.save()
-
-        messages.success(request, 'Tipo de negocio seleccionado con éxito.')
-        return redirect('account:profile')
-    return render('business_type_selection.html')
