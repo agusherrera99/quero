@@ -63,6 +63,10 @@
             <p class="card-subtitle">Gestiona tu cuenta.</p>
             
             <div class="actions-grid">
+                <button class="btn btn-special">
+                    <i class="fa-solid fa-rocket"></i>
+                    Mejorar plan
+                </button>
                 <form action="{% url 'password_change' %}">
                     {% csrf_token %}
                     <button class="btn btn-default btn-icon" type="submit">
