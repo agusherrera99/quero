@@ -13,7 +13,20 @@ def contact(request):
 def prices(request):
     plans = [
         {
+            "name": "Prueba Gratis",
+            "free": True,
+            "monthly_price": None,
+            "annual_price": None,
+            "one_time_price": None,
+            "discount": None,
+            "description": "Prueba nuestra plataforma sin compromiso",
+            "features": [
+                "Acceso por 15 días",
+            ],
+        },
+        {
             "name": "Plan Mensual",
+            "free": False,
             "monthly_price": 14.99,
             "annual_price": None,
             "one_time_price": None,
@@ -27,6 +40,7 @@ def prices(request):
         },
         {
             "name": "Plan Anual",
+            "free": False,
             "monthly_price": 12.49,
             "annual_price": 149.99,
             "one_time_price": None,
@@ -40,6 +54,7 @@ def prices(request):
         },
         {
             "name": "Pago único, para siempre",
+            "free": False,
             "monthly_price": None,
             "annual_price": None,
             "one_time_price": 1199.99,

@@ -237,13 +237,6 @@ main {
     fill: #4caf50;
     margin-right: 0.5rem;
 }
-  
-.card-footer {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    padding: 1.5rem;
-}
 
 .select-plan {
     display: block;
