@@ -25,26 +25,18 @@ class TierModel(models.Model):
     name = models.CharField(max_length=50, null=False, default='gratuito')
     duration = models.IntegerField(default=15)
 
-def get_default_business_type():
-    business_type = BusinessType.objects.first()
-    return business_type.id if business_type else None
-
-def get_default_tier():
-    tier_model = TierModel.objects.first()
-    return tier_model.id if tier_model else None
-
 def get_default_payment_due_date():
     return timezone.localtime(timezone.now()) + timezone.timedelta(days=15)
 
 class CustomUser(AbstractUser):
     phone = models.CharField(max_length=30, default='0')
     shop_name = models.CharField(max_length=100, default='sin nombre')
-    business_type = models.ForeignKey(BusinessType, on_delete=models.CASCADE, null=True, blank=True, default=get_default_business_type)
+    business_type = models.ForeignKey(BusinessType, on_delete=models.CASCADE, null=True, blank=True, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
-    tier = models.ForeignKey(TierModel, on_delete=models.CASCADE, null=True, blank=True, default=get_default_tier)
+    tier = models.ForeignKey(TierModel, on_delete=models.CASCADE, null=True, blank=True, default=1)
     payment_due = models.DateTimeField(null=True, default=get_default_payment_due_date)
 
     class Meta:
