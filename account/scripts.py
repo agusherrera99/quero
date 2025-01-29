@@ -125,7 +125,6 @@ def create_default_data(apps, schema_editor):
     for name, id in categories_data:
         Category.objects.get_or_create(id=id, name=name)
 
-
     # Crear subcategorías predeterminadas si no existen
     subcategories_data = [
         # Generales
@@ -619,3 +618,21 @@ def create_default_data(apps, schema_editor):
         business_type.category_list.set(categories)  # Usa set para reemplazar o add si quieres agregar sin eliminar
 
         logging.info(f"BusinessType '{business_type.name}' {'created' if created else 'retrieved'}, categories set.")
+
+def create_default_tiers(apps, schema_editor):
+    TierModel = apps.get_model('account', 'TierModel')
+
+    TIERS = [
+        ('prueba gratuita', 1, 15),
+        ('mensual', 2, 30),
+        ('anual', 3, 365),
+        ('de por vida', 4, 9999)
+    ]
+
+    for tier_name, id, duration in TIERS:
+        tier, created = TierModel.objects.get_or_create(
+            id=id,
+            name=tier_name,
+            duration=duration
+        )
+        logging.info(f"TierModel '{tier.name}' {'created' if created else 'retrieved'}")

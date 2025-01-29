@@ -28,7 +28,15 @@
                 </div>
                 <div class="info-group">
                     <div class="info-label">Creado el</div>
-                    <div class="info-value">{{ user.created_at }}</div>
+                    <div class="info-value">{{ user.created_at|date:"d F Y" }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Plan</div>
+                    <div class="info-value">{{ user.tier.name|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Fecha de renovación</div>
+                    <div class="info-value">{{ user.payment_due|date:"d F Y" }}</div>
                 </div>
                 <div class="info-group">
                     <div class="info-label">Tipo de negocio</div>

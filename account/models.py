@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
-def get_default_business_type():
-    return BusinessType.objects.first()
 
 class BusinessType(models.Model):
     name = models.CharField(max_length=100, null=False, default='sin tipo')
@@ -23,6 +21,21 @@ class BusinessType(models.Model):
     def __str__(self):
         return self.name
 
+class TierModel(models.Model):
+    name = models.CharField(max_length=50, null=False, default='gratuito')
+    duration = models.IntegerField(default=15)
+
+def get_default_business_type():
+    business_type = BusinessType.objects.first()
+    return business_type.id if business_type else None
+
+def get_default_tier():
+    tier_model = TierModel.objects.first()
+    return tier_model.id if tier_model else None
+
+def get_default_payment_due_date():
+    return timezone.localtime(timezone.now()) + timezone.timedelta(days=15)
+
 class CustomUser(AbstractUser):
     phone = models.CharField(max_length=30, default='0')
     shop_name = models.CharField(max_length=100, default='sin nombre')
@@ -31,7 +44,8 @@ class CustomUser(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
-    payment_due = models.DateTimeField(null=True)
+    tier = models.ForeignKey(TierModel, on_delete=models.CASCADE, null=True, blank=True, default=get_default_tier)
+    payment_due = models.DateTimeField(null=True, default=get_default_payment_due_date)
 
     class Meta:
         indexes = [

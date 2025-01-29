@@ -5,9 +5,9 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
-from . import scipts
+from . import scripts
 from .forms import UserLoginForm, UserRegistrationForm
-from account.models import BusinessType, Notification
+from account.models import BusinessType, CustomUser, Notification
 
 
 @login_required
@@ -22,6 +22,7 @@ def login_view(request):
             email = form.cleaned_data.get('email')
             username = email.split('@')[0]
             password = form.cleaned_data.get('password')
+
             user = authenticate(request, username=username, password=password)
             
             if user is not None:
@@ -29,10 +30,15 @@ def login_view(request):
                     login(request, user)
                     messages.success(request, f'Bienvenido, {user.username}!')
                     return redirect('pos:pos')
-                else:
-                    messages.error(request, "Tu cuenta está desactivada.")
             else:
-                messages.error(request, "Nombre de usuario o contraseña incorrectos.")
+                try:
+                    custom_user = CustomUser.objects.get(email=email)
+                    if not custom_user.is_active:
+                        messages.error(request, "Tu cuenta ha sido desactivada. Contacta al administrador.")
+                    else:
+                        messages.error(request, "Usuario o Contraseña incorrecta.")
+                except CustomUser.DoesNotExist:
+                    messages.error(request, "Este usuario no existe. Por favor, regístrate.")
         else:
             messages.error(request, "Formulario no válido. Revisa los campos.")
     else:
@@ -73,7 +79,7 @@ def registration_view(request):
 
 @login_required
 def business_type_selection(request):
-    business_types = scipts.generate_business_types()
+    business_types = scripts.generate_business_types()
     
     context = {
         'business_types': business_types

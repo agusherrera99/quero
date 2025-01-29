@@ -161,6 +161,7 @@ if ENVIRONMENT == 'production':
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom
+LOGIN_URL = 'account:login'
 LOGOUT_REDIRECT_URL = 'pages:home'
 
 EMAIL_HOST = 'smtp.gmail.com'
