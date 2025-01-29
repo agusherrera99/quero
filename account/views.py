@@ -105,6 +105,70 @@ def select_business_type(request):
         return redirect('account:profile')
     return render('account/business_type_selection.html')
 
+@login_required
+def update_plan(request):
+
+    user_tier = request.user.tier if hasattr(request.user, 'tier') else None
+
+    tiers = [
+        {
+            "name": "Prueba Gratuita",
+            "free": True,
+            "monthly_price": None,
+            "annual_price": None,
+            "one_time_price": None,
+            "discount": None,
+            "description": "Prueba nuestra plataforma sin compromiso",
+            "features": [
+                "Acceso por 15 días",
+            ],
+        },
+        {
+            "name": "Plan Mensual",
+            "free": False,
+            "monthly_price": 14.99,
+            "annual_price": None,
+            "one_time_price": None,
+            "discount": None,
+            "description": "Flexibilidad mensual para tus necesidades",
+            "features": [
+                "Acceso completo",
+                "Soporte a demanda",
+                "Accesso a nuevas funciones, en cuanto estén disponibles",
+            ],
+        },
+        {
+            "name": "Plan Anual",
+            "free": False,
+            "monthly_price": 12.49,
+            "annual_price": 149.99,
+            "one_time_price": None,
+            "discount": 16,
+            "description": "Ahorra con nuestro plan anual",
+            "features": [
+                "Todo lo del plan mensual",
+                "Soporte prioritario",
+                "Acceso anticipado a nuevas funciones",
+            ],
+        },
+        {
+            "name": "Pago único, para siempre",
+            "free": False,
+            "monthly_price": None,
+            "annual_price": None,
+            "one_time_price": 1199.99,
+            "discount": 33.3,
+            "description": "Acceso de por vida con un solo pago",
+            "features": [
+                "Todo lo del plan anual",
+                "Acceso ilimitado de por vida",
+                "Soporte vitalicio",
+                "Acceso a funciones exclusivas",
+            ],
+        },
+    ]
+    return render(request, 'account/update_plan.html', {'tiers': tiers, 'user_tier': user_tier})
+
 def mark_notification_as_read(request, notification_id):
     if not request.user.is_authenticated:
         return JsonResponse({'status': 'error', 'message': 'Usuario no autenticado'}, status=401)

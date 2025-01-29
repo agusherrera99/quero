@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mejorar plan - Quero{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/update_plan.css' %}">
+
+<div >
+    <section class="pricing-container">
+        <div class="pricing-header">
+            <h1>Planes y precios</h1>
+            <p>Elige el plan que mejor se adapte a tus necesidades</p>
+        </div>
+        <div class="pricing-cards">
+            {% for tier in tiers %}
+                <div class="pricing-card">
+                    <div class="card-header">
+                        <h2>{{ tier.name }}</h2>
+                        <p>{{ tier.description }}</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="price-container">
+                            {% if tier.free %}
+                            <div class="price">
+                                <span class="currency">$</span>
+                                <span class="amount">0</span>
+                            </div>
+                            {% elif tier.annual_price %}
+                                <div class="price">
+                                    <span class="currency">$</span>
+                                    <span class="amount">{{ tier.annual_price }}</span>
+                                    <span class="period">/año</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="monthly-price">
+                                        <span class="currency" style="font-size: 1rem;">$</span>
+                                        <span class="amount">{{ tier.monthly_price }}</span>
+                                        <span class="period">/mes</span>
+                                    </div>
+                                    <div class="discount-badge">
+                                        Ahorra {{ tier.discount }}%
+                                    </div>
+                                </div>
+                            {% elif tier.one_time_price %}
+                                <div class="price">
+                                    <span class="currency">$</span>
+                                    <span class="amount">{{ tier.one_time_price }}</span>
+                                </div>
+                            {% else %}
+                                <div class="price">
+                                    <span class="currency">$</span>
+                                    <span class="amount">{{ tier.monthly_price }}</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <ul class="features">
+                            {% for feature in tier.features %}
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    {{ feature }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        {% if tier.name|lower == user_tier.name %}
+                            <span class="btn btn-current">Actual</span>
+                        {% else %}
+                            <a href="#" class="btn btn-primary select-tier disabled">Elegir</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+{% endblock %}
