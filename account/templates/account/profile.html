@@ -63,10 +63,6 @@
             <p class="card-subtitle">Gestiona tu cuenta.</p>
             
             <div class="actions-grid">
-                <a class="btn btn-special btn-icon disabled" style="border-radius: 0.375rem;" href="{% url 'account:update_plan' %}">
-                    <i class="fa-solid fa-rocket"></i>
-                    Mejorar plan
-                </a>
                 <form action="{% url 'password_change' %}">
                     {% csrf_token %}
                     <button class="btn btn-default btn-icon" type="submit">
