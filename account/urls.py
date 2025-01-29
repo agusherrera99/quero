@@ -11,5 +11,5 @@ urlpatterns = [
     path('register/', views.registration_view, name='register'),
     path('select-business-type/', views.business_type_selection, name='business_type_selection'),
     path('select-business-type/submit/', views.select_business_type, name='select_business_type'),
-    path('marcar-leida/<int:notification_id>/', views.mark_notification_as_read, name='mark_notification_as_read'),
+    path('mark-as-read/<int:notification_id>/', views.mark_notification_as_read, name='mark_notification_as_read'),
 ]

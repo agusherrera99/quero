@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 200);
 
             // Enviar una solicitud AJAX para marcar la notificacion como leída
-            fetch(`/account/marcar-leida/${notificationId}`, {
+            fetch(`/account/mark-as-read/${notificationId}`, {
                 method: 'GET'
             })
             // Procesar la respuesta
