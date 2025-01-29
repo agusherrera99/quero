@@ -1,3 +1,6 @@
+@import url(buttons.css);
+@import url(toats.css);
+
 * {
     margin: 0;
     padding: 0;
@@ -9,99 +12,6 @@ body {
     display: flex;
     min-height: 100vh;
     background-color: #f8f9fa;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.375rem;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn-primary {
-    background-color: #1a1a1a;
-    color: white;
-    border-color: #1a1a1a;
-}
-
-.btn-primary:hover {
-    opacity: 0.9;
-}
-
-.btn-default {
-    background-color: white;
-    color: #666;
-    border-color: #e5e7eb;
-}
-
-.btn-default:hover {
-    background-color: #f8f9fa;
-    border-color: #d1d5db;
-    color: #1a1a1a;
-}
-
-.btn-danger {
-    background-color: #ef4444;
-    color: white;
-    border-color: #ef4444;
-}
-
-.btn-danger:hover {
-    opacity: 0.9;
-}
-
-.btn:disabled,
-.btn[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-ghost {
-    background-color: transparent;
-    color: #666;
-}
-
-.btn-ghost:hover {
-    background-color: #f8f9fa;
-    color: #1a1a1a;
-}
-
-.btn-icon {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-icon i {
-    font-size: 1.25em;
-}
-
-.btn-lg {
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
-}
-
-.btn-sm {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-}
-
-.btn-warning {
-    background-color: #f59e0b;  /* Color amarillo */
-    color: white;
-    border-color: #f59e0b;      /* Color de borde amarillo */
-}
-
-.btn-warning:hover {
-    background-color: #d97706;  /* Amarillo más oscuro en hover */
-    border-color: #d97706;      /* Borde más oscuro en hover */
-    opacity: 0.9;
 }
 
 .logo-image {
@@ -141,48 +51,6 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 1.5rem;
-}
-
-.toast {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1000;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    max-width: 350px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    animation: slideIn 0.2s ease-out;
-}
-
-.toast-error {
-    background-color: #FEF2F2;
-    border: 1px solid #FECACA;
-    color: #B91C1C;
-}
-
-.toast-fade-out {
-    animation: fadeOut 0.5s ease-out forwards;
-}
-
-.toast-info {
-    background-color: #F0F9FF;
-    border: 1px solid #BFDBFE;
-    color: #1D4ED8;
-}
-
-.toast-success {
-    background-color: #F0FDF4;
-    border: 1px solid #BBF7D0;
-    color: #15803D;
-}
-
-.toast-warning {
-    background-color: #FFFBEB;
-    border: 1px solid #FEF3C7;
-    color: #B45309;
 }
 
 .main-content {

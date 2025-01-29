@@ -339,7 +339,7 @@ def delete_sale(request, pk):
         product = sale.product
         product.quantity += sale.quantity
         product.save()
-        messages.info(request, 'Producto eliminado correctamente.')
+        messages.success(request, 'Producto eliminado correctamente.')
         return redirect('summary:summary')
 
     context = {

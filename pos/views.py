@@ -134,5 +134,5 @@ def cancel_sale(request):
     # Limpiar el carrito de la sesión
     if 'cart' in request.session:
         request.session['cart'] = []
-    messages.success(request, 'Venta cancelada correctamente')
+    messages.info(request, 'Venta cancelada correctamente')
     return redirect('pos:pos')

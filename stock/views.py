@@ -205,7 +205,7 @@ def delete_stock(request, pk):
         sale.delete()
 
         product.delete()
-        messages.info(request, 'Producto eliminado correctamente.')
+        messages.success(request, 'Producto eliminado correctamente.')
         return redirect('stock:stock')
 
     context = {
