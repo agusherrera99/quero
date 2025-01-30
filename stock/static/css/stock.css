@@ -19,6 +19,7 @@
     background: #f3f4f6;
 }
 
+/* Estilos generales para la tabla */
 .products-table {
     width: 100%;
     border-collapse: collapse;
@@ -45,6 +46,119 @@
     background: #f8f9fa;
 }
 
+/* Estilos para las tarjetas de productos (solo en móviles) */
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    max-width: 350px;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para la información del producto */
+.product-info {
+    margin-bottom: 1rem;
+}
+
+.product-info div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: #4B5563;
+}
+
+.product-info strong {
+    font-weight: 600;
+    color: #1F2937;
+}
+
+/* Estilos para el precio y la cantidad */
+.product-price {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+}
+
+.product-quantity {
+    font-size: 0.875rem;
+    color: #6B7280;
+    margin-bottom: 1rem;
+}
+
+/* Estilos para los botones de acción */
+.product-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.product-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid #e5e7eb;
+    background-color: #f8f9fa;
+    color: #1a1a1a;
+}
+
+.product-actions .btn:hover {
+    background-color: #e5e7eb;
+}
+
+.product-actions .btn.btn-primary {
+    background-color: #1a1a1a;
+    color: white;
+    border-color: #1a1a1a;
+}
+
+.product-actions .btn.btn-primary:hover {
+    background-color: #000000;
+}
+
+.product-actions .btn.btn-danger {
+    background-color: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+.product-actions .btn.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+/* Estilos para el mensaje de "No hay resultados" */
+.product-card p {
+    text-align: center;
+    color: #6B7280;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Estilos para la búsqueda */
 .search-container {
     display: flex;
     justify-content: space-between;
@@ -100,7 +214,7 @@
     display: none;
 }
 
-.search-input:not(:placeholder-shown) + .search-clear {
+.search-input:not(:placeholder-shown)+.search-clear {
     display: block;
 }
 
@@ -119,7 +233,7 @@
     background: white;
     border-radius: 0.5rem;
     padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .stat-card .status {
@@ -144,7 +258,7 @@
 .table-container {
     background: white;
     border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
@@ -162,21 +276,67 @@
     color: #1a1a1a;
 }
 
-@media (max-width: 768px) {
+/* Pantallas Pequeñas y Medias (Móviles, Tablets y Monitores Pequeños hasta 1095px) */
+@media (max-width: 1095px) {
+
+    /* Ocultar la tabla */
     .products-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+        display: none;
+    }
+
+    /* Aseguramos que la barra de búsqueda se muestre bien en móviles */
+    .search-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .search-clear {
+        margin-top: 0.5rem;
+    }
+
+    .table-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Ocultar paginación en móviles */
+    .pagination {
+        display: none;
+    }
+
+    .search-form {
+        max-width: 400px;
     }
 }
 
-@media (max-width: 640px) {
-    .search-container {
-        flex-direction: column;
-        gap: 1rem;
+/* Pantallas Grandes (Laptops y Monitores, más de 1096px) */
+@media (min-width: 1096px) {
+    .product-list {
+        display: none;
     }
-    
+
+    /* Barra de búsqueda */
+    .search-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .search-form {
-        max-width: 100%;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
     }
 }

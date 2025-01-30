@@ -59,8 +59,8 @@
 
 .business-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
     margin-top: 1rem;
 }
 
@@ -145,4 +145,40 @@
     font-weight: 600;
     color: #92400E;
     font-size: 0.875rem;
+}
+
+/* Pantallas Pequeñas (Móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .business-card {
+        padding: 1rem;
+    }
+
+    .business-content {
+        padding: 1rem;
+    }
+
+    .business-type {
+        font-size: 1.1rem;
+    }
+
+    .business-description {
+        font-size: 0.875rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .page-description {
+        font-size: 1rem;
+    }
+
+    .select-button {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+
+    .warning-banner {
+        width: 100%;
+    }
 }

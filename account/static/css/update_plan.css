@@ -161,19 +161,177 @@ main {
     cursor: default;
 }
 
-
-@media screen and (min-width: 769px) {
-    .mobile-menu-toggle {
-        display: none;
+/* Pantallas Pequeñas (Móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .pricing-container {
+        padding: 2rem 1rem;
     }
 
-    .nav-buttons {
-        display: flex;
+    .pricing-header h1 {
+        font-size: 2rem;
+    }
+
+    .pricing-header p {
+        font-size: 1rem;
+    }
+
+    .pricing-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .pricing-card {
+        margin-bottom: 1rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .card-header p {
+        font-size: 0.875rem;
+    }
+
+    .price {
+        font-size: 2rem;
+    }
+
+    .currency {
+        font-size: 1.25rem;
+    }
+
+    .period {
+        font-size: 0.875rem;
+    }
+
+    .monthly-price {
+        font-size: 0.875rem;
+    }
+
+    .discount-badge {
+        font-size: 0.75rem;
+    }
+
+    .features li {
+        font-size: 0.875rem;
+    }
+
+    .select-tier,
+    .btn-current {
+        width: 100%;
     }
 }
 
-@media (max-width: 768px) {
+/* Pantallas Medianas (Tablets, 769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .pricing-container {
+        padding: 3rem 1rem;
+    }
+
+    .pricing-header h1 {
+        font-size: 2.25rem;
+    }
+
+    .pricing-header p {
+        font-size: 1.125rem;
+    }
+
     .pricing-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .card-header p {
+        font-size: 1rem;
+    }
+
+    .price {
+        font-size: 2.25rem;
+    }
+
+    .currency {
+        font-size: 1.5rem;
+    }
+
+    .period {
+        font-size: 1rem;
+    }
+
+    .monthly-price {
+        font-size: 1rem;
+    }
+
+    .discount-badge {
+        font-size: 0.875rem;
+    }
+
+    .features li {
+        font-size: 1rem;
+    }
+
+    .select-tier,
+    .btn-current {
+        width: 100%;
+    }
+}
+
+/* Pantallas Grandes (Laptops y Monitores, más de 1025px) */
+@media (min-width: 1025px) {
+    .pricing-container {
+        padding: 4rem 1rem;
+    }
+
+    .pricing-header h1 {
+        font-size: 2.5rem;
+    }
+
+    .pricing-header p {
+        font-size: 1.25rem;
+    }
+
+    .pricing-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .card-header p {
+        font-size: 1.125rem;
+    }
+
+    .price {
+        font-size: 2.5rem;
+    }
+
+    .currency {
+        font-size: 1.75rem;
+    }
+
+    .period {
+        font-size: 1.125rem;
+    }
+
+    .monthly-price {
+        font-size: 1.125rem;
+    }
+
+    .discount-badge {
+        font-size: 1rem;
+    }
+
+    .features li {
+        font-size: 1.125rem;
+    }
+
+    .select-tier,
+    .btn-current {
+        width: 250px;
     }
 }

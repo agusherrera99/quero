@@ -9,14 +9,14 @@
     gap: 1rem;
 }
 
-button {
+.account-grid form button {
     width: 100%;
 }
 
 .card {
     background: white;
     border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
 }
 
@@ -79,4 +79,101 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* Pantallas Pequeñas (Móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .account-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .card h2 {
+        font-size: 1.25rem;
+    }
+
+    .card p {
+        font-size: 0.875rem;
+    }
+
+    .info-value {
+        font-size: 0.875rem;
+    }
+
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Pantallas Medianas (Tablets, 769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .account-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .card h2 {
+        font-size: 1.5rem;
+    }
+
+    .card p {
+        font-size: 1rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+    }
+
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+/* Pantallas Grandes (Laptops y Monitores, más de 1025px) */
+@media (min-width: 1025px) {
+    .account-grid {
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .card h2 {
+        font-size: 1.5rem;
+    }
+
+    .card p {
+        font-size: 1rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+    }
+
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
 }

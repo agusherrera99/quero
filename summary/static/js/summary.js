@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Tablas de productos más vendidos e historial de ventas
-    // Este código es solo un marcador de posición y no actualizará realmente los datos de la tabla
     const tableToggleButtons = document.querySelectorAll('.table-toggle .toggle-btn');
     const tableContainers = document.querySelectorAll('.table-container');
 

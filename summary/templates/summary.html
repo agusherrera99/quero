@@ -157,8 +157,8 @@
     </div>
 
     <!-- Tables Section -->
-    <div class="table-toggle">
-        <button class="toggle-btn active" data-table="sales-history">Historial de Ventas</button>
+    <div class="table-toggle" id="table-toggle">
+        <button class="toggle-btn active" data-table="sales-history" id="table-btn">Historial de Ventas</button>
         <button class="toggle-btn" data-table="best-selling">Mejores Productos</button>
     </div>
 
@@ -182,7 +182,9 @@
                     </form>
                 </div>
             </div>
-            <table class="sales-table">
+    
+            <!-- Tabla para PC -->
+            <table class="sales-table desktop-only">
                 <thead>
                     <tr>
                         <th data-sort="id">ID Venta</th>
@@ -206,18 +208,19 @@
                                 <tr>
                                     <td>#{{ sale.id }}</td>
                                     <td>{{ sale.product.name }}</td>
-                                    <!--Cambiar etiqueta segun el uom-->
-                                    {% if sale.product.uom == 'unidad' %}
-                                        <td>{{ sale.quantity }}</td>
-                                    {% elif sale.product.uom == 'kilogramo' %}
-                                        <td>{{ sale.quantity }} Kg</td>
-                                    {% elif sale.product.uom == 'gramo' %}
-                                        <td>{{ sale.quantity }} g</td>
-                                    {% elif sale.product.uom == 'litro' %}
-                                        <td>{{ sale.quantity }} L</td>
-                                    {% elif sale.product.uom == 'mililitro' %}
-                                        <td>{{ sale.quantity }} ml</td>
-                                    {% endif %}
+                                    <td>
+                                        {% if sale.product.uom == 'unidad' %}
+                                            {{ sale.quantity }}
+                                        {% elif sale.product.uom == 'kilogramo' %}
+                                            {{ sale.quantity }} Kg
+                                        {% elif sale.product.uom == 'gramo' %}
+                                            {{ sale.quantity }} g
+                                        {% elif sale.product.uom == 'litro' %}
+                                            {{ sale.quantity }} L
+                                        {% elif sale.product.uom == 'mililitro' %}
+                                            {{ sale.quantity }} ml
+                                        {% endif %}
+                                    </td>
                                     <td>${{ sale.total_price }}</td>
                                     <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
                                     <td>
@@ -233,18 +236,19 @@
                             <tr>
                                 <td>#{{ sale.id }}</td>
                                 <td>{{ sale.product.name }}</td>
-                                <!--Cambiar etiqueta segun el uom-->
-                                {% if sale.product.uom == 'unidad' %}
-                                    <td>{{ sale.quantity }}</td>
-                                {% elif sale.product.uom == 'kilogramo' %}
-                                    <td>{{ sale.quantity }} Kg</td>
-                                {% elif sale.product.uom == 'gramo' %}
-                                    <td>{{ sale.quantity }} g</td>
-                                {% elif sale.product.uom == 'litro' %}
-                                    <td>{{ sale.quantity }} L</td>
-                                {% elif sale.product.uom == 'mililitro' %}
-                                    <td>{{ sale.quantity }} ml</td>
-                                {% endif %}
+                                <td>
+                                    {% if sale.product.uom == 'unidad' %}
+                                        {{ sale.quantity }}
+                                    {% elif sale.product.uom == 'kilogramo' %}
+                                        {{ sale.quantity }} Kg
+                                    {% elif sale.product.uom == 'gramo' %}
+                                        {{ sale.quantity }} g
+                                    {% elif sale.product.uom == 'litro' %}
+                                        {{ sale.quantity }} L
+                                    {% elif sale.product.uom == 'mililitro' %}
+                                        {{ sale.quantity }} ml
+                                    {% endif %}
+                                </td>
                                 <td>${{ sale.total_price }}</td>
                                 <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
                                 <td>
@@ -265,17 +269,124 @@
                 </tbody>
             </table>
             <div class="pagination">
-                {% include 'components/pagination.html' with page=sales %}
+                {% include 'components/pagination.html' with page=top_sales %}
+            </div>
+
+            <!-- Tarjetas para móviles -->
+            <div class="product-list mobile-only">
+                {% if sale_query %}
+                    {% if not sales_results %}
+                        <div class="product-card">
+                            <p>No hay resultados para "{{ sale_query }}"</p>
+                        </div>
+                    {% else %}
+                        {% for sale in sales_results %}
+                            <div class="product-card">
+                                <div class="product-info">
+                                    <div>
+                                        <p>ID Venta:</p>
+                                        <strong>#{{ sale.id }}</strong>
+                                    </div>
+                                    <div>
+                                        <p>Producto:</p>
+                                        <strong>{{ sale.product.name }}</strong>
+                                    </div>
+                                    <div>
+                                        <p>Cantidad:</p>
+                                        <strong>
+                                            {% if sale.product.uom == 'unidad' %}
+                                                {{ sale.quantity }}
+                                            {% elif sale.product.uom == 'kilogramo' %}
+                                                {{ sale.quantity }} Kg
+                                            {% elif sale.product.uom == 'gramo' %}
+                                                {{ sale.quantity }} g
+                                            {% elif sale.product.uom == 'litro' %}
+                                                {{ sale.quantity }} L
+                                            {% elif sale.product.uom == 'mililitro' %}
+                                                {{ sale.quantity }} ml
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+                                    <div>
+                                        <p>Total:</p>
+                                        <strong>${{ sale.total_price }}</strong>
+                                    </div>
+                                    <div>
+                                        <p>Fecha:</p>
+                                        <strong>{{ sale.created_at|date:"d/m/Y H:i" }}</strong>
+                                    </div>
+                                </div>
+                                <div class="product-actions">
+                                    <a href="{% url 'summary:delete_sale' sale.id %}" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% else %}
+                    {% for sale in sales %}
+                        <div class="product-card">
+                            <div class="product-info">
+                                <div>
+                                    <p>ID Venta:</p>
+                                    <strong>#{{ sale.id }}</strong>
+                                </div>
+                                <div>
+                                    <p>Producto:</p>
+                                    <strong>{{ sale.product.name }}</strong>
+                                </div>
+                                <div>
+                                    <p>Cantidad:</p>
+                                    <strong>
+                                        {% if sale.product.uom == 'unidad' %}
+                                            {{ sale.quantity }}
+                                        {% elif sale.product.uom == 'kilogramo' %}
+                                            {{ sale.quantity }} Kg
+                                        {% elif sale.product.uom == 'gramo' %}
+                                            {{ sale.quantity }} g
+                                        {% elif sale.product.uom == 'litro' %}
+                                            {{ sale.quantity }} L
+                                        {% elif sale.product.uom == 'mililitro' %}
+                                            {{ sale.quantity }} ml
+                                        {% endif %}
+                                    </strong>
+                                </div>
+                                <div>
+                                    <p>Total:</p>
+                                    <strong>${{ sale.total_price }}</strong>
+                                </div>
+                                <div>
+                                    <p>Fecha:</p>
+                                    <strong>{{ sale.created_at|date:"d/m/Y H:i" }}</strong>
+                                </div>
+                            </div>
+                            <div class="product-actions">
+                                <a href="{% url 'summary:delete_sale' sale.id %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if not sales %}
+                    <div class="product-card">
+                        <p>No hay ventas registradas</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
+    <!-- Mejores Productos -->
     <div class="table-container" id="best-selling-table">
         <div class="table-card">
             <div class="table-header">
                 <h3 class="table-title">Mejores Productos</h3>
             </div>
-            <table class="summary-table">
+    
+            <!-- Tabla para PC -->
+            <table class="summary-table desktop-only">
                 <thead>
                     <tr>
                         <th>Producto</th>
@@ -286,35 +397,79 @@
                 </thead>
                 <tbody>
                     {% for sale in top_sales %}
-                    <tr>
-                        <td>{{ sale.product__name}}</td>
-                        <td>{{ sale.product__subcategory__category__name }}</td>
-                        <!--Cambiar etiqueta segun el uom-->
-                        {% if sale.product__uom == 'unidad' %}
-                            <td>{{ sale.total_quantity }}</td>
-                        {% elif sale.product__uom == 'kilogramo' %}
-                            <td>{{ sale.total_quantity }} Kg</td>
-                        {% elif sale.product__uom == 'gramo' %}
-                            <td>{{ sale.total_quantity }} g</td>
-                        {% elif sale.product__uom == 'litro' %}
-                            <td>{{ sale.total_quantity }} L</td>
-                        {% elif sale.product__uom == 'mililitro' %}
-                            <td>{{ sale.total_quantity }} ml</td>
-                        {% endif %}
-                        <td>${{ sale.total_price }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ sale.product__name }}</td>
+                            <td>{{ sale.product__subcategory__category__name }}</td>
+                            <td>
+                                {% if sale.product__uom == 'unidad' %}
+                                    {{ sale.total_quantity }}
+                                {% elif sale.product__uom == 'kilogramo' %}
+                                    {{ sale.total_quantity }} Kg
+                                {% elif sale.product__uom == 'gramo' %}
+                                    {{ sale.total_quantity }} g
+                                {% elif sale.product__uom == 'litro' %}
+                                    {{ sale.total_quantity }} L
+                                {% elif sale.product__uom == 'mililitro' %}
+                                    {{ sale.total_quantity }} ml
+                                {% endif %}
+                            </td>
+                            <td>${{ sale.total_price }}</td>
+                        </tr>
                     {% endfor %}
                     {% if not top_sales %}
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 2rem; color: #6B7280;">
-                            No hay datos disponibles
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: #6B7280;">
+                                No hay datos disponibles
+                            </td>
+                        </tr>
                     {% endif %}
                 </tbody>
             </table>
             <div class="pagination">
                 {% include 'components/pagination.html' with page=top_sales %}
+            </div>
+    
+            <!-- Tarjetas para móviles -->
+            <div class="product-list mobile-only">
+                {% for sale in top_sales %}
+                    <div class="product-card">
+                        <div class="product-info">
+                            <div>
+                                <p>Producto:</p>
+                                <strong>{{ sale.product__name }}</strong>
+                            </div>
+                            <div>
+                                <p>Categoría:</p>
+                                <strong>{{ sale.product__subcategory__category__name }}</strong>
+                            </div>
+                            <div>
+                                <p>Unidades Vendidas:</p>
+                                <strong>
+                                    {% if sale.product__uom == 'unidad' %}
+                                        {{ sale.total_quantity }}
+                                    {% elif sale.product__uom == 'kilogramo' %}
+                                        {{ sale.total_quantity }} Kg
+                                    {% elif sale.product__uom == 'gramo' %}
+                                        {{ sale.total_quantity }} g
+                                    {% elif sale.product__uom == 'litro' %}
+                                        {{ sale.total_quantity }} L
+                                    {% elif sale.product__uom == 'mililitro' %}
+                                        {{ sale.total_quantity }} ml
+                                    {% endif %}
+                                </strong>
+                            </div>
+                            <div>
+                                <p>Ingresos:</p>
+                                <strong>${{ sale.total_price }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% if not top_sales %}
+                    <div class="product-card">
+                        <p>No hay datos disponibles</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

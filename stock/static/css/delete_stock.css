@@ -5,6 +5,7 @@
     gap: 1rem;
     margin-top: 1.5rem;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .btn {
@@ -17,7 +18,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
-    width: 100%;
+    width: auto; 
+    min-width: 120px;
 }
 
 .btn:disabled {
@@ -39,6 +41,7 @@
     padding: 1rem;
     border-left: 4px solid #F59E0B;
     background-color: #FEF3C7;
+    font-size: 0.875rem;
 }
 
 .consequences-list {
@@ -128,4 +131,72 @@
 .warning-icon i {
     font-size: 32px;
     color: #DC2626;
+}
+
+/* Pantallas pequeñas (móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn-detele, .btn-cancel {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .consequences {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .consequences-title {
+        font-size: 1rem;
+    }
+
+    .delete-container {
+        margin: 1rem auto;
+        padding: 1.5rem;
+    }
+
+    .delete-title {
+        font-size: 1.25rem;
+    }
+
+    .delete-warning {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .input-confirm {
+        font-size: 0.75rem;
+    }
+
+    .product-details {
+        font-size: 0.75rem;
+    }
+
+    .product-info {
+        padding: 0.75rem;
+    }
+
+    .product-name {
+        font-size: 1rem;
+    }
+
+    .warning-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .warning-icon i {
+        font-size: 24px;
+    }
 }

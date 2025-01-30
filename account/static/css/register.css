@@ -34,18 +34,17 @@ body {
 }
 
 .card {
-    background: white;
+    max-width: 600px;
+    width: 100%;
     padding: 2rem;
+    margin: 1rem;
+    background: white;
     border-radius: 0.5rem;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 600px;
-    margin: 1rem;
 }
 
 .card h1 {
     text-align: center;
-    margin-bottom: 2rem;
     font-size: 1.5rem;
 }
 
@@ -64,9 +63,9 @@ body {
 .form-group input {
     width: 100%;
     padding: 0.75rem;
+    font-size: 1rem;
     border: 1px solid #ddd;
     border-radius: 0.375rem;
-    font-size: 1rem;
     background-position: 0.75rem center;
     background-repeat: no-repeat;
     background-size: 1rem;
@@ -99,6 +98,10 @@ body {
     text-decoration: underline;
 }
 
+.icon-back {
+    font-size: 2rem;
+}
+
 .input-icon {
     position: relative;
 }
@@ -118,20 +121,20 @@ body {
 
 .readonly-input {
     background-color: #f0f0f0;
-    opacity: 0.7; /* Para hacerlo ver más desactivado */
-    pointer-events: none; /* Deshabilita la interacción */
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 .submit-button {
     width: 100%;
     padding: 0.75rem;
+    margin-top: 1rem;
     background: #1a1a1a;
     color: white;
     border: none;
     border-radius: 0.375rem;
     font-size: 1rem;
     cursor: pointer;
-    margin-top: 1rem;
 }
 
 .submit-button:hover {
@@ -145,17 +148,21 @@ body {
     color: #666;
 }
 
+/* Pantallas pequeñas (móviles, hasta 768px) */
 @media (max-width: 768px) {
     .card {
-        padding: 0.5rem;
+        padding: 1rem;
     }
 
     .card h1 {
         font-size: 1.25rem;
     }
 
+    .icon-back {
+        font-size: 1.75rem;
+    }
+
     .form-group input {
-        
         font-size: 0.875rem;
     }
 
@@ -164,3 +171,4 @@ body {
         font-size: 0.875rem;
     }
 }
+

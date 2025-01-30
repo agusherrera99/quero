@@ -4,6 +4,7 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 1rem;
+    flex-wrap: wrap;
 }
 
 .pagination-info {
@@ -54,4 +55,36 @@
 
 .pagination-button.next i {
     margin-left: 0.25rem;
+}
+
+/* Pantallas pequeñas (móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .pagination {
+        padding: 0.75rem;
+        gap: 0.25rem;
+    }
+
+    .pagination-info {
+        font-size: 0.75rem;
+        margin-right: 0.5rem;
+    }
+
+    .pagination-button {
+        padding: 0.25rem 0.5rem; 
+        font-size: 0.75rem; 
+    }
+
+    .pagination-button i {
+        font-size: 0.625rem;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .pagination-button {
+        width: 100%;
+        text-align: center;
+    }
 }

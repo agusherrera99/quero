@@ -74,7 +74,7 @@
     </div>
 </div>
 
-<!-- Tabla de productos -->
+<!-- Tabla de productos (se muestra en pantallas grandes) -->
 <div class="table-container">
     <div class="table-header">
         <h2 class="table-title">Productos</h2>
@@ -160,6 +160,95 @@
     <div class="pagination">
         {% include 'components/pagination.html' with page=products %}
     </div>
+</div>
+
+<!-- Lista de productos (solo visible en dispositivos móviles) -->
+<div class="product-list">
+    {% if query %}
+        {% if not results %}
+            <div class="product-card">
+                <p>No hay resultados para "{{ query }}"</p>
+            </div>
+        {% else %}
+            {% for product in results %}
+            <div class="product-card">
+                <!-- Información del Producto -->
+                <div class="product-info">
+                    <div>
+                        <p>Producto:</p>
+                        <strong>{{ product.name }}</strong>
+                    </div>
+                    <div>
+                        <p>Categoría:</p>
+                        <strong>{{ product.subcategory.category.name }}</strong>
+                    </div>
+                    <div>
+                        <p>Subategoría:</p>
+                        <strong>{{ product.subcategory.name }}</strong>
+                    </div>
+                </div>
+
+                <!-- Precio y Cantidad -->
+                <div class="product-price">
+                    ${{ product.price }} ({{ product.uom }})
+                </div>
+                <div class="product-quantity">
+                    {{ product.quantity|floatformat:2 }} {{ product.uom }} 
+                    {% if product.uom == "unidad" %}es{% else %}s{% endif %}
+                </div>
+
+                <!-- Acciones -->
+                <div class="product-actions">
+                    <a href="{% url 'stock:edit_stock' product.id %}" class="btn btn-primary">
+                        <i class="fas fa-pen"></i> Editar
+                    </a>
+                    <a href="{% url 'stock:delete_stock' product.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        {% for product in products %}
+            <div class="product-card">
+                <!-- Información del Producto -->
+                <div class="product-info">
+                    <div class="product-info-header">
+                        <p>Producto:</p>
+                        <strong>{{ product.name }}</strong>
+                    </div>
+                    <div class="product-info-header">
+                        <p>Categoría:</p>
+                        <strong>{{ product.subcategory.category.name }}</strong>
+                    </div>
+                    <div class="product-info-header">
+                        <p>Subategoría:</p>
+                        <strong>{{ product.subcategory.name }}</strong>
+                    </div>
+                </div>
+
+                <!-- Precio y Cantidad -->
+                <div class="product-price">
+                    ${{ product.price }} ({{ product.uom }})
+                </div>
+                <div class="product-quantity">
+                    {{ product.quantity|floatformat:2 }} {{ product.uom }} 
+                    {% if product.uom == "unidad" %}es{% else %}s{% endif %}
+                </div>
+
+                <!-- Acciones -->
+                <div class="product-actions">
+                    <a href="{% url 'stock:edit_stock' product.id %}" class="btn btn-primary">
+                        <i class="fas fa-pen"></i> Editar
+                    </a>
+                    <a href="{% url 'stock:delete_stock' product.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 </div>
 
 <!-- Mensajes de éxito o error -->

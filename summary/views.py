@@ -191,7 +191,7 @@ def summary(request):
         xaxis_title='Fecha',
         yaxis_title='Ventas ($)',
         showlegend=True,
-        autosize=True
+        autosize=True,
     )
     daily_series_graph_html = daily_series_chart.to_html(full_html=False)
 
