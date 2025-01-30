@@ -10,7 +10,7 @@ def home(request):
 def contact(request):
     return render(request, 'contact.html')
 
-def prices(request):
+def plans(request):
     plans = [
         {
             "name": "Prueba Gratis",
@@ -69,7 +69,7 @@ def prices(request):
         },
     ]
     
-    return render(request, 'prices.html', {'plans': plans})
+    return render(request, 'plans.html', {'plans': plans})
 
 def receive_contact_email(request):
     if request.method == 'POST':
