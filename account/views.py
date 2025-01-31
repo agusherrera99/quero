@@ -86,17 +86,32 @@ def support(request):
 @login_required
 def receive_support_email(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
         subject = request.POST.get('subject')
         message = request.POST.get('message')
         
         email_message = EmailMessage(
-            subject=f'SOPORTE: Nuevo mensaje de {name} - Asunto: {subject}',
-            body=f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}',
-            from_email=email,
+            subject='SOPORTE',
+            body=f"""
+            -- Mensaje de Soporte --
+
+            **Nombre del Usuario**: {request.user.username}
+            **Correo Electrónico**: {request.user.email}
+            **Teléfono**: {request.user.phone}
+            **Tier**: {request.user.tier.name}
+            **Plan Pagado**: {request.user.is_paid}
+            
+
+            **Asunto**: {subject}
+
+            **Mensaje**:
+            {message}
+
+            -- Fin del Mensaje --
+            """,
+            from_email=request.user.email,
             to=[settings.EMAIL_HOST_USER],
         )
+        email_message.reply_to = [request.user.email]
 
         try:
             email_message.send(fail_silently=False)

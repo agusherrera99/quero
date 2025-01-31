@@ -75,15 +75,30 @@ def receive_contact_email(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
+        phone = request.POST.get('phone')
         subject = request.POST.get('subject')
         message = request.POST.get('message')
         
         email_message = EmailMessage(
-            subject=f'CONTACTO: Nuevo mensaje de {name} - Asunto: {subject}',
-            body=f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}',
+            subject='CONTACTO',
+            body=f"""
+            -- Mensaje de Contacto --
+
+            **Nombre**: {name}
+            **Correo Electrónico**: {request.user.email}
+            **Teléfono**: {phone}
+
+            **Asunto**: {subject}
+
+            **Mensaje**:
+            {message}
+
+            -- Fin del Mensaje --
+            """,
             from_email=email,
             to=[settings.EMAIL_HOST_USER],
         )
+        email_message.reply_to = [request.user.email]
 
         try:
             email_message.send(fail_silently=False)

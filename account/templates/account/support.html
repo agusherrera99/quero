@@ -32,20 +32,11 @@
         <!-- Formulario de contacto -->
          <form id="contact-form" class="contact-form" method="post" action="{% url 'account:receive_support_email' %}">
             {% csrf_token %}
-            <div class="form-group form-name">
-                <label for="name" class="form-label">Nombre</label>
-                <input type="text" id="name" name="name" class="form-input" value="{{ user.username }}" required>
-            </div>
-            <div class="form-group form-email">
-                <label for="email" class="form-label">Correo electrónico</label>
-                <input type="email" id="email" name="email" class="form-input" value="{{ user.email }}" required>
-            </div>
             <div class="form-group form-subject">
                 <!-- Lista de opciones -->
                 <label for="subject" class="form-label">Asunto</label>
                 <select id="subject" name="subject" class="form-input" required>
                     <option value="">Selecciona un asunto</option>
-                    <option value="soporte">Soporte</option>
                     <option value="general">General</option>
                     <option value="ventas">Pagos</option>
                     <option value="otro">Otro</option>
