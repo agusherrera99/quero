@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMessage
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -76,6 +78,33 @@ def registration_view(request):
     }
 
     return render(request, 'registration/register.html', context)
+
+@login_required
+def support(request):
+    return render(request, 'account/support.html')
+
+@login_required
+def receive_support_email(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        email_message = EmailMessage(
+            subject=f'SOPORTE: Nuevo mensaje de {name} - Asunto: {subject}',
+            body=f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}',
+            from_email=email,
+            to=[settings.EMAIL_HOST_USER],
+        )
+
+        try:
+            email_message.send(fail_silently=False)
+            messages.success(request, 'Gracias por contactarnos, te responderemos a la brevedad.')
+        except Exception:
+            messages.error(request, 'Ocurrió un error al enviar el mensaje.')
+            
+        return redirect('pos:pos')
 
 @login_required
 def business_type_selection(request):

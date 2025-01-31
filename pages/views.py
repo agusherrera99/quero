@@ -79,7 +79,7 @@ def receive_contact_email(request):
         message = request.POST.get('message')
         
         email_message = EmailMessage(
-            subject=f'Nuevo mensaje de {name} - Asunto: {subject}',
+            subject=f'CONTACTO: Nuevo mensaje de {name} - Asunto: {subject}',
             body=f'Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}',
             from_email=email,
             to=[settings.EMAIL_HOST_USER],
@@ -91,4 +91,4 @@ def receive_contact_email(request):
         except Exception:
             messages.error(request, 'Ocurrió un error al enviar el mensaje.')
             
-        return redirect('pages:contact')
+        return redirect('pages:home')

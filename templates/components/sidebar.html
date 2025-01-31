@@ -25,6 +25,10 @@
                 <i class="fa-solid fa-user fa-2x"></i>
                 Cuenta
             </a>
+            <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'support' %}active{% endif %}" href="{% url 'account:support' %}">
+                <i class="fa-solid fa-headset fa-2x"></i>
+                Soporte
+            </a>
         </nav>
     {% endif %}
 </aside>
