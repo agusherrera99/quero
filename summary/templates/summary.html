@@ -114,26 +114,7 @@
                     <button class="period-btn" data-period-chart="90D">90D</button>
                     <button class="period-btn" data-period-chart="1A">1A</button>
                 </div>
-                <div class="chart-period-container active" id="7D-chart">
-                    <div class="chart-placeholder">
-                        {{ daily_series_graph_html|safe }}
-                    </div>
-                </div>
-                <div class="chart-period-container" id="30D-chart">
-                    <div class="chart-placeholder">
-                        {{ monthly_series_graph_html|safe }}
-                    </div>
-                </div>
-                <div class="chart-period-container" id="90D-chart">
-                    <div class="chart-placeholder">
-                        {{ quarterly_series_graph_html|safe }}
-                    </div>
-                </div>
-                <div class="chart-period-container" id="1A-chart">
-                    <div class="chart-placeholder">
-                        {{ yearly_series_graph_html|safe }}
-                    </div>
-                </div>
+                <div id="sales-chart"></div> 
             </div>
             
             <!-- Gráficos de ventas por categorias/subcategorias -->
@@ -143,14 +124,10 @@
                     <button class="chart-type-btn" data-type-chart="subcategory">Subcategoría</button>
                 </div>
                 <div class="chart-type-container active" id="category-chart">
-                    <div class="chart-placeholder">
-                        {{ category_graph_html|safe }}
-                    </div>
+                    <div id="category-chart" class="chart-container"></div>
                 </div>
                 <div class="chart-type-container" id="subcategory-chart">
-                    <div class="chart-placeholder">
-                        {{ subcategory_graph_html|safe }}
-                    </div>
+                    <div id="subcategory-chart" class="chart-container"></div>
                 </div>
             </div>
         </div>
@@ -475,5 +452,6 @@
     </div>
 </div>
 
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="{% static 'js/summary.js' %}"></script>
 {% endblock %}

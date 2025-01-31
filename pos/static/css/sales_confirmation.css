@@ -116,3 +116,20 @@
     font-size: 0.75rem;
     margin-right: 0.5rem;
 }
+
+@media (max-width: 768px) {
+    .confirmation-datetime {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .total-amount {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
+        font-size: 1rem;
+    }
+}

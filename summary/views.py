@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Case, IntegerField, Sum, Value, When
-from django.db.models.functions import TruncDate, TruncMonth, TruncQuarter, TruncYear
+from django.db.models import Case, F, IntegerField, Sum, Value, When
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 import plotly.graph_objs as go
@@ -26,32 +27,85 @@ def calculate_percentage_change(current, previous):
     else:
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
-def get_sales_data_for_period(sales, period):
-    # Definir las fechas de inicio y fin basadas en el período
+def get_sales_data_for_period(period):
+    cache_key = f"sales_data_{period}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
     today = datetime.today()
     start_date = today - timedelta(days=period)
 
-    # Agrupar las ventas por diferentes periodos de tiempo (día, mes, trimestre, año)
-    sales_by_day = sales.filter(created_at__gte=start_date).annotate(day=TruncDate('created_at')).values('day').annotate(total_sales=Sum('total_price')).order_by('day')
-    sales_by_month = sales.filter(created_at__gte=start_date).annotate(month=TruncMonth('created_at')).values('month').annotate(total_sales=Sum('total_price')).order_by('month')
-    sales_by_quarter = sales.filter(created_at__gte=start_date).annotate(quarter=TruncQuarter('created_at')).values('quarter').annotate(total_sales=Sum('total_price')).order_by('quarter')
-    sales_by_year = sales.filter(created_at__gte=start_date).annotate(year=TruncYear('created_at')).values('year').annotate(total_sales=Sum('total_price')).order_by('year')
+    # Usar una consulta agregada con `values` y `annotate` más eficiente
+    sales_data = Sale.objects.filter(created_at__date__gte=start_date).values(
+        'created_at__date'
+    ).annotate(
+        total_sales=Sum('total_price')
+    ).order_by('created_at__date')
 
-    # Extraer las fechas y los valores de ventas de cada período
-    def extract_sales_data(sales_data):
-        if sales_data:
-            sales_date = [sale['day'] if 'day' in sale else sale['month'] if 'month' in sale else sale['quarter'] if 'quarter' in sale else sale['year'] for sale in sales_data]
-            sales_values = [sale['total_sales'] for sale in sales_data]
-            return sales_date, sales_values
-        return [], []
+    sales_dates = [entry['created_at__date'].strftime('%Y-%m-%d') for entry in sales_data]
+    sales_values = [entry['total_sales'] for entry in sales_data]
 
-    # Extraer los datos de ventas por período
-    daily_sales_date, daily_sales_values = extract_sales_data(sales_by_day)
-    monthly_sales_date, monthly_sales_values = extract_sales_data(sales_by_month)
-    quarterly_sales_date, quarterly_sales_values = extract_sales_data(sales_by_quarter)
-    yearly_sales_date, yearly_sales_values = extract_sales_data(sales_by_year)
+    result = {'dates': sales_dates, 'values': sales_values}
+    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    return result
 
-    return (daily_sales_date, daily_sales_values, monthly_sales_date, monthly_sales_values, quarterly_sales_date, quarterly_sales_values, yearly_sales_date, yearly_sales_values)
+@login_required
+def sales_data(request):
+    period = request.GET.get('period', 7)
+    period = int(period[:-1])
+
+    data = get_sales_data_for_period(period)
+    
+    return JsonResponse(data)
+
+def get_category_sales_data():
+    cache_key = "category_sales_data"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    category_sales = Sale.objects.values(
+        category_name=F('product__subcategory__category__name')
+    ).annotate(
+        total_sales=Sum('total_price')
+    ).order_by('-total_sales')
+
+    category_labels = [entry['category_name'] for entry in category_sales]
+    category_values = [entry['total_sales'] for entry in category_sales]
+
+    result = {'labels': category_labels, 'values': category_values}
+    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    return result
+
+def get_subcategory_sales_data():
+    cache_key = "subcategory_sales_data"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    subcategory_sales = Sale.objects.values(
+        subcategory_name=F('product__subcategory__name')
+    ).annotate(
+        total_sales=Sum('total_price')
+    ).order_by('-total_sales')
+
+    subcategory_labels = [entry['subcategory_name'] for entry in subcategory_sales]
+    subcategory_values = [entry['total_sales'] for entry in subcategory_sales]
+
+    result = {'labels': subcategory_labels, 'values': subcategory_values}
+    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    return result
+
+@login_required
+def category_sales_data(request):
+    data = get_category_sales_data()
+    return JsonResponse(data)
+
+@login_required
+def subcategory_sales_data(request):
+    data = get_subcategory_sales_data()
+    return JsonResponse(data)
 
 @login_required
 def summary(request):
@@ -125,132 +179,27 @@ def summary(request):
     monthly_products_sold_last_month = round(monthly_products_sold_last_month)
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
     
-    # Ventas por Categoría y Subcategoría
-    category_and_subcategory_sales = Sale.objects.values(
-        'product__subcategory__category__name',
-        'product__subcategory__name'
-    ).annotate(
-        total_sales=Sum('total_price')
-    ).filter(user=request.user).order_by('-total_sales')
+    # # Categorías y Subcategorías más vendidas
+    # category_and_subcategory_sales = cache.get("category_sales")
+    # if not category_and_subcategory_sales:
+    #     category_and_subcategory_sales = Sale.objects.values(
+    #         category_name=F('product__subcategory__category__name'),
+    #         subcategory_name=F('product__subcategory__name')
+    #     ).annotate(
+    #         total_sales=Sum('total_price')
+    #     ).order_by('-total_sales')
+    #     cache.set("category_sales", category_and_subcategory_sales, timeout=3600)
 
-    # Gráfico de Ventas por Categoría (Pie Chart)
-    # Ventas totales por Categoría
-    category_sales_labels = [sale['product__subcategory__category__name'] for sale in category_and_subcategory_sales]
-    category_sales_values = [sale['total_sales'] for sale in category_and_subcategory_sales]
+    # category_sales = {}
+    # subcategory_sales = {}
+    # for sale in category_and_subcategory_sales:
+    #     category_sales[sale['category_name']] = category_sales.get(sale['category_name'], 0) + sale['total_sales']
+    #     subcategory_sales[sale['subcategory_name']] = subcategory_sales.get(sale['subcategory_name'], 0) + sale['total_sales']
 
-    category_pie = go.Pie(
-        labels=category_sales_labels,
-        values=category_sales_values,
-        name='Ventas por Categoría',
-        hole=0.3
-    )
-
-    category_layout = go.Layout(
-        title='Ventas por Categoría',
-        showlegend=True,
-        autosize=True
-    )
-    category_fig = go.Figure(data=[category_pie], layout=category_layout)
-    category_graph_html = category_fig.to_html(full_html=False)
-
-    # Gráfico de Ventas por Subcategoría (Pie Chart)
-    # Ventas totales por Subcategoría
-    subcategory_sales_labels = [sale['product__subcategory__name'] for sale in category_and_subcategory_sales]
-    subcategory_sales_values = [sale['total_sales'] for sale in category_and_subcategory_sales]
-
-    subcategory_pie = go.Pie(
-        labels=subcategory_sales_labels,
-        values=subcategory_sales_values,
-        name='Ventas por Subcategoría',
-        hole=0.3
-    )
-
-    subcategory_layout = go.Layout(
-        title='Ventas por Subcategoría',
-        showlegend=True,
-        autosize=True
-    )
-    subcategory_fig = go.Figure(data=[subcategory_pie], layout=subcategory_layout)
-    subcategory_graph_html = subcategory_fig.to_html(full_html=False)
-
-    # Obtener los datos de ventas para el gráfico de series temporales
-    daily_sales_date, daily_sales_values, monthly_sales_date, monthly_sales_values, quarterly_sales_date, quarterly_sales_values, yearly_sales_date, yearly_sales_values = get_sales_data_for_period(sales, 365)
-
-    # Gráfico de Ventas Diarias
-    daily_series_chart = go.Figure()
-    daily_series_chart.add_trace(
-        go.Scatter(
-            x=daily_sales_date,
-            y=daily_sales_values,
-            mode='lines+markers',
-            name='Ventas Diarias',
-        )
-    )
-    daily_series_chart.update_layout(
-        title='Ventas Diarias',
-        xaxis_title='Fecha',
-        yaxis_title='Ventas ($)',
-        showlegend=True,
-        autosize=True,
-    )
-    daily_series_graph_html = daily_series_chart.to_html(full_html=False)
-
-    # Gráfico de Ventas Mensuales
-    monthly_series_chart = go.Figure()
-    monthly_series_chart.add_trace(
-        go.Scatter(
-            x=monthly_sales_date,
-            y=monthly_sales_values,
-            mode='lines+markers',
-            name='Ventas Mensuales',
-        )
-    )
-    monthly_series_chart.update_layout(
-        title='Ventas Mensuales',
-        xaxis_title='Fecha',
-        yaxis_title='Ventas ($)',
-        showlegend=True,
-        autosize=True
-    )
-    monthly_series_graph_html = monthly_series_chart.to_html(full_html=False)
-
-    # Gráfico de Ventas Trimestrales
-    quarterly_series_chart = go.Figure()
-    quarterly_series_chart.add_trace(
-        go.Scatter(
-            x=quarterly_sales_date,
-            y=quarterly_sales_values,
-            mode='lines+markers',
-            name='Ventas Trimestrales',
-        )
-    )
-    quarterly_series_chart.update_layout(
-        title='Ventas Trimestrales',
-        xaxis_title='Fecha',
-        yaxis_title='Ventas ($)',
-        showlegend=True,
-        autosize=True
-    )
-    quarterly_series_graph_html = quarterly_series_chart.to_html(full_html=False)
-
-    # Gráfico de Ventas Anuales
-    yearly_series_chart = go.Figure()
-    yearly_series_chart.add_trace(
-        go.Scatter(
-            x=yearly_sales_date,
-            y=yearly_sales_values,
-            mode='lines+markers',
-            name='Ventas Anuales',
-        )
-    )
-    yearly_series_chart.update_layout(
-        title='Ventas Anuales',
-        xaxis_title='Fecha',
-        yaxis_title='Ventas ($)',
-        showlegend=True,
-        autosize=True
-    )
-    yearly_series_graph_html = yearly_series_chart.to_html(full_html=False)
+    # category_pie = go.Figure(data=[go.Pie(labels=list(category_sales.keys()), values=list(category_sales.values()), hole=0.3)])
+    # subcategory_pie = go.Figure(data=[go.Pie(labels=list(subcategory_sales.keys()), values=list(subcategory_sales.values()), hole=0.3)])
+    # category_graph_html = category_pie.to_html(full_html=False)
+    # subcategory_graph_html = subcategory_pie.to_html(full_html=False)
 
     # Buscador de ventas
     sale_search_form = SalesForm()
@@ -306,13 +255,8 @@ def summary(request):
         'monthly_products_sold_percentage_text': monthly_products_sold_percentage_text,
         'monthly_products_sold_percentage_color': monthly_products_sold_percentage_color,
 
-        'category_graph_html': category_graph_html,
-        'subcategory_graph_html': subcategory_graph_html,
-
-        'daily_series_graph_html': daily_series_graph_html,
-        'monthly_series_graph_html': monthly_series_graph_html,
-        'quarterly_series_graph_html': quarterly_series_graph_html,
-        'yearly_series_graph_html': yearly_series_graph_html,
+        # 'category_graph_html': category_graph_html,
+        # 'subcategory_graph_html': subcategory_graph_html,
 
         'sales': sales,  
         'sales_results': sales_results, 
