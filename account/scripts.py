@@ -55,6 +55,8 @@ def create_default_data(apps, schema_editor):
         # Generales
         ('sin categoría', 1),
         ('bebidas', 10),
+        ('fiambres', 51),
+        ('embutidos', 52),
 
         # Panadería
         ('panes', 2),
@@ -115,8 +117,6 @@ def create_default_data(apps, schema_editor):
         ('porcinos', 48),
         ('aves', 49),
         ('pescados y mariscos', 50),
-        ('fiambres', 51),
-        ('embutidos', 52),
         ('preparados', 53),
         ('congelados', 54),
         ('carbón y leña', 55),
@@ -595,7 +595,7 @@ def create_default_data(apps, schema_editor):
     # Crear BusinessType predeterminados si no existen
     business_types_data = [
         ('sin tipo', 1, 'sin descripción', ['sin categoría']),
-        ('quisco', 2, 'Venta de productos de consumo diario, prensa y artículos variados.', ['almacen', 'bebidas', 'golosinas', 'galletitas', 'limpieza', 'perfumeria', 'cigarrillos']),
+        ('quisco', 2, 'Venta de productos de consumo diario, prensa y artículos variados.', ['almacen', 'bebidas', 'golosinas', 'galletitas', 'limpieza', 'perfumeria', 'cigarrillos', 'fiambres', 'embutidos']),
         ('panadería', 3, 'Elaboración y venta de productos de panadería y pastelería frescos.', ['panes', 'facturas', 'tortas y postres', 'galletitas y bizcochos', 'confitería', 'empanadas', 'pizzas y focaccias', 'panes integrales y saludables', 'bebidas']),
         ('verdulería', 4, 'Venta de frutas y verduras frescas.', ['frutas', 'verduras', 'hortalizas', 'productos animales', 'bebidas']),
         ('ferretería', 5, 'Suministro de herramientas, materiales de construcción y artículos para el hogar.', ['articulos para gas y electricidad', 'buloneria', 'ferreteria en general', 'herrajes y hogar', 'herramientas', 'herramientas electricas', 'insecticidas y jardineria', 'materiales electricos', 'material para la construccion', 'pintureria', 'plomeria', 'quimicos y limpieza', 'sanitarios', 'seguridad', 'sogas y tejidos']),
