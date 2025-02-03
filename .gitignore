@@ -185,3 +185,6 @@ ssl/
 
 # Staticfiles
 staticfiles/
+
+# QR Code
+qr/
