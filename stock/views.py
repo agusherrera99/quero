@@ -18,6 +18,9 @@ def calculate_percentage_change(current, previous):
     if previous is None or previous == 0:
         return None, 'No disponible', 'gray'
     
+    if current is None:
+        current = 0
+    
     percentage_change = ((current - previous) / previous) * 100
     if percentage_change < 0:
         return abs(percentage_change), f"{abs(percentage_change):.2f}%", 'red'

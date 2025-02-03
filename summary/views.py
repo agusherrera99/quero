@@ -10,14 +10,15 @@ from django.db.models import Case, F, IntegerField, Sum, Value, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-import plotly.graph_objs as go
-
 from pos.models import Sale
 from .forms import SalesForm
 
 def calculate_percentage_change(current, previous):
     if previous is None or previous == 0:
         return None, 'No disponible', 'gray'
+
+    if current is None:
+        current = 0
     
     percentage_change = ((current - previous) / previous) * 100
     if percentage_change < 0:
