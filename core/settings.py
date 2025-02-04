@@ -29,8 +29,8 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = ENVIRONMENT == 'development'
 
 if ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = ['quero-production.up.railway.app']
-    CRSF_TRUSTED_ORIGINS = ['https://quero-production.up.railway.app', 'http://quero-production.up.railway.app']
+    ALLOWED_HOSTS = ['quero-production.up.railway.app', 'queroweb.com']
+    CRSF_TRUSTED_ORIGINS = ['https://quero-production.up.railway.app', 'http://quero-production.up.railway.app', 'https://queroweb.com', 'http://queroweb.com']
     USE_X_FORWARDED_HOST = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
