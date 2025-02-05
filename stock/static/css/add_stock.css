@@ -1,3 +1,5 @@
+@import url(../../../static/css/colors.css);
+
 * {
     margin: 0;
     padding: 0;
@@ -8,8 +10,8 @@
 .add-button {
     width: 100%;
     padding: 0.75rem;
-    background: #1a1a1a;
-    color: white;
+    background: var(--primary-color);
+    color: var(--white);
     border: none;
     border-radius: 0.375rem;
     font-size: 1rem;
@@ -24,8 +26,8 @@
 .add-continue-button {
     width: 100%;
     padding: 0.75rem;
-    background-color: #6B7280;
-    color: white;
+    background-color: var(--third-color);
+    color: var(--white);
     border: none;
     border-radius: 0.375rem;
     font-size: 1rem;
@@ -34,7 +36,7 @@
 }
 
 .add-continue-button:hover {
-    background-color: #4B5563;
+    background-color: var(--third-color-hover);
 }
 
 .back-button {
@@ -43,14 +45,14 @@
     display: flex;
     align-items: center;
     padding: 0.5rem;
-    color: #4B5563;
+    color: var(--third-color);
     text-decoration: none;
     font-size: 0.875rem;
     transition: color 0.2s ease;
 }
 
 .back-button:hover {
-    color: #1a1a1a;
+    color: var(--third-color-hover);
 }
 
 .back-button i {
@@ -62,11 +64,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f8f9fa;
+    background-color: var(--secondary-background);
 }
 
 .form-container {
-    background: white;
+    background: var(--white);
     padding: 2rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -88,7 +90,7 @@ body {
 .form-group input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 0.375rem;
     font-size: 1rem;
     background-position: 0.75rem center;
@@ -98,21 +100,21 @@ body {
 
 .form-group input:focus {
     outline: none;
-    border-color: #666;
+    border-color: var(--border-color);
 }
 
 .form-group label {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--third-color);
     margin-bottom: 0.5rem;
 }
 
 .form-group select {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 0.375rem;
     font-size: 1rem;
     background-position: 0.75rem center;
@@ -127,4 +129,8 @@ body {
     justify-content: center;
     position: relative;
     margin-bottom: 1.5rem;
+}
+
+.header-container h2 {
+    color: var(--primary-color);
 }

@@ -1,4 +1,4 @@
-@import url(../../../static/css/buttons.css);
+@import url(../../../static/css/components/buttons.css);
 
 .action-buttons {
     display: grid;
@@ -20,21 +20,11 @@
     width: 100%;
 }
 
-.btn-confirm {
-    background-color: #10B981;
-    color: white;
-    justify-content: center;
-}
-
-.btn-confirm:hover {
-    background-color: #059669;
-}
-
 .confirmation-container {
     max-width: 500px;
     margin: 2rem auto;
     padding: 2rem;
-    background: white;
+    background: var(--white);
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -46,13 +36,13 @@
 .confirmation-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--primary-color);
     margin-bottom: 2rem;
     text-align: center;
 }
 
 .price-indicator {
-    color: #6B7280;
+    color: var(--third-color);
     font-size: 0.75rem;
     margin-right: 0.25rem;
 }
@@ -60,7 +50,6 @@
 .product-details {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
 .product-item {
@@ -68,7 +57,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .product-item:last-child {
@@ -81,24 +70,24 @@
 
 .product-price {
     font-size: 0.875rem;
-    color: #1a1a1a;
+    color: var(--primary-color);
 }
 
 .product-quantity {
-    color: #6B7280;
+    color: var(--third-color);
     font-size: 0.875rem;
 }
 
 .total-amount {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--primary-color);
 }
 
 .total-label {
     font-size: 1rem;
     font-weight: 500;
-    color: #1a1a1a;
+    color: var(--primary-color);
     margin-right: 0.5rem;
 }
 
@@ -108,11 +97,11 @@
     align-items: center;
     margin: 1.5rem 0;
     padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--border-color);
 }
 
 .quantity-indicator {
-    color: #6B7280;
+    color: var(--third-color);
     font-size: 0.75rem;
     margin-right: 0.5rem;
 }

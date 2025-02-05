@@ -1,5 +1,7 @@
+@import url(../../../static/css/colors.css);
+
 .category-item {
-    color: #4B5563;
+    color: var(--fourth-color);
     font-size: 0.875rem;
     padding: 0.25rem 0;
     display: flex;
@@ -8,7 +10,7 @@
 
 .category-item:before {
     content: "•";
-    color: #9CA3AF;
+    color: var(--fourth-color);
     margin-right: 0.5rem;
 }
 
@@ -24,14 +26,14 @@
 
 .category-title {
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
 }
 
 .business-card {
-    background: white;
-    border: 1px solid #E5E7EB;
+    background: var(--white);
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -40,7 +42,7 @@
 }
 
 .business-card:hover {
-    border-color: #1a1a1a;
+    border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
@@ -51,7 +53,7 @@
 }
 
 .business-description {
-    color: #4B5563;
+    color: var(--third-color);
     font-size: 0.875rem;
     margin-bottom: 1.5rem;
     line-height: 1.5;
@@ -73,12 +75,12 @@
 .business-type {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
 .page-description {
-    color: #4B5563;
+    color: var(--third-color);
     font-size: 1.125rem;
 }
 
@@ -92,15 +94,15 @@
 .page-title {
     font-size: 2rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
 .select-button {
     width: 100%;
     padding: 0.75rem;
-    background-color: #1a1a1a;
-    color: white;
+    background-color: var(--primary-color);;
+    color: var(--white);
     border: none;
     font-weight: 500;
     font-size: 0.875rem;
@@ -109,13 +111,13 @@
 }
 
 .select-button:hover {
-    background-color: #000000;
+    background-color: var(--primary-color-hover);
 }
 
 .warning-banner {
     width: 75%;
-    background-color: #FFFBEB;
-    border: 1px solid #FCD34D;
+    background-color: var(--warning-banner-background);
+    border: 1px solid var(--warning-banner-border);
     border-radius: 0.5rem;
     margin: 1.5rem 0;
     overflow: hidden;
@@ -123,18 +125,18 @@
 
 .warning-banner-content {
     padding: 1rem;
-    color: #92400E;
+    color: var(--warning-banner-color);
     font-size: 0.875rem;
     line-height: 1.5;
 }
 
 .warning-banner-icon {
-    color: #92400E;
+    color: var(--warning-banner-color);
     font-size: 0.875rem;
 }
 
 .warning-banner-header {
-    background-color: #FCD34D;
+    background-color: var(--warning-banner-border);
     padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
@@ -143,7 +145,7 @@
 
 .warning-banner-title {
     font-weight: 600;
-    color: #92400E;
+    color: var(--warning-banner-color);
     font-size: 0.875rem;
 }
 

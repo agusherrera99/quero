@@ -1,10 +1,5 @@
-@import url(../../../static/css/toats.css);
-
-:root {
-    --background-color: #F3F4F6;
-    --text-color: #1F2937;
-    --text-light: #6B7280;
-}
+@import url(../../../static/css/colors.css);
+@import url(../../../static/css/components/toats.css);
 
 * {
     margin: 0;
@@ -19,14 +14,14 @@
     display: flex;
     align-items: center;
     padding: 0.5rem;
-    color: #4B5563;
+    color: var(--third-color);
     text-decoration: none;
     font-size: 0.875rem;
     transition: color 0.2s ease;
 }
 
 .back-button:hover {
-    color: #1a1a1a;
+    color: var(--third-color-hover);
 }
 
 .back-button i {
@@ -40,8 +35,8 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: var(--secondary-background);
+    color: var(--third-color);
 }
 
 .contact-form {
@@ -53,7 +48,7 @@ body {
 .contact-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--primary-color);
     text-align: center;
 }
 
@@ -61,7 +56,7 @@ body {
     max-width: 600px;
     margin: 2rem auto;
     padding: 2rem;
-    background-color: #ffffff;
+    background-color: var(--white);
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     flex-grow: 1;
@@ -84,13 +79,13 @@ body {
 .form-input:focus,
 .form-textarea:focus {
     outline: none;
-    border-color: #666;
+    border-color: var(--border-color);
 }
 
 .form-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--text-light);
+    color: var(--third-color);
     margin-bottom: 0.5rem;
 }
 
@@ -108,9 +103,9 @@ body {
 }
 
 .submit-button {
-    background-color: #1a1a1a;
-    color: white;
-    border-color: #1a1a1a;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
     font-size: 0.875rem;
     font-weight: 500;
     padding: 0.75rem 1.5rem;
@@ -119,6 +114,8 @@ body {
 }
 
 .submit-button:hover {
+    background-color: var(--primary-color-hover);
+    border-color: var(--primary-color-hover);
     opacity: 0.9;
 }
 

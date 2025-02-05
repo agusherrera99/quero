@@ -1,12 +1,5 @@
-@import url(../../../static/css/buttons.css);
-
-:root {
-    --gradient-start: #e0f0ff;
-    --gradient-end: #e6e0ff;
-    --primary-color: #1a1a1a;
-    --secondary-color: #6b7280;
-    --card-bg: #ffffff;
-  }
+@import url(../../../static/css/colors.css);
+@import url(../../../static/css/components/buttons.css);
 
 * {
     margin: 0;
@@ -65,7 +58,7 @@ main {
     left: -250px;
     width: 250px;
     height: 100%;
-    background-color: white;
+    background-color: var(--white);
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: left 0.3s ease;
     z-index: 10;
@@ -97,7 +90,7 @@ main {
 
 .pricing-header p {
     font-size: 1.25rem;
-    color: var(--secondary-color);
+    color: var(--third-color);
 }
 
 .pricing-cards {
@@ -107,7 +100,7 @@ main {
 }
 
 .pricing-card {
-    background-color: var(--card-bg);
+    background-color: var(--white);
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -127,7 +120,7 @@ main {
 }
 
 .card-header p {
-    color: var(--secondary-color);
+    color: var(--third-color);
     font-size: 0.875rem;
 }
 
@@ -159,21 +152,21 @@ main {
   
 .period {
     font-size: 1rem;
-    color: var(--secondary-color);
+    color: var(--third-color);
 } 
   
 .monthly-price {
     display: flex;
     align-items: center;
     text-align: center;
-    color: var(--secondary-color);
+    color: var(--third-color);
     font-size: 1rem;
     margin-bottom: 1rem;
 }
   
 .discount-badge {
-    background-color: #4caf50;
-    color: white;
+    background-color: var(--green);
+    color: var(--white);
     font-size: 0.875rem;
     padding: 0.25rem 0.5rem;
     border-radius: 1rem;
@@ -191,7 +184,7 @@ main {
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
-    color: var(--secondary-color);
+    color: var(--third-color);
 }
 
 .features li i {
@@ -201,7 +194,7 @@ main {
 .checkmark {
     width: 1rem;
     height: 1rem;
-    fill: #4caf50;
+    fill: var(--green);
     margin-right: 0.5rem;
 }
 
@@ -210,15 +203,15 @@ footer {
     justify-content: space-between;
     align-items: center;
     padding: 2rem;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border-color);
 }
 
 footer p {
-    color: #6B7280;
+    color: var(--third-color);
 }
 
 .footer-link {
-    color: #1a1a1a;
+    color: var(--primary-color);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -235,7 +228,7 @@ footer p {
 }
 
 .mobile-menu-toggle:hover {
-    color: #1a1a1a;
+    color: var(--primary-color);
 }
 
 .sidebar {
@@ -244,7 +237,7 @@ footer p {
     left: -250px;
     width: 250px;
     height: 100%;
-    background-color: white;
+    background-color: var(--white);
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: left 0.3s ease;
     z-index: 10;
