@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funcion para alternar entre los gráficos principales
     chartToggleButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const chartType = button.getAttribute('data-chart');
-
             chartToggleButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
@@ -52,8 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Plotly.react('sales-chart', [{
             x: dates,
             y: values,
-            type: 'scatter',
-            mode: 'lines+markers'
+            type: 'bar',
         }], {
             title: 'Ventas en el tiempo',
             xaxis: {

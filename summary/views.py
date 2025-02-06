@@ -179,28 +179,6 @@ def summary(request):
     monthly_products_sold_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
     monthly_products_sold_last_month = round(monthly_products_sold_last_month)
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
-    
-    # # Categorías y Subcategorías más vendidas
-    # category_and_subcategory_sales = cache.get("category_sales")
-    # if not category_and_subcategory_sales:
-    #     category_and_subcategory_sales = Sale.objects.values(
-    #         category_name=F('product__subcategory__category__name'),
-    #         subcategory_name=F('product__subcategory__name')
-    #     ).annotate(
-    #         total_sales=Sum('total_price')
-    #     ).order_by('-total_sales')
-    #     cache.set("category_sales", category_and_subcategory_sales, timeout=3600)
-
-    # category_sales = {}
-    # subcategory_sales = {}
-    # for sale in category_and_subcategory_sales:
-    #     category_sales[sale['category_name']] = category_sales.get(sale['category_name'], 0) + sale['total_sales']
-    #     subcategory_sales[sale['subcategory_name']] = subcategory_sales.get(sale['subcategory_name'], 0) + sale['total_sales']
-
-    # category_pie = go.Figure(data=[go.Pie(labels=list(category_sales.keys()), values=list(category_sales.values()), hole=0.3)])
-    # subcategory_pie = go.Figure(data=[go.Pie(labels=list(subcategory_sales.keys()), values=list(subcategory_sales.values()), hole=0.3)])
-    # category_graph_html = category_pie.to_html(full_html=False)
-    # subcategory_graph_html = subcategory_pie.to_html(full_html=False)
 
     # Buscador de ventas
     sale_search_form = SalesForm()
@@ -218,7 +196,7 @@ def summary(request):
 
     # Si no hay búsqueda, simplemente paginamos las ventas
     sales_paginator = Paginator(sales_results if sales_results else sales, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get('page', 1)
     sales = sales_paginator.get_page(page_number)
 
     # Agrupar por 'product_id' para que las ventas de un mismo producto se sumen correctamente
@@ -255,9 +233,6 @@ def summary(request):
         'monthly_products_sold_percentage': monthly_products_sold_percentage,
         'monthly_products_sold_percentage_text': monthly_products_sold_percentage_text,
         'monthly_products_sold_percentage_color': monthly_products_sold_percentage_color,
-
-        # 'category_graph_html': category_graph_html,
-        # 'subcategory_graph_html': subcategory_graph_html,
 
         'sales': sales,  
         'sales_results': sales_results, 
