@@ -1,0 +1,484 @@
+@import url(../../../static/css/components/pagination.css);
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-title {
+    font-size: 0.875rem;
+    color: var(--third-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.status {
+    font-size: 1rem;
+    color: var(--third-color);
+    margin-top: 0.5rem;
+}
+
+.chart-btn,
+.chart-type-btn,
+.toggle-btn,
+.period-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--third-color);
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chart-btn:hover,
+.chart-type-btn:hover,
+.toggle-btn:hover,
+.period-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.chart-btn.active,
+.chart-type-btn.active,
+.toggle-btn.active,
+.period-btn.active {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.chart-card {
+    width: 100%;
+    background: var(--white);
+    border-radius: 0.5rem;
+    padding: 1rem 2.5rem 12rem 2.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.chart-container,
+.chart-type-container,
+.chart-period-container {
+    display: none;
+}
+
+.chart-container.active,
+.chart-type-container.active,
+.chart-period-container.active {
+    display: block;
+}
+
+.chart-flex {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.chart-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.chart-placeholder {
+    width: 100%;
+    max-height: 550px;
+    height: 90%;
+    position: relative;
+    background: var(--secondary-background);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--third-color);
+    font-size: 0.875rem;
+}
+
+.chart-placeholder > div{
+    height: auto;
+    padding: 1rem 1rem;
+}
+
+.chart-period {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chart-toggle,
+.table-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chart-type {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.plot-container {
+    display: flex;
+    justify-content: center;
+}
+
+.table-container {
+    background: var(--white);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-form {
+    display: flex;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    background-color: var(--white);
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.search-input::placeholder {
+    color: var(--third-color);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--third-color);
+    pointer-events: none;
+}
+
+.search-clear {
+    transform: translateX(-100%);
+    color: var(--third-color);
+    cursor: pointer;
+    padding-right: 1rem;
+    border: none;
+    background: none;
+    display: none;
+}
+
+.search-clear:hover {
+    color: var(--primary-color);
+}
+
+.search-input:not(:placeholder-shown)+.search-clear {
+    display: block;
+}
+
+.spends-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.spends-table th {
+    background: var(--secondary-background);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-weight: 500;
+    color: var(--primary-color);
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.spends-table td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+}
+
+.spends-table tr:hover {
+    background: var(--secondary-background);
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Estilos para las tarjetas de gastos (solo en móviles) */
+.spends-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.spend-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    max-width: 350px;
+    padding: 1.5rem;
+    background-color: var(--white);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.spend-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para la información del gasto */
+.spend-info {
+    margin-bottom: 1rem;
+}
+
+.spend-info div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--third-color);
+}
+
+.spend-info strong {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Estilos para los botones de acción */
+.spend-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.spend-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-background);
+    color: var(--primary-color);
+}
+
+.spend-actions .btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.spend-actions .btn.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.spend-actions .btn.btn-primary:hover {
+    background-color: var(--primary-color-hover);
+}
+
+.spend-actions .btn.btn-danger {
+    background-color: var(--danger-color);
+    color: var(--white);
+    border-color: var(--danger-color);
+}
+
+.spend-actions .btn.btn-danger:hover {
+    background-color: var(--danger-color-hover);
+}
+
+/* Estilos para el mensaje de "No hay resultados" */
+.spend-card p {
+    text-align: center;
+    color: var(--third-color);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Ocultar tarjetas en PC y mostrar tablas */
+.desktop-only {
+    display: table;
+}
+
+.mobile-only {
+    display: none;
+}
+
+/* Pantallas pequeñas (móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .table-header {
+        justify-content: unset;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* Ocultar tablas en móviles y mostrar tarjetas */
+@media (max-width: 1140px) {
+    .desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        display: block;
+    }
+
+    .chart-flex {
+        display: none;
+    }
+
+    /* Estilos para las tarjetas en móviles */
+    .spends-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .spend-card {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        height: 100%;
+        max-width: 420px;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e5e7eb;
+    }
+
+    .spend-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .spend-info {
+        margin-bottom: 1rem;
+    }
+
+    .spend-info div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+        color: #4B5563;
+    }
+
+    .spend-info strong {
+        font-weight: 600;
+        color: #1F2937;
+    }
+
+    .spend-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: auto;
+        justify-content: center;
+    }
+
+    .spend-actions .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 0.375rem;
+        text-align: center;
+        transition: background-color 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        border: 1px solid #e5e7eb;
+        background-color: #f8f9fa;
+        color: var(--primary-color);
+    }
+
+    .spend-actions .btn:hover {
+        background-color: #e5e7eb;
+    }
+
+    .spend-actions .btn.btn-danger {
+        background-color: #dc2626;
+        color: white;
+        border-color: #dc2626;
+    }
+
+    .spend-actions .btn.btn-danger:hover {
+        background-color: #b91c1c;
+    }
+
+    .spend-card p {
+        text-align: center;
+        color: #6B7280;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+}

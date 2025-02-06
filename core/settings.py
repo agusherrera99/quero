@@ -46,10 +46,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'account.apps.AccountConfig',
     'pages.apps.PagesConfig',
-    'stock.apps.StockConfig',
+    'account.apps.AccountConfig',
     'pos.apps.PosConfig',
+    'stock.apps.StockConfig',
+    'spends.apps.SpendsConfig',
     'summary.apps.SummaryConfig',
 ]
 

@@ -17,6 +17,10 @@
                 <i class="fa-solid fa-cubes fa-2x"></i>
                 Inventario
             </a>
+            <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'spends' %}active{% endif %}" href="{% url 'spends:spends' %}">
+                <i class="fa-solid fa-receipt fa-2x"></i>
+                Gastos
+            </a>
             <a class="nav-item btn btn-ghost {% if request.resolver_match.url_name == 'summary' %}active{% endif %}" href="{% url 'summary:summary' %}">
                 <i class="fa-solid fa-book fa-2x"></i>
                 Resumen
