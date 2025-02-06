@@ -1,15 +1,17 @@
 from datetime import datetime, timedelta
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Case, IntegerField, F, Sum, Value, When
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from spends.models import Spend
-from spends.forms import SpendForm
+from spends.forms import AddSpendForm, SpendForm
 
 
 def calculate_percentage_change(current, previous):
@@ -66,7 +68,7 @@ def get_category_spends_data():
         return cached_data
 
     category_spends = Spend.objects.values(
-        category_name=F('category__name')
+        category_name=F('category')
     ).annotate(
         total_spends=Sum('amount')
     ).order_by('-total_spends')
@@ -83,9 +85,10 @@ def category_spends_data(request):
     data = get_category_spends_data()
     return JsonResponse(data)
 
+@login_required
 def spends(request):
     # Obtener los gastos del usuario
-    spends = Spend.objects.filter(user=request.user).select_related('category').order_by('-created_at')
+    spends = Spend.objects.filter(user=request.user).order_by('-created_at')
 
     # Calcular el primer dia del més actual y el día anterior
     today = datetime.today()
@@ -131,7 +134,7 @@ def spends(request):
         if spend_search_form.is_valid():
             spend_query = spend_search_form.cleaned_data['spend_query']
             spends_results = spends.annotate(
-            search=SearchVector('category__name')
+            search=SearchVector('category')
         ).filter(search__icontains=spend_query)
 
     spends_paginator = Paginator(spends_results if spends_results else spends, 10)
@@ -156,3 +159,51 @@ def spends(request):
     }
 
     return render(request, 'spends.html', context=context)
+
+@login_required
+@transaction.atomic
+def add_spend(request):
+    if request.method == 'POST':
+        form = AddSpendForm(request.POST)
+        if form.is_valid():
+            action = request.POST.get('action')
+
+            if action == 'add_and_finish':
+
+                category = form.cleaned_data.get('category')
+                amount = form.cleaned_data.get('amount')
+                receiver = form.cleaned_data.get('receiver')
+
+                spend = Spend(
+                    user=request.user,
+                    category=category,
+                    amount=amount,
+                    receiver=receiver
+                )
+                spend.save()
+                messages.success(request, 'Gasto añadido correctamente.')
+                return redirect('spends:spends')
+            elif action == 'add_and_continue':
+                category = form.cleaned_data.get('category')
+                amount = form.cleaned_data.get('amount')
+                receiver = form.cleaned_data.get('receiver')
+
+                spend = Spend(
+                    user=request.user,
+                    category=category,
+                    amount=amount,
+                    receiver=receiver
+                )
+                spend.save()
+                messages.success(request, 'Gasto añadido correctamente.')
+                return redirect('spends:add_spend')
+        else:
+            messages.error(request, 'Ocurrió un error al añadir el gasto.')
+    else:
+        form = AddSpendForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'add_spend.html', context)

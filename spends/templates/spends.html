@@ -103,7 +103,7 @@
                 </button>
             </form>
         </div>
-        <a class="btn btn-primary btn-icon" href="">
+        <a class="btn btn-primary btn-icon" href="{% url 'spends:add_spend' %}">
             <i class="fas fa-plus"></i>
             Añadir Gasto
         </a>
@@ -113,7 +113,7 @@
         <thead>
             <tr>
                 <th>Fecha</th>
-                <th>Tipo</th>
+                <th>Categoría</th>
                 <th>Monto</th>
                 <th>Destinatario</th>
                 <th>Acciones</th>
@@ -128,15 +128,15 @@
                         </td>
                     </tr>
                 {% else %}
-                    {% for spends in results %}
+                    {% for spend in results %}
                         <tr>
-                            <td>{{ spends.created_at }}</td>
-                            <td>{{ spends.category.name }}</td>
-                            <td>{{ spends.amount}}</td>
-                            <td>{{ spends.receiver}}</td>
+                            <td>{{ spend.created_at }}</td>
+                            <td>{{ spend.category.name }}</td>
+                            <td>{{ spend.amount}}</td>
+                            <td>{{ spend.receiver}}</td>
                             <td class="actions">
-                                <a class="btn-icon-only" href="{% url 'spends:edit_spend' spend.id %}" title="Editar"><i class="fas fa-pen"></i></a>
-                                <a class="btn-icon-only" href="{% url 'spends:delete_spend' spend.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>
+                                <!-- <a class="btn-icon-only" href="" title="Editar"><i class="fas fa-pen"></i></a>
+                                <a class="btn-icon-only" href="" title="Eliminar"><i class="fas fa-trash"></i></a> -->
                             </td>
                         </tr>
                     {% endfor %}
@@ -151,13 +151,13 @@
                 {% else %}
                     {% for spend in spends %}
                     <tr>
-                        <td>{{ spends.created_at }}</td>
-                        <td>{{ spends.category.name }}</td>
-                        <td>{{ spends.amount}}</td>
-                        <td>{{ spends.receiver}}</td>
+                        <td>{{ spend.created_at }}</td>
+                        <td>{{ spend.category.name }}</td>
+                        <td>{{ spend.amount}}</td>
+                        <td>{{ spend.receiver}}</td>
                         <td class="actions">
-                            <a class="btn-icon-only" href="{% url 'spends:edit_spend' spend.id %}" title="Editar"><i class="fas fa-pen"></i></a>
-                            <a class="btn-icon-only" href="{% url 'spends:delete_spend' spend.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>
+                            <a class="btn-icon-only" href="" title="Editar"><i class="fas fa-pen"></i></a>
+                            <a class="btn-icon-only" href="" title="Eliminar"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -172,7 +172,7 @@
 </div>
 
 <!-- Lista de gastos (solo visible en dispositivos móviles) -->
-<div class="spends-list">
+<div class="spends-list mobile-only">
     {% if query %}
         {% if not results %}
             <div class="spend-card">
@@ -188,7 +188,7 @@
                         <strong>{{ spend.created_at }}</strong>
                     </div>
                     <div>
-                        <p>Tipo:</p>
+                        <p>Categoría:</p>
                         <strong>{{ spend.category.name }}</strong>
                     </div>
                     <div>
@@ -203,10 +203,10 @@
 
                 <!-- Acciones -->
                 <div class="spend-actions">
-                    <a href="{% url 'spends:edit_spend' spend.id %}" class="btn btn-primary">
+                    <a href="" class="btn btn-primary">
                         <i class="fas fa-pen"></i> Editar
                     </a>
-                    <a href="{% url 'spends:delete_spend' spend.id %}" class="btn btn-danger">
+                    <a href="" class="btn btn-danger">
                         <i class="fas fa-trash"></i> Eliminar
                     </a>
                 </div>
@@ -223,7 +223,7 @@
                     <strong>{{ spend.created_at }}</strong>
                 </div>
                 <div>
-                    <p>Tipo:</p>
+                    <p>Categoría:</p>
                     <strong>{{ spend.category.name }}</strong>
                 </div>
                 <div>
@@ -238,10 +238,10 @@
 
             <!-- Acciones -->
             <div class="spend-actions">
-                <a href="{% url 'spends:edit_spend' spend.id %}" class="btn btn-primary">
+                <a href="" class="btn btn-primary">
                     <i class="fas fa-pen"></i> Editar
                 </a>
-                <a href="{% url 'spends:delete_spend' spend.id %}" class="btn btn-danger">
+                <a href="" class="btn btn-danger">
                     <i class="fas fa-trash"></i> Eliminar
                 </a>
             </div>
