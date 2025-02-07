@@ -1,0 +1,203 @@
+@import url(../../../static/css/colors.css);
+@import url(../../../static/css/components/buttons.css);
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    width: auto; 
+    min-width: 120px;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-delete {
+    background-color: var(--danger-color);
+    color: var(--white);
+}
+
+.btn-delete:hover:not(:disabled) {
+    background-color: var(--danger-color-hover);
+}
+
+.consequences {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    border-left: 4px solid var(--warning-color);
+    background-color: var(--warning-banner-background);
+    font-size: 0.875rem;
+}
+
+.consequences-list {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    color: var(--warning-banner-color);
+    font-size: 0.875rem;
+}
+
+.consequences-title {
+    font-weight: 600;
+    color: var(--warning-banner-color);
+    margin-bottom: 0.5rem;
+}
+
+.delete-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.delete-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.delete-warning {
+    color: var(--danger-color);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--toast-error-background);
+    border-radius: 0.375rem;
+    text-align: center;
+}
+
+.input-confirm {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.input-confirm:focus {
+    outline: none;
+    border-color: var(--border-color);
+    box-shadow: 0 0 0 1px var(--danger-color);
+}
+
+.spend-details {
+    color: var(--third-color);
+    font-size: 0.875rem;
+}
+
+.spend-info {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: var(--secondary-background);
+    border-radius: 0.375rem;
+}
+
+.spend-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.warning-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--toast-error-background);
+    border-radius: 50%;
+}
+
+.warning-icon i {
+    font-size: 32px;
+    color: var(--danger-color);
+}
+
+/* Pantallas pequeñas (móviles, hasta 768px) */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn-detele, .btn-cancel {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .consequences {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .consequences-title {
+        font-size: 1rem;
+    }
+
+    .delete-container {
+        margin: 1rem auto;
+        padding: 1.5rem;
+    }
+
+    .delete-title {
+        font-size: 1.25rem;
+    }
+
+    .delete-warning {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .input-confirm {
+        font-size: 0.75rem;
+    }
+
+    .spend-details {
+        font-size: 0.75rem;
+    }
+
+    .spend-info {
+        padding: 0.75rem;
+    }
+
+    .spend-name {
+        font-size: 1rem;
+    }
+
+    .warning-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .warning-icon i {
+        font-size: 24px;
+    }
+}

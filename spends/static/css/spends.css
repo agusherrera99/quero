@@ -266,6 +266,10 @@
     gap: 0.5rem;
 }
 
+.actions a {
+    color: var(--primary-color);
+}
+
 /* Estilos para las tarjetas de gastos (solo en móviles) */
 .spends-list {
     display: grid;

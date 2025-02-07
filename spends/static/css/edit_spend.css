@@ -7,38 +7,6 @@
     font-family: system-ui, -apple-system, sans-serif;
 }
 
-.add-button {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--primary-color);
-    color: var(--white);
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 1rem;
-}
-
-.add-button:hover {
-    opacity: 0.9;
-}
-
-.add-continue-button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: var(--third-color);
-    color: var(--white);
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 1rem;
-}
-
-.add-continue-button:hover {
-    background-color: var(--third-color-hover);
-}
-
 .back-button {
     position: absolute;
     left: 0;
@@ -139,4 +107,20 @@ body {
 
 .header-container h2 {
     color: var(--primary-color);
+}
+
+.submit-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.submit-button:hover {
+    background: var(--primary-color-hover);
 }

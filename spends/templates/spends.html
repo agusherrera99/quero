@@ -135,8 +135,8 @@
                             <td>{{ spend.amount}}</td>
                             <td>{{ spend.receiver}}</td>
                             <td class="actions">
-                                <!-- <a class="btn-icon-only" href="" title="Editar"><i class="fas fa-pen"></i></a>
-                                <a class="btn-icon-only" href="" title="Eliminar"><i class="fas fa-trash"></i></a> -->
+                                <a class="btn-icon-only" href="{% url 'spends:edit_spend' spend.id %}" title="Editar"><i class="fas fa-pen"></i></a>
+                                <a class="btn-icon-only" href="{% url 'spends:delete_spend' spend.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -156,8 +156,8 @@
                         <td>{{ spend.amount}}</td>
                         <td>{{ spend.receiver}}</td>
                         <td class="actions">
-                            <a class="btn-icon-only" href="" title="Editar"><i class="fas fa-pen"></i></a>
-                            <a class="btn-icon-only" href="" title="Eliminar"><i class="fas fa-trash"></i></a>
+                            <a class="btn-icon-only" href="{% url 'spends:edit_spend' spend.id %}" title="Editar"><i class="fas fa-pen"></i></a>
+                            <a class="btn-icon-only" href="{% url 'spends:delete_spend' spend.id %}" title="Eliminar"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                     {% endfor %}

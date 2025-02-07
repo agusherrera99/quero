@@ -43,5 +43,7 @@ class Spend(models.Model):
 
         if self.amount < 0:
             raise ValueError('El monto no puede ser negativo')
+        
+        self.receiver = self.receiver.lower()
 
         return super(Spend, self).save(*args, **kwargs)

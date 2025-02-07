@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Case, IntegerField, F, Sum, Value, When
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from spends.models import Spend
 from spends.forms import AddSpendForm, SpendForm
@@ -49,7 +49,7 @@ def get_spend_data_for_period(period):
     spends_values = [entry['amount'] for entry in spend_data]
 
     result = {'dates': spends_dates, 'values': spends_values}
-    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    cache.set(cache_key, result, 60)
     return result
 
 @login_required
@@ -77,7 +77,7 @@ def get_category_spends_data():
     category_values = [entry['total_spends'] for entry in category_spends]
 
     result = {'labels': category_labels, 'values': category_values}
-    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    cache.set(cache_key, result, 60)
     return result
 
 @login_required
@@ -207,3 +207,48 @@ def add_spend(request):
     }
 
     return render(request, 'add_spend.html', context)
+
+@login_required
+@transaction.atomic
+def edit_spend(request, pk):
+    spend = Spend.objects.filter(pk=pk).first()
+
+    if spend.user != request.user:
+        messages.error(request, 'No tienes permisos para editar este gasto.')
+        return redirect('spends:spends')
+
+    if request.method == 'POST':
+        form = AddSpendForm(data=request.POST, instance=spend, request=request)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Gasto editado correctamente.')
+            return redirect('spends:spends')
+        else:
+            messages.error(request, 'Ocurrió un error al editar el gasto.')
+    else:
+        form = AddSpendForm(instance=spend, request=request)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'edit_spend.html', context)
+
+@login_required
+@transaction.atomic
+def delete_spend(request, pk):
+    spend = get_object_or_404(Spend, pk=pk)
+
+    if spend.user != request.user:
+        messages.error(request, 'No tienes permisos para eliminar este gasto.')
+        return redirect('spends:spends')
+    
+    if request.method == 'POST':
+        spend.delete()
+        messages.success(request, 'Gasto eliminado correctamente.')
+        return redirect('spends:spends')
+
+    context = {
+        'spend': spend
+    }
+    return render(request, 'delete_spend.html', context)

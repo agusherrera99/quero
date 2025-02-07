@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/svg" href="{% static 'images/favicon.svg' %}" >
+    <title>Eliminar Gasto</title>
+    <link rel="stylesheet" href="{% static 'css/delete_spend.css' %}">
+</head>
+<body>
+    <div class="delete-container">
+        <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2 class="delete-title">Eliminar Gasto</h2>
+        
+        <!-- Mensaje de advertencia -->
+        <div class="delete-warning">
+            ¡Atención! Esta acción no se puede deshacer
+        </div>
+        <div class="consequences">
+            <div class="consequences-title">Esta acción causará:</div>
+            <ul class="consequences-list">
+                <li>Eliminar el gasto de la base de datos</li>
+            </ul>
+        </div>
+
+        <!-- Información del gasto -->
+        <div class="spend-info">
+            <div class="spend-name">{{ spend.name }}</div>
+            <div class="spend-details">
+                Categoría: {{ spend.category }}<br>
+                Monto: ${{ spend.amount }}<br>
+                Destinatario: {{ spend.receiver }}<br>
+            </div>
+        </div>
+
+        <!-- Formulario de confirmación -->
+        <form method="post" action="{% url 'spends:delete_spend' spend.id %}">
+            {% csrf_token %}
+            <div style="display: flex;">
+                <input 
+                type="text" 
+                class="input-confirm" 
+                required
+                placeholder="Escribe 'ELIMINAR' para confirmar" 
+                pattern="ELIMINAR"
+                oninput="document.getElementById('deleteButton').disabled = this.value !== 'ELIMINAR'">  
+            </div>
+            
+            <div class="action-buttons">
+                <button type="submit" 
+                        class="btn btn-delete" 
+                        id="deleteButton" 
+                        disabled>
+                    Eliminar Gasto
+                </button>
+                <a href="{% url 'spends:spends' %}" class="btn btn-default">Cancelar</a>
+            </div>
+        </form>
+    </div>
+    <script stc="{% static 'js/delete_spend.js' %}"></script>
+</body>
