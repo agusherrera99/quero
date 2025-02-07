@@ -48,7 +48,7 @@ def get_sales_data_for_period(period):
     sales_values = [entry['total_sales'] for entry in sales_data]
 
     result = {'dates': sales_dates, 'values': sales_values}
-    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    cache.set(cache_key, result, 60)
     return result
 
 @login_required
@@ -76,7 +76,7 @@ def get_category_sales_data():
     category_values = [entry['total_sales'] for entry in category_sales]
 
     result = {'labels': category_labels, 'values': category_values}
-    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    cache.set(cache_key, result, 60)
     return result
 
 def get_subcategory_sales_data():
@@ -95,7 +95,7 @@ def get_subcategory_sales_data():
     subcategory_values = [entry['total_sales'] for entry in subcategory_sales]
 
     result = {'labels': subcategory_labels, 'values': subcategory_values}
-    cache.set(cache_key, result, timeout=3600)  # 1 hora
+    cache.set(cache_key, result, 60)
     return result
 
 @login_required
