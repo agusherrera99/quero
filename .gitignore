@@ -188,3 +188,6 @@ staticfiles/
 
 # QR Code
 qr/
+
+# Test Files
+test_files/
