@@ -49,7 +49,7 @@ def get_spend_data_for_period(period):
     spends_values = [entry['amount'] for entry in spend_data]
 
     result = {'dates': spends_dates, 'values': spends_values}
-    cache.set(cache_key, result, 60)
+    # cache.set(cache_key, result, 60)
     return result
 
 @login_required

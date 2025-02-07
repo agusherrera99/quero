@@ -7,10 +7,12 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Case, F, IntegerField, Sum, Value, When
+from django.db.models.functions import TruncDate
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from pos.models import Sale
+from spends.models import Spend
 from .forms import SalesForm
 
 def calculate_percentage_change(current, previous):
@@ -106,6 +108,61 @@ def category_sales_data(request):
 @login_required
 def subcategory_sales_data(request):
     data = get_subcategory_sales_data()
+    return JsonResponse(data)
+
+def get_income_spends_data_for_period(period):
+    cache_key = f"income_spends_data_{period}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    today = datetime.today()
+    start_date = today - timedelta(days=period)
+
+    # Agrupar ingresos por fecha
+    income_data = Sale.objects.filter(created_at__date__gte=start_date).values(
+        'created_at__date'
+    ).annotate(
+        total_income=Sum('total_price')
+    ).order_by('created_at__date')
+
+    # Agrupar gastos por fecha
+    spend_data = Spend.objects.filter(created_at__date__gte=start_date).values(
+        'created_at__date'
+    ).annotate(
+        total_spend=Sum('amount')
+    ).order_by('created_at__date')
+
+    # Extraer fechas y valores
+    income_dates = [entry['created_at__date'].strftime('%Y-%m-%d') for entry in income_data]
+    income_values = [entry['total_income'] for entry in income_data]
+
+    spend_dates = [entry['created_at__date'].strftime('%Y-%m-%d') for entry in spend_data]
+    spend_values = [entry['total_spend'] for entry in spend_data]
+
+    # Combinar todas las fechas únicas
+    all_dates = sorted(set(income_dates + spend_dates))
+
+    # Asegurar que cada fecha tenga un valor para ingresos y gastos
+    incomes = [next((val for date, val in zip(income_dates, income_values) if date == d), 0) for d in all_dates]
+    spends = [next((val for date, val in zip(spend_dates, spend_values) if date == d), 0) for d in all_dates]
+
+    result = {
+        'dates': all_dates,
+        'incomes': incomes,
+        'spends': spends
+    }
+
+    cache.set(cache_key, result, 60)
+    return result
+
+@login_required
+def income_spends_data(request):
+    period = request.GET.get('period', 7)
+    period = int(period[:-1])
+
+    data = get_income_spends_data_for_period(period)
+    
     return JsonResponse(data)
 
 @login_required

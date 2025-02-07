@@ -26,27 +26,27 @@ document.addEventListener('DOMContentLoaded', function() {
     chartContainers[0].classList.add('active'); // Muestra el gráfico de ventas en el tiempo por defecto
 
     // Ventas en el tiempo
-    const periodButtons = document.querySelectorAll('.period-btn');
+    const salesPeriodButton = document.querySelectorAll('.sales-period-btn');
     
-    // Función para alternar entre los periodos de tiempo
-    periodButtons.forEach(button => {
+    // Función para alternar entre los periodos de tiempo para el gráfico de ventas en el tiempo
+    salesPeriodButton.forEach(button => {
         button.addEventListener('click', () => {
-            const period = button.getAttribute('data-period-chart');
-            periodButtons.forEach(btn => btn.classList.remove('active'));
+            const period = button.getAttribute('data-period-sales');
+            salesPeriodButton.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
-            fetchChartData(period);
+            fetchSalesChartData(period);
         });
     });
 
-    async function fetchChartData(period) {
+    async function fetchSalesChartData(period) {
         let response = await fetch(`sales-data?period=${period}`);
         let data = await response.json();
         
-        updateChart(data.dates, data.values);
+        updateSalesChart(data.dates, data.values);
     }
 
-    function updateChart(dates, values) {
+    function updateSalesChart(dates, values) {
         Plotly.react('sales-chart', [{
             x: dates,
             y: values,
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cargar datos para el periodo 7 días al cargar la página
-    fetchChartData('7d');
+    fetchSalesChartData('7d');
 
     // Función para cargar datos de categorías
     async function fetchCategoryData() {
@@ -152,6 +152,55 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Función para alternar entre los periodos de tiempo para el gráfico de ingresos vs gastos
+    const incomeSpendsPeriodButton = document.querySelectorAll('.income-spends-period-btn');
+
+    incomeSpendsPeriodButton.forEach(button => {
+        button.addEventListener('click', () => {
+            const period = button.getAttribute('data-period-income-spends');
+            incomeSpendsPeriodButton.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            fetchIncomeSpendsData(period);
+        });
+    });
+
+    async function fetchIncomeSpendsData(period) {
+        let response = await fetch(`income-spends-data?period=${period}`);
+        let data = await response.json();
+        
+        updateIncomeSpendsChart(data.dates, data.incomes, data.spends);
+    };
+
+    function updateIncomeSpendsChart(dates, incomes, spends) {
+        Plotly.react('income-spends-chart', [{
+            x: dates,
+            y: incomes,
+            type: 'area',
+            mode: 'line',
+            fill: 'tozeroy', // Relleno bajo la curva
+            name: 'Ingresos'
+        }, {
+            x: dates,
+            y: spends,
+            type: 'area',
+            mode: 'line',
+            fill: 'tozeroy',
+            name: 'Gastos'
+        }], {
+            title: 'Ingresos vs Gastos',
+            xaxis: {
+                title: 'Fecha'
+            },
+            yaxis: {
+                title: 'Cantidad'
+            },
+            responsive: true
+        });
+    };
+
+    fetchIncomeSpendsData('7d');
 
     const searchInput = document.querySelector('.search-input');
     const clearButton = document.querySelector('.search-clear');

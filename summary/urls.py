@@ -10,5 +10,6 @@ urlpatterns = [
     path('sales-data/', views.sales_data, name='sales_data'),
     path('category-sales-data/', views.category_sales_data, name='category_sales_data'),
     path('subcategory-sales-data/', views.subcategory_sales_data, name='subcategory_sales_data'),
+    path('income-spends-data/', views.income_spends_data, name='income_spends_data'),
     path('delete/<int:pk>/', views.delete_sale, name='delete_sale'),
 ]

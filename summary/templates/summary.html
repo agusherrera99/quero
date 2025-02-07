@@ -103,16 +103,17 @@
                 <div class="chart-toggle">
                     <button class="chart-btn active">Ventas en el tiempo</button>
                     <button class="chart-btn">Ventas por categorias/subcategorias</button>
+                    <button class="chart-btn">Ingresos vs Gastos</button>
                 </div>
             </div>
             
             <!-- Gráficos de ventas en el tiempo -->
             <div class="chart-container active" id="ventas en el tiempo-chart">
-                <div class="chart-period">
-                    <button class="period-btn active" data-period-chart="7D">7D</button>
-                    <button class="period-btn" data-period-chart="30D">30D</button>
-                    <button class="period-btn" data-period-chart="90D">90D</button>
-                    <button class="period-btn" data-period-chart="1A">1A</button>
+                <div class="sales-chart-period">
+                    <button class="sales-period-btn active" data-period-sales="7D">7D</button>
+                    <button class="sales-period-btn" data-period-sales="30D">30D</button>
+                    <button class="sales-period-btn" data-period-sales="90D">90D</button>
+                    <button class="sales-period-btn" data-period-sales="1A">1A</button>
                 </div>
                 <div id="sales-chart"></div> 
             </div>
@@ -129,6 +130,17 @@
                 <div class="chart-type-container" id="subcategory-chart">
                     <div id="subcategory-chart" class="chart-container"></div>
                 </div>
+            </div>
+
+            <!-- Gráficos de ingresos vs gastos -->
+            <div class="chart-container" id="ingresos vs gastos-chart">
+                <div class="income-spends-chart-period">
+                    <button class="income-spends-period-btn active" data-period-income-spends="7D">7D</button>
+                    <button class="income-spends-period-btn" data-period-income-spends="30D">30D</button>
+                    <button class="income-spends-period-btn" data-period-income-spends="90D">90D</button>
+                    <button class="income-spends-period-btn" data-period-income-spends="1A">1A</button>
+                </div>
+                <div id="income-spends-chart"></div> 
             </div>
         </div>
     </div>
