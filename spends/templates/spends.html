@@ -131,7 +131,7 @@
                     {% for spend in results %}
                         <tr>
                             <td>{{ spend.created_at }}</td>
-                            <td>{{ spend.category.name }}</td>
+                            <td>{{ spend.category}}</td>
                             <td>{{ spend.amount}}</td>
                             <td>{{ spend.receiver}}</td>
                             <td class="actions">
@@ -152,7 +152,7 @@
                     {% for spend in spends %}
                     <tr>
                         <td>{{ spend.created_at }}</td>
-                        <td>{{ spend.category.name }}</td>
+                        <td>{{ spend.category }}</td>
                         <td>{{ spend.amount}}</td>
                         <td>{{ spend.receiver}}</td>
                         <td class="actions">
@@ -189,7 +189,7 @@
                     </div>
                     <div>
                         <p>Categoría:</p>
-                        <strong>{{ spend.category.name }}</strong>
+                        <strong>{{ spend.category }}</strong>
                     </div>
                     <div>
                         <p>Monto:</p>
@@ -224,7 +224,7 @@
                 </div>
                 <div>
                     <p>Categoría:</p>
-                    <strong>{{ spend.category.name }}</strong>
+                    <strong>{{ spend.category }}</strong>
                 </div>
                 <div>
                     <p>Monto:</p>
