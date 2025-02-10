@@ -251,7 +251,6 @@ def summary(request):
     total_sales = sales.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
     gross_profit = total_sales - total_cost
     gross_profit_percentage = (gross_profit / total_sales) * 100 if total_sales != 0 else 0
-    gross_profit = thousand_separator(gross_profit)
 
     if gross_profit_percentage < 0:
         gross_profit_percentage_text = f"{abs(gross_profit_percentage):.2f}%"
@@ -262,6 +261,24 @@ def summary(request):
     else:
         gross_profit_percentage_text = f"{gross_profit_percentage:.2f}%"
         gross_profit_percentage_color = 'green'
+
+    # Margen de ganancias neta (Teniendo en cuenta además todos los tipos de gastos)
+    total_spends = Spend.objects.filter(user=request.user).aggregate(total_spends=Sum('amount'))['total_spends'] or 0
+    net_profit = gross_profit - total_spends
+    net_profit_percentage = (net_profit / total_sales) * 100 if total_sales != 0 else 0
+    
+    if net_profit_percentage < 0:
+        net_profit_percentage_text = f"{abs(net_profit_percentage):.2f}%"
+        net_profit_percentage_color = 'red'
+    elif net_profit_percentage == 0:
+        net_profit_percentage_text = "Igual"
+        net_profit_percentage_color = 'gray'
+    else:
+        net_profit_percentage_text = f"{net_profit_percentage:.2f}%"
+        net_profit_percentage_color = 'green'
+
+    gross_profit = thousand_separator(gross_profit)
+    net_profit = thousand_separator(net_profit)
 
     # Buscador de ventas
     sale_search_form = SalesForm()
@@ -321,6 +338,11 @@ def summary(request):
         'gross_profit_percentage': gross_profit_percentage,
         'gross_profit_percentage_text': gross_profit_percentage_text,
         'gross_profit_percentage_color': gross_profit_percentage_color,
+
+        'net_profit': net_profit,
+        'net_profit_percentage': net_profit_percentage,
+        'net_profit_percentage_text': net_profit_percentage_text,
+        'net_profit_percentage_color': net_profit_percentage_color,
 
         'sales': sales,  
         'sales_results': sales_results, 

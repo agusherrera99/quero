@@ -114,6 +114,27 @@
                 {% endif %}
             </div>
         </div>
+        <div class="stat-card">
+            <div class="stat-title">Margen de Ganancia Neta</div>
+            <div class="stat-value">${{ net_profit|default:"0.00" }}</div>
+            <div class="status" style="color: {{ net_profit_percentage_color }};">
+                {% if net_profit_percentage %}
+                    {% if net_profit_percentage_color == "red" %}
+                        <i class="fas fa-arrow-down"></i>
+                    {% elif net_profit_percentage_color == "green" %}
+                        <i class="fas fa-arrow-up"></i>
+                    {% else %}
+                        <i class="fas fa-equals"></i>
+                    {% endif %}
+                {% endif %}
+
+                {% if net_profit_percentage_text == 'No disponible' %}
+                    No disponible
+                {% else %}
+                    {{ net_profit_percentage_text }}
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <!-- Charts Section -->
