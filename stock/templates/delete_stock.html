@@ -36,8 +36,10 @@
             <div class="product-details">
                 Categoría: {{ product.subcategory.category.name }}<br>
                 Subategoría: {{ product.subcategory.name }}<br>
+                Costo: ${{ product.cost }}<br>
                 Precio: ${{ product.price }}<br>
-                Stock: {{ product.quantity }}
+                Stock: {{ product.quantity }}<br>
+                <!-- barcode: {{ product.barcode }} -->
             </div>
         </div>
 

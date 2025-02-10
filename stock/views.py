@@ -126,6 +126,8 @@ def add_stock(request):
                 name = form.cleaned_data.get('name')
                 quantity = form.cleaned_data.get('quantity')
                 price = form.cleaned_data.get('price')
+                cost = form.cleaned_data.get('cost')
+                barcode = form.cleaned_data.get('barcode')
                 uom = form.cleaned_data.get('uom')
                 subcategory = form.cleaned_data.get('subcategory')
 
@@ -133,6 +135,8 @@ def add_stock(request):
                     name=name,
                     quantity=quantity,
                     price=price,
+                    cost=cost,
+                    barcode=barcode,
                     uom=uom,
                     subcategory=subcategory,
                     user=request.user
@@ -145,6 +149,8 @@ def add_stock(request):
                 name = form.cleaned_data.get('name')
                 quantity = form.cleaned_data.get('quantity')
                 price = form.cleaned_data.get('price')
+                cost = form.cleaned_data.get('cost')
+                barcode = form.cleaned_data.get('barcode')
                 uom = form.cleaned_data.get('uom')
                 subcategory = form.cleaned_data.get('subcategory')
 
@@ -152,6 +158,8 @@ def add_stock(request):
                     name=name,
                     quantity=quantity,
                     price=price,
+                    cost=cost,
+                    barcode=barcode,
                     uom=uom,
                     subcategory=subcategory,
                     user=request.user

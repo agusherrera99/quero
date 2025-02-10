@@ -105,6 +105,7 @@
                 <th>Producto</th>
                 <th>Categoría</th>
                 <th>Subcategoría</th>
+                <th>Costo</th>
                 <th>Precio</th>
                 <th>Cantidad</th>
                 <th>Acciones</th>
@@ -124,6 +125,7 @@
                             <td>{{ product.name }}</td>
                             <td>{{ product.subcategory.category.name }}</td>
                             <td>{{ product.subcategory.name }}</td>
+                            <td>${{ product.cost}}</td>
                             <td>${{ product.price }} ({{ product.uom }})</td>
                             <td>{{ product.quantity|floatformat:2 }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
                             <td class="actions">
@@ -139,6 +141,7 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.subcategory.category.name }}</td>
                     <td>{{ product.subcategory.name }}</td>
+                    <td>${{ product.cost}}</td>
                     <td>${{ product.price }} ({{ product.uom }})</td>
                     <td>{{ product.quantity }} ({{ product.uom }}{% if product.uom == "unidad" %}es{% else %}s{% endif %})</td>
                     <td class="actions">
@@ -188,9 +191,12 @@
                     </div>
                 </div>
 
-                <!-- Precio y Cantidad -->
+                <!-- Costo, Precio y Cantidad -->
+                <div class="product-cost">
+                    costo: ${{ product.cost }}
+                </div>
                 <div class="product-price">
-                    ${{ product.price }} ({{ product.uom }})
+                    precio: ${{ product.price }} ({{ product.uom }})
                 </div>
                 <div class="product-quantity">
                     {{ product.quantity|floatformat:2 }} {{ product.uom }} 
@@ -228,9 +234,12 @@
                     </div>
                 </div>
 
-                <!-- Precio y Cantidad -->
+                <!-- Costo, Precio y Cantidad -->
+                <div class="product-cost">
+                    costo: ${{ product.cost }}
+                </div>
                 <div class="product-price">
-                    ${{ product.price }} ({{ product.uom }})
+                    precio: ${{ product.price }} ({{ product.uom }})
                 </div>
                 <div class="product-quantity">
                     {{ product.quantity|floatformat:2 }} {{ product.uom }} 

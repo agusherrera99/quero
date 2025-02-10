@@ -20,7 +20,7 @@ class SearchForm(forms.Form):
 class AddProductForm(forms.ModelForm):
     class Meta:
         model = models.Product
-        fields = ('name', 'quantity', 'price', 'uom', 'subcategory')
+        fields = ('name', 'quantity', 'cost', 'price', 'uom', 'barcode', 'subcategory')
 
     UNIT_CHOICES = [
         ('unidad', 'Unidad'),
@@ -53,6 +53,17 @@ class AddProductForm(forms.ModelForm):
         )
     )
 
+    cost = forms.DecimalField(
+        required=True,
+        help_text='Proporcione el costo del producto.',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Costo del producto'
+            }
+        )
+    )
+
     price = forms.DecimalField(
         required=True,
         help_text='Proporcione el precio del producto.',
@@ -69,6 +80,18 @@ class AddProductForm(forms.ModelForm):
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}),
         label='Unidad de Medida'
+    )
+
+    barcode = forms.CharField(
+        max_length=100,
+        required=False,
+        help_text='Proporcione el código de barras del producto.',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Código de barras'
+            }
+        )
     )
 
     category = forms.ModelChoiceField(
@@ -105,6 +128,18 @@ class AddProductForm(forms.ModelForm):
             raise forms.ValidationError("El precio no puede ser negativo.")
         
         return price
+    
+    def clean_cost(self):
+        cost = self.cleaned_data['cost']
+        try:
+            cost = Decimal(cost)
+        except InvalidOperation:
+            raise forms.ValidationError("El costo debe ser un número válido.")
+        
+        if cost < 0:
+            raise forms.ValidationError("El costo no puede ser negativo.")
+        
+        return cost
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)

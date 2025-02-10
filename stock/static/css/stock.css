@@ -95,7 +95,13 @@
     color: var(--primary-color);
 }
 
-/* Estilos para el precio y la cantidad */
+/* Estilos para el costo, precio y la cantidad */
+.product-cost {
+    font-size: 1.125rem;
+    color: var(--third-color);
+    margin-bottom: 0.5rem;
+}
+
 .product-price {
     font-size: 1.125rem;
     font-weight: 600;

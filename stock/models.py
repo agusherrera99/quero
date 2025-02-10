@@ -53,6 +53,8 @@ class Product(models.Model):
     name = models.CharField(max_length=100, null=False, default='sin nombre')
     quantity = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
+    barcode = models.CharField(max_length=100, null=True, default=None)
     uom = models.CharField(max_length=30, choices=UNIT_CHOICES, null=False, default='unidad')
     subcategory = models.ForeignKey('Subcategory', on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -94,6 +96,8 @@ class Product(models.Model):
             raise ValidationError('La cantidad no puede ser negativa')
         if self.price < 0:
             raise ValidationError('El precio no puede ser negativo')
+        if self.cost < 0:
+            raise ValidationError('El costo no puede ser negativo')
 
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
@@ -110,6 +114,9 @@ class Product(models.Model):
 
         if self.quantity < 0:
             raise ValidationError('La cantidad no puede ser negativa')
+        
+        if self.cost < 0:
+            raise ValidationError('El costo no puede ser negativo')
 
         # Verificar si el producto está en stock bajo
         self.is_low_stock()
