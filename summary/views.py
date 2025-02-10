@@ -35,7 +35,7 @@ def calculate_percentage_change(current, previous):
     else:
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
-def get_sales_data_for_period(period):
+def get_sales_data_for_period(user, period):
     cache_key = f"sales_data_{period}"
     cached_data = cache.get(cache_key)
     if cached_data:
@@ -45,7 +45,7 @@ def get_sales_data_for_period(period):
     start_date = today - timedelta(days=period)
 
     # Usar una consulta agregada con `values` y `annotate` más eficiente
-    sales_data = Sale.objects.filter(created_at__date__gte=start_date).values(
+    sales_data = Sale.objects.filter(user=user, created_at__date__gte=start_date).values(
         'created_at__date'
     ).annotate(
         total_sales=Sum('total_price')
@@ -63,17 +63,17 @@ def sales_data(request):
     period = request.GET.get('period', 7)
     period = int(period[:-1])
 
-    data = get_sales_data_for_period(period)
+    data = get_sales_data_for_period(request.user, period)
     
     return JsonResponse(data)
 
-def get_category_sales_data():
+def get_category_sales_data(user):
     cache_key = "category_sales_data"
     cached_data = cache.get(cache_key)
     if cached_data:
         return cached_data
 
-    category_sales = Sale.objects.values(
+    category_sales = Sale.objects.filter(user=user).values(
         category_name=F('product__subcategory__category__name')
     ).annotate(
         total_sales=Sum('total_price')
@@ -86,13 +86,13 @@ def get_category_sales_data():
     cache.set(cache_key, result, 60)
     return result
 
-def get_subcategory_sales_data():
+def get_subcategory_sales_data(user):
     cache_key = "subcategory_sales_data"
     cached_data = cache.get(cache_key)
     if cached_data:
         return cached_data
 
-    subcategory_sales = Sale.objects.values(
+    subcategory_sales = Sale.objects.filter(user=user).values(
         subcategory_name=F('product__subcategory__name')
     ).annotate(
         total_sales=Sum('total_price')
@@ -107,15 +107,15 @@ def get_subcategory_sales_data():
 
 @login_required
 def category_sales_data(request):
-    data = get_category_sales_data()
+    data = get_category_sales_data(request.user)
     return JsonResponse(data)
 
 @login_required
 def subcategory_sales_data(request):
-    data = get_subcategory_sales_data()
+    data = get_subcategory_sales_data(request.user)
     return JsonResponse(data)
 
-def get_income_spends_data_for_period(period):
+def get_income_spends_data_for_period(user, period):
     cache_key = f"income_spends_data_{period}"
     cached_data = cache.get(cache_key)
     if cached_data:
@@ -125,14 +125,14 @@ def get_income_spends_data_for_period(period):
     start_date = today - timedelta(days=period)
 
     # Agrupar ingresos por fecha
-    income_data = Sale.objects.filter(created_at__date__gte=start_date).values(
+    income_data = Sale.objects.filter(user=user, created_at__date__gte=start_date).values(
         'created_at__date'
     ).annotate(
         total_income=Sum('total_price')
     ).order_by('created_at__date')
 
     # Agrupar gastos por fecha
-    spend_data = Spend.objects.filter(created_at__date__gte=start_date).values(
+    spend_data = Spend.objects.filter(user=user, created_at__date__gte=start_date).values(
         'created_at__date'
     ).annotate(
         total_spend=Sum('amount')
@@ -166,7 +166,7 @@ def income_spends_data(request):
     period = request.GET.get('period', 7)
     period = int(period[:-1])
 
-    data = get_income_spends_data_for_period(period)
+    data = get_income_spends_data_for_period(request.user, period)
     
     return JsonResponse(data)
 

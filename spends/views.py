@@ -34,7 +34,7 @@ def calculate_percentage_change(current, previous):
     else:
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
-def get_spend_data_for_period(period):
+def get_spend_data_for_period(user, period):
     cache_key = f"spend_data_{period}"
     cached_data = cache.get(cache_key)
     if cached_data:
@@ -44,7 +44,7 @@ def get_spend_data_for_period(period):
     start_date = today - timedelta(days=period)
 
     # Usar una consulta agregada con `values` y `annotate` más eficiente
-    spend_data = Spend.objects.filter(created_at__date__gte=start_date).values(
+    spend_data = Spend.objects.filter(user=user, created_at__date__gte=start_date).values(
         'created_at__date'
     ).annotate(
         amount=Sum('amount')
@@ -62,17 +62,17 @@ def spends_data(request):
     period = request.GET.get('period', 7)
     period = int(period[:-1])
 
-    data = get_spend_data_for_period(period)
+    data = get_spend_data_for_period(request.user, period)
 
     return JsonResponse(data)
 
-def get_category_spends_data():
+def get_category_spends_data(user):
     cache_key = "category_spends_data"
     cached_data = cache.get(cache_key)
     if cached_data:
         return cached_data
 
-    category_spends = Spend.objects.values(
+    category_spends = Spend.objects.filter(user=user).values(
         category_name=F('category')
     ).annotate(
         total_spends=Sum('amount')
@@ -87,7 +87,7 @@ def get_category_spends_data():
 
 @login_required
 def category_spends_data(request):
-    data = get_category_spends_data()
+    data = get_category_spends_data(request.user)
     return JsonResponse(data)
 
 @login_required
