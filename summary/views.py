@@ -14,6 +14,10 @@ from pos.models import Sale
 from spends.models import Spend
 from .forms import SalesForm
 
+
+def thousand_separator(value):
+    return "{:,.2f}".format(value).replace(",", "X").replace(".", ",").replace("X", ".")
+
 def calculate_percentage_change(current, previous):
     if previous is None or previous == 0:
         return None, 'No disponible', 'gray'
@@ -191,6 +195,7 @@ def summary(request):
     daily_sales = daily_sales_data.get('total_sales_today', 0) if daily_sales_data else 0
     daily_sales_yesterday = daily_sales_data.get('total_sales_yesterday', 0) if daily_sales_data else 0
     daily_sales_percentage, daily_sales_percentage_text, daily_sales_percentage_color = calculate_percentage_change(daily_sales, daily_sales_yesterday)
+    daily_sales = thousand_separator(daily_sales)    
 
     # Productos vendidos (Hoy)
     daily_products_sold_data = sales.aggregate(
@@ -219,11 +224,13 @@ def summary(request):
         daily_products_sold_yesterday = 0
         
     daily_products_sold_percentage, daily_products_sold_percentage_text, daily_products_sold_percentage_color = calculate_percentage_change(daily_products_sold, daily_products_sold_yesterday)
+    daily_products_sold = thousand_separator(daily_products_sold)
 
     # Ventas Totales (Mes)
     monthly_sales = sales.filter(created_at__date__gte=first_day_current_month).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
     monthly_sales_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
     monthly_sales_percentage, monthly_sales_percentage_text, monthly_sales_percentage_color = calculate_percentage_change(monthly_sales, monthly_sales_last_month)
+    monthly_sales = thousand_separator(monthly_sales)
 
     # Productos vendidos (Mes)
     monthly_products_sold = sales.filter(created_at__date__gte=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
@@ -235,6 +242,7 @@ def summary(request):
     monthly_products_sold_last_month = sales.filter(created_at__date__gte=first_day_last_month, created_at__date__lt=first_day_current_month).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
     monthly_products_sold_last_month = round(monthly_products_sold_last_month)
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
+    monthly_products_sold = thousand_separator(monthly_products_sold)
 
     # Buscador de ventas
     sale_search_form = SalesForm()

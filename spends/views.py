@@ -14,6 +14,9 @@ from spends.models import Spend
 from spends.forms import AddSpendForm, SpendForm
 
 
+def thousand_separator(value):
+    return "{:,.2f}".format(value).replace(",", "X").replace(".", ",").replace("X", ".")
+
 def calculate_percentage_change(current, previous):
     if previous is None or previous == 0:
         return None, 'No disponible', 'gray'
@@ -113,6 +116,8 @@ def spends(request):
     daily_spends_yesterday = daily_spends_data.get('total_spends_yesterday', 0) if daily_spends_data else 0
     daily_spends_percentage, daily_spends_percentage_text, daily_spends_percentage_color = calculate_percentage_change(daily_spends, daily_spends_yesterday)
 
+    daily_spends = thousand_separator(daily_spends)
+
     # Gastos del mes actual y del mes pasado
     monthly_spends_data = spends.filter(created_at__date__gte=first_day_current_month).aggregate(
         total_spends=Sum('amount')
@@ -123,6 +128,8 @@ def spends(request):
     )
     monthly_spends_last_month = monthly_spends_last_month_data.get('total_spends', 0) if monthly_spends_last_month_data else 0
     monthly_spends_percentage, monthly_spends_percentage_text, monthly_spends_percentage_color = calculate_percentage_change(monthly_spends, monthly_spends_last_month)
+
+    monthly_spends = thousand_separator(monthly_spends)
 
     # Buscador de ventas
     spend_search_form = SpendForm()

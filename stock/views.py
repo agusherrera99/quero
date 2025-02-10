@@ -14,6 +14,9 @@ from .models import Product, Subcategory
 from pos.models import Sale
 
 
+def thousand_separator(value):
+    return "{:,.2f}".format(value).replace(",", "X").replace(".", ",").replace("X", ".")
+
 def calculate_percentage_change(current, previous):
     if previous is None or previous == 0:
         return None, 'No disponible', 'gray'
@@ -59,11 +62,10 @@ def stock(request):
     # Productos únicos, cantidad total y valor total de stock
     unique_products = products.values('name').distinct().count()
     total_quantity = products.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+    total_quantity = thousand_separator(total_quantity)
     stock_value = products.aggregate(stock_value=Sum(F('quantity') * F('price'))).get('stock_value', 0)
     stock_value = stock_value if stock_value is not None else 0
-
-    # Formatear el valor del stock en formato argentino
-    stock_formatted_value = "{:,.2f}".format(stock_value).replace(",", "X").replace(".", ",").replace("X", ".")
+    stock_value = thousand_separator(stock_value)
 
     # Buscador de productos
     search_form = SearchForm()
@@ -100,7 +102,7 @@ def stock(request):
         'total_quantity_percentage_text': total_quantity_percentage_text,
         'total_quantity_percentage_color': total_quantity_percentage_color,
 
-        'stock_formatted_value': stock_formatted_value,
+        'stock_value': stock_value,
         'stock_percentage': stock_percentage,
         'stock_percentage_text': stock_percentage_text,
         'stock_percentage_color': stock_percentage_color,

@@ -53,7 +53,7 @@
     
     <div class="stat-card">
         <div class="stat-title">Valor del inventario</div>
-        <div class="stat-value">${{ stock_formatted_value|default:"0.00" }}</div>
+        <div class="stat-value">${{ stock_value|default:"0.00" }}</div>
         <div class="status" style="color: {{ stock_percentage_color }};">
             {% if stock_percentage_change %}
                 {% if stock_percentage_color == "red" %}
