@@ -326,6 +326,11 @@
     .search-form {
         max-width: 400px;
     }
+
+    .table-actions {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 /* Pantallas Grandes (Laptops y Monitores, más de 1096px) */
