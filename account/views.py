@@ -136,7 +136,15 @@ def select_business_type(request):
     if request.method == 'POST':
         business_type = request.POST.get('business_type')
         business_type_id = BusinessType.objects.get(name=business_type)
-     
+        
+        if business_type_id is None:
+            messages.error(request, 'Tipo de negocio no válido.')
+            return redirect('account:business_type_selection')
+        elif request.user.business_type == business_type_id:
+            messages.info(request, 'Actualmente tienes seleccionado este tipo de negocio.')
+            return redirect('account:business_type_selection')
+
+
         request.user.business_type = business_type_id
         # Eliminar todos los productos del usuario
         request.user.product_set.all().delete()
