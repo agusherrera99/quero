@@ -14,7 +14,12 @@ from account.models import BusinessType, CustomUser, Notification
 
 @login_required
 def profile(request):
-    return render(request, 'account/profile.html')
+    sub_accounts = CustomUser.objects.filter(parent_account=request.user)
+
+    context = {
+        'sub_accounts': sub_accounts,
+    }
+    return render(request, 'account/profile.html', context)
 
 def login_view(request):
     if request.method == 'POST':
@@ -78,6 +83,68 @@ def registration_view(request):
     }
 
     return render(request, 'registration/register.html', context)
+
+@login_required
+def create_sub_account(request):
+    return render(request, 'account/create_sub_account.html')
+
+@login_required
+def add_sub_account(request):
+    """
+    Agregar una subcuenta a un usuario principal.
+    """
+    if request.user.is_sub_account:
+        messages.error(request, 'No tienes permiso para crear subcuentas.')
+        return redirect('account:profile')
+    else:
+        if request.method == 'POST':
+            first_name = request.POST.get('sub_account_first_name')
+            last_name = request.POST.get('sub_account_last_name')
+            sub_account_email = request.POST.get('sub_account_email')
+            sub_account_username = request.POST.get('sub_account_username')
+            sub_account_password = request.POST.get('sub_account_password')
+            sub_account_password2 = request.POST.get('sub_account_password2')
+            sub_account_phone = request.POST.get('sub_account_phone')
+
+            if sub_account_password != sub_account_password2:
+                messages.error(request, 'Las contraseñas no coinciden.')
+                return redirect('account:create_sub_account')
+
+            try:
+                sub_account = CustomUser.objects.create_user(
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=sub_account_email,
+                    username=sub_account_username,
+                    password=sub_account_password,
+                    phone=sub_account_phone,
+                    shop_name=request.user.shop_name,
+                    business_type=request.user.business_type,
+                    tier=request.user.tier,
+                    is_paid=request.user.is_paid,
+                    payment_due=request.user.payment_due,
+                    parent_account=request.user,
+                    is_sub_account=True,
+                )
+                messages.success(request, f'Subcuenta {sub_account.username} creada con éxito.')
+            except Exception as e:
+                messages.error(request, f'Ocurrió un error al crear la subcuenta: {str(e)}')
+            
+            return redirect('account:profile')
+
+@login_required
+def delete_sub_account(request, sub_account_id):
+    if request.user.is_sub_account:
+        messages.error(request, 'No tienes permiso para eliminar subcuentas.')
+        return redirect('account:profile')
+    else:
+        try:
+            sub_account = CustomUser.objects.get(id=sub_account_id, parent_account=request.user)
+            sub_account.delete()
+            messages.success(request, f'Subcuenta {sub_account.username} eliminada con éxito.')
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'Subcuenta no encontrada.')
+        return redirect('account:profile')
 
 @login_required
 def support(request):

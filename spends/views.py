@@ -62,7 +62,10 @@ def spends_data(request):
     period = request.GET.get('period', 7)
     period = int(period[:-1])
 
-    data = get_spend_data_for_period(request.user, period)
+    if request.user.is_sub_account:
+        data = get_spend_data_for_period(request.user.parent_account.id, period)
+    else:
+        data = get_spend_data_for_period(request.user, period)
 
     return JsonResponse(data)
 
@@ -87,13 +90,19 @@ def get_category_spends_data(user):
 
 @login_required
 def category_spends_data(request):
-    data = get_category_spends_data(request.user)
+    if request.user.is_sub_account:
+        data = get_category_spends_data(request.user.parent_account.id)
+    else:
+        data = get_category_spends_data(request.user)
     return JsonResponse(data)
 
 @login_required
 def spends(request):
     # Obtener los gastos del usuario
-    spends = Spend.objects.filter(user=request.user).order_by('-created_at')
+    if request.user.is_sub_account:
+        spends = Spend.objects.filter(user=request.user.parent_account.id).order_by('-created_at')
+    else:
+        spends = Spend.objects.filter(user=request.user).order_by('-created_at')
 
     # Calcular el primer dia del més actual y el día anterior
     today = datetime.today()

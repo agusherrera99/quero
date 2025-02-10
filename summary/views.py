@@ -63,7 +63,10 @@ def sales_data(request):
     period = request.GET.get('period', 7)
     period = int(period[:-1])
 
-    data = get_sales_data_for_period(request.user, period)
+    if request.user.is_sub_account:
+        data = get_sales_data_for_period(request.user.parent_account.id, period)
+    else:
+        data = get_sales_data_for_period(request.user, period)
     
     return JsonResponse(data)
 
@@ -107,12 +110,18 @@ def get_subcategory_sales_data(user):
 
 @login_required
 def category_sales_data(request):
-    data = get_category_sales_data(request.user)
+    if request.user.is_sub_account:
+        data = get_category_sales_data(request.user.parent_account.id)
+    else:
+        data = get_category_sales_data(request.user)
     return JsonResponse(data)
 
 @login_required
 def subcategory_sales_data(request):
-    data = get_subcategory_sales_data(request.user)
+    if request.user.is_sub_account:
+        data = get_subcategory_sales_data(request.user.parent_account.id)
+    else:
+        data = get_subcategory_sales_data(request.user)
     return JsonResponse(data)
 
 def get_income_spends_data_for_period(user, period):
@@ -166,14 +175,20 @@ def income_spends_data(request):
     period = request.GET.get('period', 7)
     period = int(period[:-1])
 
-    data = get_income_spends_data_for_period(request.user, period)
+    if request.user.is_sub_account:
+        data = get_income_spends_data_for_period(request.user.parent_account.id, period)
+    else:
+        data = get_income_spends_data_for_period(request.user, period)
     
     return JsonResponse(data)
 
 @login_required
 def summary(request):
     # Obtener las ventas del usuario
-    sales = Sale.objects.filter(user=request.user).select_related('product__subcategory__category').order_by('-created_at')
+    if request.user.is_sub_account:
+        sales = Sale.objects.filter(user=request.user.parent_account.id).select_related('product__subcategory__category').order_by('-created_at')
+    else:
+        sales = Sale.objects.filter(user=request.user).select_related('product__subcategory__category').order_by('-created_at')
 
     # Calcula el primer día del mes actual y el día anterior
     today = datetime.today()
@@ -263,7 +278,11 @@ def summary(request):
         gross_profit_percentage_color = 'green'
 
     # Margen de ganancias neta (Teniendo en cuenta además todos los tipos de gastos)
-    total_spends = Spend.objects.filter(user=request.user).aggregate(total_spends=Sum('amount'))['total_spends'] or 0
+    if request.user.is_sub_account:
+        total_spends = Spend.objects.filter(user=request.user.parent_account.id).aggregate(total_spends=Sum('amount'))['total_spends'] or 0
+    else:
+        total_spends = Spend.objects.filter(user=request.user).aggregate(total_spends=Sum('amount'))['total_spends'] or 0
+
     net_profit = gross_profit - total_spends
     net_profit_percentage = (net_profit / total_sales) * 100 if total_sales != 0 else 0
     
@@ -300,13 +319,22 @@ def summary(request):
     sales = sales_paginator.get_page(page_number)
 
     # Agrupar por 'product_id' para que las ventas de un mismo producto se sumen correctamente
-    top_sales = Sale.objects.values('product__id', 'product__name', 'product__subcategory__category__name', 'product__uom')\
+    if request.user.is_sub_account:
+        top_sales = Sale.objects.filter(user=request.user.parent_account.id).values('product__id', 'product__name', 'product__subcategory__category__name', 'product__uom')\
         .annotate(
             total_quantity=Sum('quantity'),
             total_price=Sum('total_price')  # Sumar el total de dinero por cada producto
         )\
-        .filter(user=request.user)\
+        .filter(user=request.user.parent_account.id)\
         .order_by('-total_price')[:10]
+    else:
+        top_sales = Sale.objects.filter(user=request.user).values('product__id', 'product__name', 'product__subcategory__category__name', 'product__uom')\
+            .annotate(
+                total_quantity=Sum('quantity'),
+                total_price=Sum('total_price')  # Sumar el total de dinero por cada producto
+            )\
+            .filter(user=request.user)\
+            .order_by('-total_price')[:10]
     
     # Paginación de los productos más vendidos
     top_sales_paginator = Paginator(top_sales, 10)

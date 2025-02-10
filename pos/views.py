@@ -22,7 +22,10 @@ def pos(request):
     total_amount = sum(Decimal(item.get('total_price', 0)) for item in cart)
     
     # Obtener todos los productos del usuario
-    products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('name')
+    if request.user.is_sub_account:
+        products = Product.objects.filter(user=request.user.parent_account.id).select_related('subcategory__category').order_by('name')
+    else:
+        products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('name')
 
     business_type = request.user.business_type
     

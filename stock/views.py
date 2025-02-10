@@ -111,7 +111,10 @@ def calculate_percentage_change(current, previous):
 
 @login_required
 def stock(request):
-    products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('-updated_at')
+    if request.user.is_sub_account:
+        products = Product.objects.filter(user=request.user.parent_account.id).select_related('subcategory__category').order_by('-updated_at')
+    else:
+        products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('-updated_at')
 
     # Fecha actual, primer día del mes actual y primer día del mes anterior
     today = datetime.today()

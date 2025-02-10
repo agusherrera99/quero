@@ -77,6 +77,7 @@
                         Restablecer contraseña
                     </button>
                 </form>
+                {% if user.is_sub_account == False %}
                 <form  action="{% url 'account:business_type_selection' %}" method="post">
                     {% csrf_token %}
                         <button class="btn btn-warning btn-icon" type="submit">
@@ -84,6 +85,14 @@
                             Cambiar tipo de negocio
                         </button>
                 </form>
+                <form action="{% url 'account:create_sub_account' %}" method="post">
+                    {% csrf_token %}
+                        <button class="btn btn-primary btn-icon" type="submit">
+                            <i class="fa-solid fa-user-plus fa-2x"></i>
+                            Crear subcuenta
+                        </button>
+                </form>
+                {% endif %}
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
                         <button class="btn btn-danger btn-icon" type="submit">
@@ -93,6 +102,40 @@
                 </form>
             </div>
         </div>
+
+        <!-- Subcuentas -->
+        {% if user.is_sub_account == False %}
+            <div class="card">
+                <h2 class="card-title">Subcuentas</h2>
+                <p class="card-subtitle">Administra tus subcuentas.</p>
+
+                <div class="subaccounts-grid">
+                    {% for sub_account in sub_accounts %}
+                        <div class="subaccount-card">
+                            <div class="subaccount-info">
+                                <div class="subaccount-group">
+                                    <div class="subaccount-label">Usuario</div>
+                                    <div class="subaccount-value">{{ sub_account.username }}</div>
+                                </div>
+                                <div class="subaccount-group">
+                                    <div class="subaccount-label">Email</div>
+                                    <div class="subaccount-value">{{ sub_account.email }}</div>
+                                </div>
+                            </div>
+                            <div class="subaccount-actions">
+                                <form action="{% url 'account:delete_sub_account' sub_account.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger btn-icon" type="submit">
+                                        <i class="fa-solid fa-user-minus fa-2x"></i>
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>     
+        {% endif %}     
     </div>
 </div>
 
