@@ -1,3 +1,5 @@
+import csv
+
 from datetime import datetime, timedelta
 
 from django.contrib import messages
@@ -6,13 +8,30 @@ from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Sum, F
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import AddProductForm, SearchForm
 from .models import Product, Subcategory
 from pos.models import Sale
 
+
+def download_stock(request):
+    """
+    Vista que permite descargar un archivo CSV con el stock de productos.
+    """
+    products = Product.objects.filter(user=request.user).select_related('subcategory__category').order_by('-updated_at')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="stock.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Producto', 'Categoria', 'Subcategoria', 'Costo', 'Precio', 'Cantidad', 'Unidad de Medida', 'Código de Barras'])
+
+    for product in products:
+        writer.writerow([product.name, product.subcategory.category.name, product.subcategory.name, product.cost, product.price, product.quantity, product.uom, product.barcode])
+
+    return response
 
 def thousand_separator(value):
     if value is None:

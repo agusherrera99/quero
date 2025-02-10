@@ -285,6 +285,11 @@
     color: var(--primary-color);
 }
 
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
 /* Pantallas Pequeñas y Medias (Móviles, Tablets y Monitores Pequeños hasta 1095px) */
 @media (max-width: 1095px) {
 

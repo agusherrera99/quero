@@ -93,10 +93,17 @@
                 </button>
             </form>
         </div>
-        <a class="btn btn-primary btn-icon" href="{% url 'stock:add_stock' %}">
-            <i class="fas fa-plus"></i>
-            Añadir Producto
-        </a>
+        <div class="table-actions">
+            <a class="btn btn-primary btn-icon" href="{% url 'stock:add_stock' %}">
+                <i class="fas fa-plus"></i>
+                Añadir Producto
+            </a>
+            <!-- Boton para descargar los datos de la tabla -->
+            <a class="btn btn-default btn-icon" href="{% url 'stock:download_stock' %}">
+                <i class="fas fa-download"></i>
+                Descargar
+            </a>
+        </div>
     </div>
 
     <table class="products-table">
