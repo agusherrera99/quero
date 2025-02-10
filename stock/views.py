@@ -1,7 +1,9 @@
 import csv
+import io
 
 from datetime import datetime, timedelta
 
+from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
@@ -26,12 +28,66 @@ def download_stock(request):
     response['Content-Disposition'] = 'attachment; filename="stock.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Producto', 'Categoria', 'Subcategoria', 'Costo', 'Precio', 'Cantidad', 'Unidad de Medida', 'Código de Barras'])
+    writer.writerow(['Producto', 'Subcategoria', 'Costo', 'Precio', 'Cantidad', 'Unidad de Medida', 'Código de Barras'])
 
     for product in products:
-        writer.writerow([product.name, product.subcategory.category.name, product.subcategory.name, product.cost, product.price, product.quantity, product.uom, product.barcode])
+        writer.writerow([product.name, product.subcategory.name, product.cost, product.price, product.quantity, product.uom, product.barcode])
 
     return response
+
+def download_csv_template(request):
+    """
+    Vista que permite descargar un archivo CSV con el stock de productos.
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="stock_template.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Producto', 'Subcategoria', 'Costo', 'Precio', 'Cantidad', 'Unidad de Medida', 'Código de Barras'])
+
+    return response
+
+def import_stock(request):
+    """
+    Función que permite importar productos desde un archivo CSV.
+    Se espera que el archivo tenga la siguiente estructura:
+    
+    Producto,Subcategoria,Costo,Precio,Cantidad,Unidad de Medida,Código de Barras.
+    """
+
+    if request.method == 'POST':
+        csv_file = request.FILES['stockFile']
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, 'El archivo seleccionado no es un archivo CSV.')
+            return redirect('stock:import_stock')
+        
+        data_set = csv_file.read().decode('UTF-8')
+        io_string = io.StringIO(data_set)
+        next(io_string)
+
+        for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+            try:
+                _, created = Product.objects.update_or_create(
+                    name=column[0],
+                    subcategory=Subcategory.objects.get(name=column[1]),
+                    cost=Decimal(column[2]),
+                    price=Decimal(column[3]),
+                    quantity=Decimal(column[4]),
+                    uom=column[5],
+                    barcode=column[6],
+                    user=request.user
+                )
+            except Subcategory.DoesNotExist:
+                messages.error(request, f'La subcategoría {column[1]} no existe.')
+                return redirect('stock:import_stock')
+            except ValueError:
+                messages.error(request, 'Error al importar el archivo.')
+                return redirect('stock:import_stock')
+
+        messages.success(request, 'Productos importados correctamente.')
+        return redirect('stock:stock')
+
+    return render(request, 'import_stock.html')
 
 def thousand_separator(value):
     if value is None:
