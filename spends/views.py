@@ -15,6 +15,8 @@ from spends.forms import AddSpendForm, SpendForm
 
 
 def thousand_separator(value):
+    if value is None:
+        return "0.0"
     return "{:,.2f}".format(value).replace(",", "X").replace(".", ",").replace("X", ".")
 
 def calculate_percentage_change(current, previous):
