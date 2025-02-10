@@ -246,6 +246,23 @@ def summary(request):
     monthly_products_sold_percentage, monthly_products_sold_percentage_text, monthly_products_sold_percentage_color = calculate_percentage_change(monthly_products_sold, monthly_products_sold_last_month)
     monthly_products_sold = thousand_separator(monthly_products_sold)
 
+    # Margen de ganancia bruta (Teniendo en cuenta costo de los productos y precio de venta)
+    total_cost = sales.aggregate(total_cost=Sum(F('product__cost') * F('quantity')))['total_cost'] or 0
+    total_sales = sales.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+    gross_profit = total_sales - total_cost
+    gross_profit_percentage = (gross_profit / total_sales) * 100 if total_sales != 0 else 0
+    gross_profit = thousand_separator(gross_profit)
+
+    if gross_profit_percentage < 0:
+        gross_profit_percentage_text = f"{abs(gross_profit_percentage):.2f}%"
+        gross_profit_percentage_color = 'red'
+    elif gross_profit_percentage == 0:
+        gross_profit_percentage_text = "Igual"
+        gross_profit_percentage_color = 'gray'
+    else:
+        gross_profit_percentage_text = f"{gross_profit_percentage:.2f}%"
+        gross_profit_percentage_color = 'green'
+
     # Buscador de ventas
     sale_search_form = SalesForm()
     sale_query = None
@@ -299,6 +316,11 @@ def summary(request):
         'monthly_products_sold_percentage': monthly_products_sold_percentage,
         'monthly_products_sold_percentage_text': monthly_products_sold_percentage_text,
         'monthly_products_sold_percentage_color': monthly_products_sold_percentage_color,
+
+        'gross_profit': gross_profit,
+        'gross_profit_percentage': gross_profit_percentage,
+        'gross_profit_percentage_text': gross_profit_percentage_text,
+        'gross_profit_percentage_color': gross_profit_percentage_color,
 
         'sales': sales,  
         'sales_results': sales_results, 

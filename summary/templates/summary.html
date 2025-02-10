@@ -93,6 +93,27 @@
                 {% endif %}
             </div>
         </div>
+        <div class="stat-card">
+            <div class="stat-title">Margen de Ganancia Bruta</div>
+            <div class="stat-value">${{ gross_profit|default:"0.00" }}</div>
+            <div class="status" style="color: {{ gross_profit_percentage_color }};">
+                {% if gross_profit_percentage %}
+                    {% if gross_profit_percentage_color == "red" %}
+                        <i class="fas fa-arrow-down"></i>
+                    {% elif gross_profit_percentage_color == "green" %}
+                        <i class="fas fa-arrow-up"></i>
+                    {% else %}
+                        <i class="fas fa-equals"></i>
+                    {% endif %}
+                {% endif %}
+
+                {% if gross_profit_percentage_text == 'No disponible' %}
+                    No disponible
+                {% else %}
+                    {{ gross_profit_percentage_text }}
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <!-- Charts Section -->
