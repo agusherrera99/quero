@@ -63,6 +63,13 @@
             <p class="card-subtitle">Gestiona tu cuenta.</p>
             
             <div class="actions-grid">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                        <button class="btn btn-default btn-icon" type="submit">
+                            <i class="fa-solid fa-right-from-bracket fa-2x"></i>
+                            Cerrar Sesión
+                        </button>
+                </form>
                 <form action="{% url 'password_change' %}">
                     {% csrf_token %}
                     <button class="btn btn-default btn-icon" type="submit">
@@ -92,14 +99,14 @@
                             Crear subcuenta
                         </button>
                 </form>
-                {% endif %}
-                <form action="{% url 'logout' %}" method="post">
+                <form action="{% url 'account:delete_account' %}" method="post">
                     {% csrf_token %}
                         <button class="btn btn-danger btn-icon" type="submit">
-                            <i class="fa-solid fa-right-from-bracket fa-2x"></i>
-                            Cerrar Sesión
+                            <i class="fa-solid fa-user-xmark fa-2x"></i>
+                            Eliminar cuenta
                         </button>
                 </form>
+                {% endif %}
             </div>
         </div>
 

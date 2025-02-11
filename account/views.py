@@ -57,6 +57,44 @@ def login_view(request):
 
     return render(request, 'registration/login.html', context)
 
+@login_required
+def delete_account(request):
+    return render(request, 'account/delete_account.html')
+
+def delete_subaccounts(user):
+    sub_accounts = CustomUser.objects.filter(parent_account=user)
+    try:
+        for sub_account in sub_accounts:
+            sub_account.product_set.all().delete()
+            sub_account.spend_set.all().delete()
+            sub_account.notifications.all().delete()
+            sub_account.delete()
+    except Exception as e:
+        raise Exception(f"Hubo un problema al eliminar las subcuentas: {str(e)}")
+
+@login_required
+def delete_account_confirm(request):
+    """
+    Eliminar la cuenta de un usuario.
+    
+    Se eliminan todos los productos, gastos y notificaciones del usuario.
+    Se eliminan todas las subcuentas asociadas al usuario.
+    """
+    if request.user.is_sub_account:
+        messages.error(request, 'No tienes permiso para eliminar tu cuenta.')
+        return redirect('account:profile')
+    else:
+        try:
+            request.user.product_set.all().delete()
+            request.user.spend_set.all().delete()
+            request.user.notifications.all().delete()
+            delete_subaccounts(request.user)
+            request.user.delete()
+            return redirect('pages:home')
+        except Exception as e:
+            messages.error(request, f"Hubo un problema al eliminar tu cuenta: {str(e)}")
+        return redirect('account:profile')
+
 def registration_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -213,8 +251,10 @@ def select_business_type(request):
 
 
         request.user.business_type = business_type_id
-        # Eliminar todos los productos del usuario
+        # Eliminar todos los productos, gastos y notificaciones del usuario
         request.user.product_set.all().delete()
+        request.user.spend_set.all().delete()
+        request.user.notification_set.all().delete()
         request.user.save()
 
         # Refrescar la instancia del usuario para evitar problemas con la caché
