@@ -263,9 +263,14 @@ def add_stock(request):
 def edit_stock(request, pk):
     product = Product.objects.filter(pk=pk).select_related('subcategory__category').first()
 
-    if product.user != request.user:
-        messages.error(request, 'No tienes permisos para editar este producto.')
-        return redirect('stock:stock')
+    if request.user.is_sub_account:
+        if product.user != request.user.parent_account:
+            messages.error(request, 'No tienes permisos para editar este producto.')
+            return redirect('stock:stock')
+    else:
+        if product.user != request.user:
+            messages.error(request, 'No tienes permisos para editar este producto.')
+            return redirect('stock:stock')
 
     if request.method == 'POST':
         form = AddProductForm(data=request.POST, instance=product, request=request)
@@ -288,9 +293,14 @@ def edit_stock(request, pk):
 def delete_stock(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
-    if product.user != request.user:
-        messages.error(request, 'No tienes permisos para eliminar este producto.')
-        return redirect('stock:stock')
+    if request.user.is_sub_account:
+        if product.user != request.user.parent_account:
+            messages.error(request, 'No tienes permisos para eliminar este producto.')
+            return redirect('stock:stock')
+    else:
+        if product.user != request.user:
+            messages.error(request, 'No tienes permisos para eliminar este producto.')
+            return redirect('stock:stock')
     
     if request.method == 'POST':
         # Eliminar ventas asociadas al producto

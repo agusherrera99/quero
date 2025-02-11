@@ -231,9 +231,14 @@ def add_spend(request):
 def edit_spend(request, pk):
     spend = Spend.objects.filter(pk=pk).first()
 
-    if spend.user != request.user:
-        messages.error(request, 'No tienes permisos para editar este gasto.')
-        return redirect('spends:spends')
+    if request.user.is_sub_account:
+        if spend.user != request.user.parent_account:
+            messages.error(request, 'No tienes permisos para editar este gasto.')
+            return redirect('spends:spends')
+    else:
+        if spend.user != request.user:
+            messages.error(request, 'No tienes permisos para editar este gasto.')
+            return redirect('spends:spends')
 
     if request.method == 'POST':
         form = AddSpendForm(data=request.POST, instance=spend, request=request)
@@ -257,9 +262,14 @@ def edit_spend(request, pk):
 def delete_spend(request, pk):
     spend = get_object_or_404(Spend, pk=pk)
 
-    if spend.user != request.user:
-        messages.error(request, 'No tienes permisos para eliminar este gasto.')
-        return redirect('spends:spends')
+    if request.user.is_sub_account:
+        if spend.user != request.user.parent_account:
+            messages.error(request, 'No tienes permisos para eliminar este gasto.')
+            return redirect('spends:spends')
+    else:
+        if spend.user != request.user:
+            messages.error(request, 'No tienes permisos para eliminar este gasto.')
+            return redirect('spends:spends')
     
     if request.method == 'POST':
         spend.delete()
