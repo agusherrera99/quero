@@ -254,7 +254,7 @@ def select_business_type(request):
         # Eliminar todos los productos, gastos y notificaciones del usuario
         request.user.product_set.all().delete()
         request.user.spend_set.all().delete()
-        request.user.notification_set.all().delete()
+        request.user.notifications.all().delete()
         request.user.save()
 
         # Refrescar la instancia del usuario para evitar problemas con la caché
