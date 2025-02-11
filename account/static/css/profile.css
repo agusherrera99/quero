@@ -166,6 +166,11 @@
         gap: 1.5rem;
     }
 
+    .account-grid form button {
+        width: 100%;
+        height: 3rem;
+    }
+
     .info-grid {
         grid-template-columns: repeat(2, 1fr);
     }
