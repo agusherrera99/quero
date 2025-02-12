@@ -1,4 +1,5 @@
 @import url(../../../static/css/colors.css);
+@import url(../../../static/css/components/buttons.css);
 
 * {
     margin: 0;
@@ -139,4 +140,14 @@ body {
 
 .header-container h2 {
     color: var(--primary-color);
+}
+
+.barcode-container a {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.barcode-container input {
+    display: none;
 }

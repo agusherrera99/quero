@@ -323,3 +323,7 @@ def load_subcategories(request):
     # Creamos un diccionario con las subcategorías que vamos a devolver
     subcategory_data = [{"id": subcategory.id, "name": subcategory.name} for subcategory in subcategories]
     return JsonResponse({"subcategories": subcategory_data})
+
+@login_required
+def scan_product(request):
+    return render(request, 'scan_product.html')
