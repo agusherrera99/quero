@@ -1,0 +1,41 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/svg" href="{% static 'images/favicon.svg' %}" >
+    <title>Escanear Producto - Quero</title>
+    <link rel="stylesheet" href="{% static 'css/scan_product.css' %}">
+</head>
+<body>
+    <link rel="stylesheet" href="{% static 'css/scan_product.css' %}">
+
+    <div class="scan-container">
+        <div class="header-container">
+            <a href="{% url 'stock:add_stock' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
+            <h2>Escanear Producto</h2>
+        </div>
+        <p>Apunta la cámara al código de barras del producto para escanearlo.</p>
+        <div class="camera-container" id="interactive" class="viewport"></div>
+        <div class="info-container">
+            <div class="manual-scan">
+                <p>Si no puedes escanear el código, también puedes introducirlo manualmente.</p>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="barcode" id="barcode" placeholder="Código de barras" required>
+                    <button class="btn btn-primary" type="submit">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de confirmacion de producto con datos obtenidos del escaneo mas localStorage que se oculta hasta que el usuario confirma el escaneo -->
+    <div class="confirmation-card" id="confirmation-card"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
+    <script src="{% static 'js/scan_product.js' %}"></script>
+</body>
+</html>

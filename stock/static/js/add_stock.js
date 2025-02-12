@@ -25,4 +25,18 @@ document.getElementById('id_category').addEventListener('change', function () {
             });
         });
     }
+
+    document.getElementById('scan-button').addEventListener('click', function () {
+        const formData = {
+            category: document.getElementById('id_category').value,
+            subcategory: document.getElementById('id_subcategory').value,
+            name: document.getElementById('id_name').value,
+            quantity: document.getElementById('id_quantity').value,
+            cost: document.getElementById('id_cost').value,
+            price: document.getElementById('id_price').value,
+            uom: document.getElementById('id_uom').value,
+        };
+        localStorage.setItem('addStockFormData', JSON.stringify(formData));
+        window.location.href = '/stock/scan/';
+    });
 });
