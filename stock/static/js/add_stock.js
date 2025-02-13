@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             scanButton.classList.remove('disabled');
         } else {
             scanButton.classList.add('disabled');
+        }
     }
 
     categoryField.addEventListener('change', function () {

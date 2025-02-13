@@ -20,16 +20,6 @@
         </div>
         <p>Apunta la cámara al código de barras del producto para escanearlo.</p>
         <div class="camera-container" id="interactive" class="viewport"></div>
-        <div class="info-container">
-            <div class="manual-scan">
-                <p>Si no puedes escanear el código, también puedes introducirlo manualmente.</p>
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <input type="text" name="barcode" id="manual_barcode" placeholder="Código de barras" required>
-                    <button class="btn btn-primary" type="submit">Confirmar</button>
-                </form>
-            </div>
-        </div>
     </div>
 
     <!-- Tarjeta de confirmacion de producto con datos obtenidos del escaneo mas localStorage que se oculta hasta que el usuario confirma el escaneo -->

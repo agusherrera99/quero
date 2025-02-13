@@ -114,6 +114,7 @@
     <table class="products-table">
         <thead>
             <tr>
+                <th>Código de Barra</th>
                 <th>Producto</th>
                 <th>Categoría</th>
                 <th>Subcategoría</th>
@@ -127,13 +128,14 @@
             {% if query %}
                 {% if not results %}
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem; color: #6B7280;">
+                        <td colspan="8" style="text-align: center; padding: 2rem; color: #6B7280;">
                             No hay resultados para "{{ query }}"
                         </td>
                     </tr>
                 {% else %}
                     {% for product in results %}
                         <tr>
+                            <td>{{ product.barcode }}</td>
                             <td>{{ product.name }}</td>
                             <td>{{ product.subcategory.category.name }}</td>
                             <td>{{ product.subcategory.name }}</td>
@@ -150,6 +152,7 @@
             {% else %}
                 {% for product in products %}
                 <tr>
+                    <td>{{ product.barcode }}</td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.subcategory.category.name }}</td>
                     <td>{{ product.subcategory.name }}</td>
@@ -165,7 +168,7 @@
             {% endif %}
             {% if not products %}
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                    <td colspan="8" style="text-align: center; padding: 2rem; color: #666;">
                         No hay productos en el inventario
                     </td>
                 </tr>
@@ -186,45 +189,49 @@
             </div>
         {% else %}
             {% for product in results %}
-            <div class="product-card">
-                <!-- Información del Producto -->
-                <div class="product-info">
-                    <div>
-                        <p>Producto:</p>
-                        <strong>{{ product.name }}</strong>
+                <div class="product-card">
+                    <!-- Información del Producto -->
+                    <div class="product-info">
+                        <div class="product-info-header">
+                            <p>Código de Barra:</p>
+                            <strong>{{ product.barcode }}</strong>
+                        </div>
+                        <div class="product-info-header">
+                            <p>Producto:</p>
+                            <strong>{{ product.name }}</strong>
+                        </div>
+                        <div class="product-info-header">
+                            <p>Categoría:</p>
+                            <strong>{{ product.subcategory.category.name }}</strong>
+                        </div>
+                        <div class="product-info-header">
+                            <p>Subategoría:</p>
+                            <strong>{{ product.subcategory.name }}</strong>
+                        </div>
                     </div>
-                    <div>
-                        <p>Categoría:</p>
-                        <strong>{{ product.subcategory.category.name }}</strong>
-                    </div>
-                    <div>
-                        <p>Subategoría:</p>
-                        <strong>{{ product.subcategory.name }}</strong>
-                    </div>
-                </div>
 
-                <!-- Costo, Precio y Cantidad -->
-                <div class="product-cost">
-                    costo: ${{ product.cost }}
-                </div>
-                <div class="product-price">
-                    precio: ${{ product.price }} ({{ product.uom }})
-                </div>
-                <div class="product-quantity">
-                    {{ product.quantity|floatformat:2 }} {{ product.uom }} 
-                    {% if product.uom == "unidad" %}es{% else %}s{% endif %}
-                </div>
+                    <!-- Costo, Precio y Cantidad -->
+                    <div class="product-cost">
+                        costo: ${{ product.cost }}
+                    </div>
+                    <div class="product-price">
+                        precio: ${{ product.price }} ({{ product.uom }})
+                    </div>
+                    <div class="product-quantity">
+                        {{ product.quantity|floatformat:2 }} {{ product.uom }} 
+                        {% if product.uom == "unidad" %}es{% else %}s{% endif %}
+                    </div>
 
-                <!-- Acciones -->
-                <div class="product-actions">
-                    <a href="{% url 'stock:edit_stock' product.id %}" class="btn btn-primary">
-                        <i class="fas fa-pen"></i> Editar
-                    </a>
-                    <a href="{% url 'stock:delete_stock' product.id %}" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </a>
+                    <!-- Acciones -->
+                    <div class="product-actions">
+                        <a href="{% url 'stock:edit_stock' product.id %}" class="btn btn-primary">
+                            <i class="fas fa-pen"></i> Editar
+                        </a>
+                        <a href="{% url 'stock:delete_stock' product.id %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
                 </div>
-            </div>
             {% endfor %}
         {% endif %}
     {% else %}
@@ -232,6 +239,10 @@
             <div class="product-card">
                 <!-- Información del Producto -->
                 <div class="product-info">
+                    <div class="product-info-header">
+                        <p>Código de Barra:</p>
+                        <strong>{{ product.barcode }}</strong>
+                    </div>
                     <div class="product-info-header">
                         <p>Producto:</p>
                         <strong>{{ product.name }}</strong>
