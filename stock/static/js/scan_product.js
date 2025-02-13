@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const formData = JSON.parse(localStorage.getItem('addStockFormData'));
-    // console.log('Datos del formulario: ', formData);
 
     function isSupportedBrowser() {
         const ua = navigator.userAgent;
@@ -16,6 +15,34 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error al solicitar permisos de cámara: ', err);
             return false;
         }
+    }
+
+    async function getCategoryName(categoryId) {
+        const response = await fetch(`get_category_name?category_id=${categoryId}`);
+        const data = await response.json();
+        return data.category_name;
+    }
+
+    async function getSubcategoryName(subcategoryId) {
+        const response = await fetch(`get_subcategory_name?subcategory_id=${subcategoryId}`);
+        const data = await response.json();
+        return data.subcategory_name;
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Check if the cookie name matches
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
     if (isSupportedBrowser() && navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
@@ -54,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Quagga.start();
                 });
 
-                Quagga.onDetected(function(result) {
+                Quagga.onDetected(async function(result) {
                     if (result.codeResult && result.codeResult.code && result.codeResult.decodedCodes) {
                         // Filtrar los códigos que tienen valores válidos de error
                         const validErrors = result.codeResult.decodedCodes
@@ -71,36 +98,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                                 if (confirmed) {
                                     formData.barcode = code;
-                                    // Una vez confirmado el código de barras, ocultar todo el sistema de escaneo y replazarlo por una confirmación de guardado del producto con toda la informacion obtendida del localstorage más el codigo de barras
+                                    const categoryName = await getCategoryName(formData.category);
+                                    const subcategoryName = await getSubcategoryName(formData.subcategory);
+                                    const csrfToken = getCookie('csrftoken');
+                                    
                                     document.getElementById('scan-container').style.display = 'none';
                                     document.getElementById('confirmation-card').style.display = 'block';
-                                    document.getElementById('confirmation-card').innerHTML = `
-                                        <div class="card">
-                                            <div class="card-header">
-                                                Confirmación de guardado
-                                            </div>
-                                            <div class="card-body">
-                                                <h5 class="card-title">¿Deseas guardar el siguiente producto?</h5>
-                                                <p class="card-text">
-                                                    <strong>Categoría:</strong> ${formData.category}<br>
-                                                    <strong>Subcategoría:</strong> ${formData.subcategory}<br>
-                                                    <strong>Nombre:</strong> ${formData.name}<br>
-                                                    <strong>Cantidad:</strong> ${formData.quantity}<br>
-                                                    <strong>Costo:</strong> ${formData.cost}<br>
-                                                    <strong>Precio:</strong> ${formData.price}<br>
-                                                    <strong>Unidad de medida:</strong> ${formData.uom}<br>
-                                                    <strong>Código de barras:</strong> ${formData.barcode}
-                                                </p>
-                                                <button id="save-button" class="btn btn-primary">Guardar</button>
-                                                <button id="cancel-button" class="btn btn-danger">Cancelar</button>
-                                            </div>
-                                        </div>
-                                    `;
+                                    
+                                    document.getElementById('category').value = categoryName;
+                                    document.getElementById('subcategory').value = subcategoryName;
+                                    document.getElementById('name').value = formData.name;
+                                    document.getElementById('quantity').value = formData.quantity;
+                                    document.getElementById('cost').value = formData.cost;
+                                    document.getElementById('price').value = formData.price;
+                                    document.getElementById('uom').value = formData.uom;
+                                    document.getElementById('barcode').value = formData.barcode;
+
                                     document.getElementById('cancel-button').addEventListener('click', function() {
                                         localStorage.removeItem('addStockFormData');
                                         window.location.href = '/stock/add/';
                                     });
-                                    
                                     
                                     localStorage.removeItem('addStockFormData');
                                 } else {
