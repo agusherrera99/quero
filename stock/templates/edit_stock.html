@@ -82,7 +82,7 @@
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
                 </div>
-                <!-- <div class="form-group">
+                <div class="form-group">
                     <label for="barcode">Código de barras</label>
                     <div>
                         {{ form.barcode }}
@@ -90,7 +90,7 @@
                     {% for error in form.barcode.errors %}
                         <p class="error" style="color: red;">{{ error }}</p>
                     {% endfor %}
-                </div> -->
+                </div>
             </div>
             <input type="hidden" name="next" value="{{ next }}" />
             <button type="submit" class="submit-button">Guardar cambios</button>

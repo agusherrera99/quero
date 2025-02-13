@@ -97,7 +97,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const confirmed = confirm(`Código de barras detectado: ${code}. ¿Deseas confirmarlo?`);
                 
                                 if (confirmed) {
-                                    formData.barcode = code;
+                                    try {
+                                        formData.barcode = code;
+                                    }   
+                                    catch (err) {
+                                        alert('Ocurrió un error al asignar el código de barras al formulario. Por favor, inténtalo de nuevo.');
+                                        window.location.href = '/stock/add/';
+                                    }
+
                                     const categoryName = await getCategoryName(formData.category);
                                     const subcategoryName = await getSubcategoryName(formData.subcategory);
                                     const csrfToken = getCookie('csrftoken');
@@ -125,15 +132,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
                         } else {
-                            console.error("No se pudieron calcular errores válidos.");
+                            alert('No se pudo calcular la confianza del código de barras. Por favor, inténtalo de nuevo.');
+                            setTimeout(() => Quagga.start(), 2000); // Esperar 2 segundos antes de reiniciar el escaneo
                         }
                     }
                 });
             } else {
-                alert('No se pudo acceder a la cámara. Por favor, asegúrate de haber otorgado los permisos necesarios.');
+                alert('No se pudo acceder a la cámara. Por favor, asegúrate de haber otorgado los permisos necesarios.');  
+                window.location.href = '/stock/add/';
             }
         });
     } else {
         alert('Tu navegador no soporta acceso a la cámara o no es compatible.');
+        window.location.href = '/stock/add/';
     }
 });
