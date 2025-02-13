@@ -173,6 +173,12 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.sales-aux-buttons {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+}
+
 .sales-table {
     width: 100%;
 }

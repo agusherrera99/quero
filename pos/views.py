@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 from stock.models import Product
@@ -139,3 +140,23 @@ def cancel_sale(request):
         request.session['cart'] = []
     messages.info(request, 'Venta cancelada correctamente')
     return redirect('pos:pos')
+
+@login_required
+def scan_product(request):
+    return render(request, 'scan_product.html')
+
+@login_required
+def search_scan_product(request):
+    barcode = request.GET.get('barcode')
+    product = Product.objects.filter(barcode=barcode).first()
+    if not product:
+        return JsonResponse({'error': 'Producto no encontrado'}, status=404)
+    else:
+        product_data = {
+            'product_id': product.id,
+            'product_name': product.name,
+            'price': float(product.price),  # Asegúrate de convertir Decimal a float
+            'uom': product.uom,
+            'quantity': 1  # Asumimos que se añade una unidad al carrito
+        }
+        return JsonResponse({'ok': 'Producto encontrado', 'product': product_data})

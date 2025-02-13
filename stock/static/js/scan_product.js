@@ -29,22 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return data.subcategory_name;
     }
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Check if the cookie name matches
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
     if (isSupportedBrowser() && navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
         requestCameraPermissions().then(granted => {
             if (granted) {
@@ -107,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     const categoryName = await getCategoryName(formData.category);
                                     const subcategoryName = await getSubcategoryName(formData.subcategory);
-                                    const csrfToken = getCookie('csrftoken');
                                     
                                     document.getElementById('scan-container').style.display = 'none';
                                     document.getElementById('confirmation-card').style.display = 'block';

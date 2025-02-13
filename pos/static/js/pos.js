@@ -1,4 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const cartItems = document.getElementById('cartItems');
+    const isReturningFromScan = sessionStorage.getItem('returningFromScan') === 'true';
+    
+    if (!isReturningFromScan) {
+        localStorage.removeItem('cart');
+    }
+    sessionStorage.removeItem('returningFromScan'); // Reset the flag
+
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    // Cargar productos del carrito desde localStorage
+    cart.forEach(product => {
+        const newRow = document.createElement('tr');
+        newRow.dataset.productId = product.product_id;
+        newRow.innerHTML = `
+            <td>${product.product_name}</td>
+            <td class="quantity-cell">
+                <input type="number" class="quantity-input" value="${product.quantity}" min="1" 
+                    data-product-id="${product.product_id}" data-price="${product.price}" data-uom="${product.uom}">
+            </td>
+            <td class="price-cell">$${product.price}</td>
+            <td class="actions-cell">
+                <button class="btn-remove" title="Eliminar producto" data-product-id="${product.product_id}" aria-label="Eliminar ${product.product_name}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        cartItems.appendChild(newRow);
+        setupRowEventListeners(newRow);
+    });
+
     // Buscador de productos
     const searchProduct = document.getElementById('searchProduct');
     searchProduct.addEventListener('input', function() {
@@ -37,14 +68,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const productCards = document.querySelectorAll('.product-card');
     productCards.forEach(card => {
         card.addEventListener('click', function() {
-            AddToCart(this)
+            AddToCart(this);
         });
     });
 
     // Limpiar el carrito de ventas actual
     const clearCartBtn = document.getElementById('clearCartBtn');
     clearCartBtn.addEventListener('click', function() {
-        const cartItems = document.getElementById('cartItems');
         cartItems.innerHTML = `
             <tr id="emptyCart">
                 <td colspan="4" style="text-align: center; padding: 1rem;">
@@ -52,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
             </tr>
         `;
+        localStorage.removeItem('cart');
         updateTotalAmount();
     });
 
@@ -76,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Actualiza el total de todos los productos en el carrito
     function updateTotalAmount() {
-        const cartItems = document.getElementById('cartItems');
         const rows = cartItems.querySelectorAll('tr[data-product-id]');
         let total = 0;
 
@@ -107,7 +137,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const productUom = productCard.dataset.uom;
 
         // Chequear si el producto ya está en el carrito
-        const cartItems = document.getElementById('cartItems');
         const existingItem = cartItems.querySelector(`tr[data-product-id="${productId}"]`);
 
         if (existingItem) {
@@ -135,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
                 <td class="price-cell">$${productPrice}</td> <!-- Se muestra el precio de manera correcta -->
                 <td class="actions-cell">
-                    <button class="btn-remove" title="Eliminar producto" data-product-id="{{ item.product_id }}" aria-label="Eliminar {{ item.name }}">
+                    <button class="btn-remove" title="Eliminar producto" data-product-id="${productId}" aria-label="Eliminar ${productName}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -151,6 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => productCard.classList.remove('added-to-cart'), 300);
 
         updateTotalAmount();
+        saveCartToLocalStorage();
     }
 
     // Agrega manejadores de eventos a las filas del carrito
@@ -164,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const uom = this.dataset.uom;
 
                 updateRowTotal(this.closest('tr'), quantity, price, uom);
+                saveCartToLocalStorage();
             });
         });
         
@@ -172,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         removeButton.addEventListener('click', function() {
             row.remove();
             updateTotalAmount();
+            saveCartToLocalStorage();
             
             // Show empty cart message if no items left
             if (!cartItems.querySelector('tr[data-product-id]')) {
@@ -186,6 +218,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Guardar el carrito en localStorage
+    function saveCartToLocalStorage() {
+        const rows = cartItems.querySelectorAll('tr[data-product-id]');
+        const cart = [];
+
+        rows.forEach(row => {
+            const productId = row.dataset.productId;
+            const productName = row.querySelector('td').textContent;
+            const quantity = row.querySelector('.quantity-input').value;
+            const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
+            const productUom = row.querySelector('.quantity-input').dataset.uom;
+            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom });
+        });
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
     // Esto se ejecuta cuando la página se carga por primera vez
     const existingRows = cartItems.querySelectorAll('tr[data-product-id]');
     existingRows.forEach(setupRowEventListeners); // Esto agrega los manejadores de eventos a los productos ya en el carrito
@@ -195,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmSaleForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const cartItems = document.getElementById('cartItems');
         const rows = cartItems.querySelectorAll('tr[data-product-id]');
 
         if (rows.length === 0) {
@@ -209,12 +257,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const productName = row.querySelector('td').textContent;
             const quantity = row.querySelector('.quantity-input').value;
             const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
-            // Agregar uom del producto
             const productUom = row.querySelector('.quantity-input').dataset.uom;
             cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom });
         });
-        
-        // Serializacón y envío de datos
+
         const cartInput = document.getElementById('cartInput');
         const totalAmountInput = document.getElementById('totalAmountInput');
         cartInput.value = JSON.stringify(cart);
