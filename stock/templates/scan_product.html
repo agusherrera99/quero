@@ -13,7 +13,7 @@
 <body>
     <link rel="stylesheet" href="{% static 'css/scan_product.css' %}">
 
-    <div class="scan-container">
+    <div class="scan-container" id="scan-container">
         <div class="header-container">
             <a href="{% url 'stock:add_stock' %}" class="back-button"><i class="fas fa-arrow-left fa-2x"></i></a>
             <h2>Escanear Producto</h2>
@@ -25,7 +25,7 @@
                 <p>Si no puedes escanear el código, también puedes introducirlo manualmente.</p>
                 <form action="" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="barcode" id="barcode" placeholder="Código de barras" required>
+                    <input type="text" name="barcode" id="manual_barcode" placeholder="Código de barras" required>
                     <button class="btn btn-primary" type="submit">Confirmar</button>
                 </form>
             </div>
@@ -33,7 +33,65 @@
     </div>
 
     <!-- Tarjeta de confirmacion de producto con datos obtenidos del escaneo mas localStorage que se oculta hasta que el usuario confirma el escaneo -->
-    <div class="confirmation-card" id="confirmation-card"></div>
+    <div class="confirmation-card" id="confirmation-card">
+        <div class="confirmation-card-header">
+            <h2>Producto escaneado</h2>
+        </div>
+        <form method="post" action="{% url 'stock:add_scan' %}" id="confirmation-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="category">Categoría</label>
+                <div>
+                    <input type="text" name="category" id="category" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="subcategory">Subcategoría</label>
+                <div>
+                    <input type="text" name="subcategory" id="subcategory" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="name">Nombre del producto</label>
+                <div>
+                    <input type="text" name="name" id="name" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Cantidad</label>
+                <div>
+                    <input type="number" name="quantity" id="quantity" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="cost">Costo</label>
+                <div>
+                    <input type="number" name="cost" id="cost" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price">Precio</label>
+                <div>
+                    <input type="number" name="price" id="price" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="uom">Unidad de Medida</label>
+                <div>
+                    <input type="text" name="uom" id="uom" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="barcode">Código de barras</label>
+                <div>
+                    <input type="number" name="barcode" id="barcode" required>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" id="save-button">Confirmar</button>
+            <a class="btn btn-default" href="{% url 'stock:add_stock' %}" type="button" id="cancel-button">Cancelar</a>
+        </form>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
     <script src="{% static 'js/scan_product.js' %}"></script>

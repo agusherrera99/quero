@@ -14,7 +14,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import AddProductForm, SearchForm
-from .models import Product, Subcategory
+from .models import Category, Product, Subcategory
 from pos.models import Sale
 
 
@@ -327,3 +327,48 @@ def load_subcategories(request):
 @login_required
 def scan_product(request):
     return render(request, 'scan_product.html')
+
+@login_required
+def get_category_name(request):
+    category_id = request.GET.get('category_id')
+    category = Category.objects.get(pk=category_id)
+    return JsonResponse({"category_name": category.name})
+
+@login_required
+def get_subcategory_name(request):
+    subcategory_id = request.GET.get('subcategory_id')
+    subcategory = Subcategory.objects.get(pk=subcategory_id)
+    return JsonResponse({"subcategory_name": subcategory.name})
+
+@login_required
+@transaction.atomic
+def add_scan(request):
+    """
+    Función que permite añadir un producto escaneado por el usuario.
+    """
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        quantity = int(request.POST.get('quantity'))
+        price = Decimal(request.POST.get('price'))
+        cost = Decimal(request.POST.get('cost'))
+        barcode = request.POST.get('barcode')
+        uom = request.POST.get('uom')
+        subcategory_ = request.POST.get('subcategory')
+        subcategory_id = Subcategory.objects.get(name=subcategory_).id
+
+        product = Product(
+            name=name,
+            quantity=quantity,
+            price=price,
+            cost=cost,
+            barcode=barcode,
+            uom=uom,
+            subcategory_id=subcategory_id,
+            user=request.user
+        )
+        product.save()
+        messages.success(request, 'Producto añadido correctamente.')
+        return redirect('stock:stock')
+    else:
+        messages.error(request, 'Error al añadir el producto.')
+        return redirect('stock:add_stock')
