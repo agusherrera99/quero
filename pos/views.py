@@ -148,7 +148,7 @@ def scan_product(request):
 @login_required
 def search_scan_product(request):
     barcode = request.GET.get('barcode')
-    product = Product.objects.filter(barcode=barcode).first()
+    product = Product.objects.filter(barcode=barcode, user=request.user).first()
     if not product:
         return JsonResponse({'error': 'Producto no encontrado'}, status=404)
     else:
