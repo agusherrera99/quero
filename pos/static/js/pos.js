@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setupRowEventListeners(newRow);
     });
 
+    // Actualizar el total del carrito después de cargar los productos
+    updateTotalAmount();
+
     // Buscador de productos
     const searchProduct = document.getElementById('searchProduct');
     searchProduct.addEventListener('input', function() {
