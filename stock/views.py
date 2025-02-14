@@ -325,8 +325,8 @@ def load_subcategories(request):
     return JsonResponse({"subcategories": subcategory_data})
 
 @login_required
-def scan_product(request):
-    return render(request, 'scan_product.html')
+def scan_stock(request):
+    return render(request, 'scan_stock.html')
 
 @login_required
 def get_category_name(request):
