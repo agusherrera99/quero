@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         cartItems.appendChild(newRow);
         setupRowEventListeners(newRow);
+        updateRowTotal(newRow, product.quantity, product.price, product.uom); // Actualizar el total del row
     });
 
     // Actualizar el total del carrito después de cargar los productos
