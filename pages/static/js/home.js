@@ -9,13 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Nuevo código para el efecto flip
     const featureCards = document.querySelectorAll('.feature-card');
+    
 
     featureCards.forEach(card => {
         const viewBtn = card.querySelector('#feature-btn');
         const closeBtn = card.querySelector('#feature-btn-close');
         const video = card.querySelector('.feature-video');
+        const frontCard = card.querySelector('.feature-card-front');
 
         viewBtn.addEventListener('click', () => {
+            frontCard.style.display = 'none';
             card.classList.add('flipped');
             // Reproducir el video cuando se voltea la card
             if (video) {
@@ -30,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 video.pause();
                 video.currentTime = 0;
             }
+            setTimeout(() => {
+                frontCard.style.display = 'flex';
+            }, 500);
         });
     });
 });
