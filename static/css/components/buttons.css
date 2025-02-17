@@ -36,6 +36,17 @@
     opacity: 0.9;
 }
 
+.btn-violet {
+    background-color: var(--violet);
+    color: var(--white);
+}
+
+.btn-violet:hover {
+    background-color: var(--violet-hover);
+    border-color: var(--violet-hover);
+    opacity: 0.9;
+}
+
 .btn-confirm {
     background-color: var(--secondary-green);
     color: var(--white);
