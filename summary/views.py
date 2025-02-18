@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
-from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Case, F, IntegerField, Sum, Value, When
@@ -36,11 +35,6 @@ def calculate_percentage_change(current, previous):
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
 def get_sales_data_for_period(user, period):
-    cache_key = f"sales_data_{period}"
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return cached_data
-
     today = datetime.today()
     start_date = today - timedelta(days=period)
 
@@ -55,7 +49,6 @@ def get_sales_data_for_period(user, period):
     sales_values = [entry['total_sales'] for entry in sales_data]
 
     result = {'dates': sales_dates, 'values': sales_values}
-    cache.set(cache_key, result, 60)
     return result
 
 @login_required
@@ -71,11 +64,6 @@ def sales_data(request):
     return JsonResponse(data)
 
 def get_category_sales_data(user):
-    cache_key = "category_sales_data"
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return cached_data
-
     category_sales = Sale.objects.filter(user=user).values(
         category_name=F('product__subcategory__category__name')
     ).annotate(
@@ -86,15 +74,9 @@ def get_category_sales_data(user):
     category_values = [entry['total_sales'] for entry in category_sales]
 
     result = {'labels': category_labels, 'values': category_values}
-    cache.set(cache_key, result, 60)
     return result
 
 def get_subcategory_sales_data(user):
-    cache_key = "subcategory_sales_data"
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return cached_data
-
     subcategory_sales = Sale.objects.filter(user=user).values(
         subcategory_name=F('product__subcategory__name')
     ).annotate(
@@ -105,7 +87,6 @@ def get_subcategory_sales_data(user):
     subcategory_values = [entry['total_sales'] for entry in subcategory_sales]
 
     result = {'labels': subcategory_labels, 'values': subcategory_values}
-    cache.set(cache_key, result, 60)
     return result
 
 @login_required
@@ -125,11 +106,6 @@ def subcategory_sales_data(request):
     return JsonResponse(data)
 
 def get_income_spends_data_for_period(user, period):
-    cache_key = f"income_spends_data_{period}"
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return cached_data
-
     today = datetime.today()
     start_date = today - timedelta(days=period)
 
@@ -166,8 +142,6 @@ def get_income_spends_data_for_period(user, period):
         'incomes': incomes,
         'spends': spends
     }
-
-    cache.set(cache_key, result, 60)
     return result
 
 @login_required
