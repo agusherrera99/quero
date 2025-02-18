@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
-from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Case, IntegerField, F, Sum, Value, When
@@ -35,11 +34,6 @@ def calculate_percentage_change(current, previous):
         return percentage_change, f"{percentage_change:.2f}%", 'green'
     
 def get_spend_data_for_period(user, period):
-    cache_key = f"spend_data_{period}"
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return cached_data
-
     today = datetime.today()
     start_date = today - timedelta(days=period)
 
@@ -54,7 +48,6 @@ def get_spend_data_for_period(user, period):
     spends_values = [entry['amount'] for entry in spend_data]
 
     result = {'dates': spends_dates, 'values': spends_values}
-    # cache.set(cache_key, result, 60)
     return result
 
 @login_required
@@ -70,11 +63,6 @@ def spends_data(request):
     return JsonResponse(data)
 
 def get_category_spends_data(user):
-    cache_key = "category_spends_data"
-    cached_data = cache.get(cache_key)
-    if cached_data:
-        return cached_data
-
     category_spends = Spend.objects.filter(user=user).values(
         category_name=F('category')
     ).annotate(
@@ -85,7 +73,6 @@ def get_category_spends_data(user):
     category_values = [entry['total_spends'] for entry in category_spends]
 
     result = {'labels': category_labels, 'values': category_values}
-    cache.set(cache_key, result, 60)
     return result
 
 @login_required
