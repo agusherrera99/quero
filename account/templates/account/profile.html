@@ -15,16 +15,32 @@
             
             <div class="info-grid">
                 <div class="info-group">
+                    <div class="info-label">Nombre</div>
+                    <div class="info-value">{{ user.first_name|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Apellido</div>
+                    <div class="info-value">{{ user.last_name|capfirst }}</div>
+                </div>
+                <div class="info-group">
                     <div class="info-label">Email</div>
                     <div class="info-value">{{ user.email }}</div>
                 </div>
                 <div class="info-group">
-                    <div class="info-label">Usuario</div>
-                    <div class="info-value">{{ user.username }}</div>
-                </div>
-                <div class="info-group">
                     <div class="info-label">Teléfono</div>
                     <div class="info-value">{{ user.phone }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Tipo de negocio</div>
+                    <div class="info-value">{{ user.business_type|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Negocio</div>
+                    <div class="info-value">{{ user.shop_name }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Dirección</div>
+                    <div class="info-value">{{ user.address }}</div>
                 </div>
                 <div class="info-group">
                     <div class="info-label">Creado el</div>
@@ -37,22 +53,6 @@
                 <div class="info-group">
                     <div class="info-label">Fecha de renovación</div>
                     <div class="info-value">{{ user.payment_due|date:"d F Y" }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Tipo de negocio</div>
-                    <div class="info-value">{{ user.business_type|capfirst }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Negocio</div>
-                    <div class="info-value">{{ user.shop_name }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Nombre</div>
-                    <div class="info-value">{{ user.first_name|capfirst }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Apellido</div>
-                    <div class="info-value">{{ user.last_name|capfirst }}</div>
                 </div>
             </div>
         </div>

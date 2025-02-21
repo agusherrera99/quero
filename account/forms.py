@@ -47,7 +47,7 @@ class UserLoginForm(forms.Form):
 class UserRegistrationForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
-        fields = ('username', 'email', 'password1', 'password2', 'shop_name', 'first_name', 'last_name', 'phone')
+        fields = ('username', 'email', 'password1', 'password2', 'shop_name', 'first_name', 'last_name', 'phone', 'address')
 
     username = forms.CharField(
         max_length=30,
@@ -141,6 +141,18 @@ class UserRegistrationForm(forms.ModelForm):
             attrs={
                 'class': 'form-control',
                 'placeholder': '1234567890'
+            }
+        )
+    )
+
+    address = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text='Proporcione su dirección.',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Calle 123'
             }
         )
     )
