@@ -160,6 +160,10 @@ body {
     color: var(--fourth-color);
 }
 
+.hidden {
+    display: none;
+}
+
 /* Pantallas pequeñas (móviles, hasta 768px) */
 @media (max-width: 768px) {
     .card {

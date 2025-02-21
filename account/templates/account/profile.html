@@ -15,16 +15,32 @@
             
             <div class="info-grid">
                 <div class="info-group">
+                    <div class="info-label">Nombre</div>
+                    <div class="info-value">{{ user.first_name|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Apellido</div>
+                    <div class="info-value">{{ user.last_name|capfirst }}</div>
+                </div>
+                <div class="info-group">
                     <div class="info-label">Email</div>
                     <div class="info-value">{{ user.email }}</div>
                 </div>
                 <div class="info-group">
-                    <div class="info-label">Usuario</div>
-                    <div class="info-value">{{ user.username }}</div>
-                </div>
-                <div class="info-group">
                     <div class="info-label">Teléfono</div>
                     <div class="info-value">{{ user.phone }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Tipo de negocio</div>
+                    <div class="info-value">{{ user.business_type|capfirst }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Negocio</div>
+                    <div class="info-value">{{ user.shop_name }}</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Dirección</div>
+                    <div class="info-value">{{ user.address }}</div>
                 </div>
                 <div class="info-group">
                     <div class="info-label">Creado el</div>
@@ -38,22 +54,6 @@
                     <div class="info-label">Fecha de renovación</div>
                     <div class="info-value">{{ user.payment_due|date:"d F Y" }}</div>
                 </div>
-                <div class="info-group">
-                    <div class="info-label">Tipo de negocio</div>
-                    <div class="info-value">{{ user.business_type|capfirst }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Negocio</div>
-                    <div class="info-value">{{ user.shop_name }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Nombre</div>
-                    <div class="info-value">{{ user.first_name|capfirst }}</div>
-                </div>
-                <div class="info-group">
-                    <div class="info-label">Apellido</div>
-                    <div class="info-value">{{ user.last_name|capfirst }}</div>
-                </div>
             </div>
         </div>
     
@@ -63,49 +63,55 @@
             <p class="card-subtitle">Gestiona tu cuenta.</p>
             
             <div class="actions-grid">
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
+                <div class="actions">
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="btn btn-fifth btn-icon" type="submit">
+                            <i class="fa-solid fa-dove fa-2x"></i>
+                            <span class="logout-text">Cerrar Sesión</span>
+                        </button>
+                    </form>
+                    <form action="{% url 'password_change' %}">
+                        {% csrf_token %}
                         <button class="btn btn-default btn-icon" type="submit">
-                            <i class="fa-solid fa-right-from-bracket fa-2x"></i>
-                            Cerrar Sesión
+                            <i class="fa-solid fa-key fa-2x"></i>
+                            Cambiar contraseña
                         </button>
-                </form>
-                <form action="{% url 'password_change' %}">
-                    {% csrf_token %}
-                    <button class="btn btn-default btn-icon" type="submit">
-                        <i class="fa-solid fa-key fa-2x"></i>
-                        Cambiar contraseña
-                    </button>
-                </form>
-                <form action="{% url 'password_reset' %}">
-                    {% csrf_token %}
-                    <button class="btn btn-default btn-icon" type="submit">
-                        <i class="fa-solid fa-unlock fa-2x"></i>
-                        Restablecer contraseña
-                    </button>
-                </form>
+                    </form>
+                    <form action="{% url 'password_reset' %}">
+                        {% csrf_token %}
+                        <button class="btn btn-default btn-icon" type="submit">
+                            <i class="fa-solid fa-unlock fa-2x"></i>
+                            Restablecer contraseña
+                        </button>
+                    </form>
+                </div>
                 {% if user.is_sub_account == False %}
-                <form  action="{% url 'account:business_type_selection' %}" method="post">
-                    {% csrf_token %}
-                        <button class="btn btn-warning btn-icon" type="submit">
-                            <i class="fa-solid fa-store fa-2x"></i>
-                            Cambiar tipo de negocio
-                        </button>
-                </form>
-                <form action="{% url 'account:create_sub_account' %}" method="post">
-                    {% csrf_token %}
-                        <button class="btn btn-primary btn-icon" type="submit">
-                            <i class="fa-solid fa-user-plus fa-2x"></i>
-                            Crear subcuenta
-                        </button>
-                </form>
-                <form action="{% url 'account:delete_account' %}" method="post">
-                    {% csrf_token %}
-                        <button class="btn btn-danger btn-icon" type="submit">
-                            <i class="fa-solid fa-user-xmark fa-2x"></i>
-                            Eliminar cuenta
-                        </button>
-                </form>
+                <div class="actions bordered">
+                    <form  action="{% url 'account:business_type_selection' %}" method="post">
+                        {% csrf_token %}
+                            <button class="btn btn-warning btn-icon" type="submit">
+                                <i class="fa-solid fa-store fa-2x"></i>
+                                Cambiar tipo de negocio
+                            </button>
+                    </form>
+                </div>
+                <div class="actions">
+                    <form action="{% url 'account:create_sub_account' %}" method="post">
+                        {% csrf_token %}
+                            <button class="btn btn-primary btn-icon" type="submit">
+                                <i class="fa-solid fa-user-plus fa-2x"></i>
+                                Crear subcuenta
+                            </button>
+                    </form>
+                    <form action="{% url 'account:delete_account' %}" method="post">
+                        {% csrf_token %}
+                            <button class="btn btn-danger btn-icon" type="submit">
+                                <i class="fa-solid fa-user-xmark fa-2x"></i>
+                                Eliminar cuenta
+                            </button>
+                    </form>
+                </div>
                 {% endif %}
             </div>
         </div>

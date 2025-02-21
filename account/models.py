@@ -31,6 +31,7 @@ def get_default_payment_due_date():
 class CustomUser(AbstractUser):
     phone = models.CharField(max_length=30, default='0')
     shop_name = models.CharField(max_length=100, default='sin nombre')
+    address = models.CharField(max_length=255, null=True, blank=True)
     business_type = models.ForeignKey(BusinessType, on_delete=models.CASCADE, null=True, blank=True, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -49,6 +50,7 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         self.shop_name = self.shop_name.lower()
+        self.address = self.address.lower()
         if self.created_at is None:
             self.created_at = timezone.localtime(timezone.now())  
         return super(CustomUser, self).save(*args, **kwargs)

@@ -7,9 +7,11 @@
     --third-color-hover: #374151;
     --fourth-color: #6B7280;
     --fourth-color-hover: #4B5563;
+    --fifth-color: #64748b;
+    --fifth-color-hover: #475569;
 
-    --special-start-color: #3b82f6;
-    --special-end-color: #8b5cf6;
+    --colorfull-start-color: #3b82f6;
+    --colorfull-end-color: #8b5cf6;
 
     --primary-background: #ffffff;
     --secondary-background: #f8f9fa;
