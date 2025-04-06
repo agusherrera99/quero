@@ -5,14 +5,16 @@ from django.utils import timezone
 from account.models import Notification
 
 class Subcategory(models.Model):
-    name = models.CharField(max_length=100, null=False, default='sin subcategoria')
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, default=1)
+    name = models.CharField(max_length=100, null=False, default='sin subcategoria', verbose_name='Subcategoría')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, default=1, verbose_name='Categoría')
 
     class Meta:
         db_table = 'subcategories'
         indexes = [
             models.Index(fields=['name'], name='subcategory_name_idx'),
         ]
+        verbose_name = 'Subcategoría'
+        verbose_name_plural = 'Subcategorías'
 
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
@@ -23,13 +25,15 @@ class Subcategory(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, null=False, default='sin categoria')
+    name = models.CharField(max_length=100, null=False, default='sin categoria', verbose_name='Categoría')
 
     class Meta:
         db_table = 'categories'
         indexes = [
             models.Index(fields=['name'], name='category_name_idx'),
         ]
+        verbose_name = 'Categoría'
+        verbose_name_plural = 'Categorías'
 
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
@@ -50,13 +54,13 @@ class Product(models.Model):
 
     LOW_THRESHOLD = 5
 
-    name = models.CharField(max_length=100, null=False, default='sin nombre')
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
-    cost = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
-    barcode = models.CharField(max_length=100, null=True, default=None)
-    uom = models.CharField(max_length=30, choices=UNIT_CHOICES, null=False, default='unidad')
-    subcategory = models.ForeignKey('Subcategory', on_delete=models.CASCADE, default=1)
+    name = models.CharField(max_length=100, null=False, default='sin nombre', verbose_name='Nombre')
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0, verbose_name='Cantidad')
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0, verbose_name='Precio')
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0, verbose_name='Costo')
+    barcode = models.CharField(max_length=100, null=True, default=None, verbose_name='Código de barras')
+    uom = models.CharField(max_length=30, choices=UNIT_CHOICES, null=False, default='unidad', verbose_name='Unidad de medida')
+    subcategory = models.ForeignKey('Subcategory', on_delete=models.CASCADE, default=1, verbose_name='Subcategoría')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('account.CustomUser', on_delete=models.CASCADE, null=True)
@@ -71,6 +75,8 @@ class Product(models.Model):
             models.Index(fields=['created_at'], name='product_created_at_idx'),
             models.Index(fields=['updated_at'], name='product_updated_at_idx'),
         ]
+        verbose_name = 'Producto'
+        verbose_name_plural = 'Productos'
 
     def is_low_stock(self):
         if self.quantity <= self.LOW_THRESHOLD:
