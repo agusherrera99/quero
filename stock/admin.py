@@ -8,16 +8,14 @@ from .models import Category, Subcategory, Product
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     search_fields = ('name',)
-    list_filter = ('name',)
     ordering = ('name',)
     list_per_page = 10
-    list_editable = ('name',)
     fieldsets = (
         (None, {
             'fields': ('name',)
         }),
     )
-    readonly_fields = ('id',)
+    list_display_links = ('name',)
 
 @admin.register(Subcategory)
 class SubcategoryAdmin(admin.ModelAdmin):
@@ -26,13 +24,12 @@ class SubcategoryAdmin(admin.ModelAdmin):
     list_filter = ('category',)
     ordering = ('name',)
     list_per_page = 10
-    list_editable = ('name', 'category')
     fieldsets = (
         (None, {
             'fields': ('name', 'category')
         }),
     )
-    readonly_fields = ('id',)
+    list_display_links = ('name',)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -47,4 +44,4 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'quantity', 'price', 'cost', 'barcode', 'uom', 'subcategory')
         }),
     )
-    readonly_fields = ('id',)
+    list_display_links = ('name',)
