@@ -49,8 +49,16 @@ class CustomUser(AbstractUser):
         ]
 
     def save(self, *args, **kwargs):
-        self.shop_name = self.shop_name.lower()
-        self.address = self.address.lower()
+        # Extraer un parámetro para indicar si es un superusuario desde manage.py
+        is_superuser_from_command = kwargs.pop('skip_lower', False)
+        
+        # Aplicar transformaciones a minúsculas solo si no es un superusuario desde comando
+        if not is_superuser_from_command:
+            if self.shop_name:
+                self.shop_name = self.shop_name.lower()
+            if self.address:
+                self.address = self.address.lower()
+        
         if self.created_at is None:
             self.created_at = timezone.localtime(timezone.now())  
         return super(CustomUser, self).save(*args, **kwargs)
