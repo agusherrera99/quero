@@ -15,7 +15,7 @@ class CategoryAdmin(admin.ModelAdmin):
             'fields': ('name',)
         }),
     )
-    list_display_links = ('name',)
+    list_display_links = ('id',)
 
 @admin.register(Subcategory)
 class SubcategoryAdmin(admin.ModelAdmin):
@@ -29,7 +29,7 @@ class SubcategoryAdmin(admin.ModelAdmin):
             'fields': ('name', 'category')
         }),
     )
-    list_display_links = ('name',)
+    list_display_links = ('id',)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -44,4 +44,4 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'quantity', 'price', 'cost', 'barcode', 'uom', 'subcategory')
         }),
     )
-    list_display_links = ('name',)
+    list_display_links = ('id',)
