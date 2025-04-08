@@ -411,7 +411,7 @@ def create_default_data(apps, schema_editor):
         ('caños corrugados', 272, 'materiales electricos'),
         ('caños rígidos', 273, 'materiales electricos'),
         ('cintas aislantes', 274, 'materiales electricos'),
-        ('diyuntores/diferenciasles', 275, 'materiales electricos'),
+        ('diyuntores/diferenciales', 275, 'materiales electricos'),
         ('fichas', 276, 'materiales electricos'),
         ('lamparas', 277, 'materiales electricos'),
         ('modulos', 278, 'materiales electricos'),
