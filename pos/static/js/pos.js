@@ -36,6 +36,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Buscador de productos
     const searchProduct = document.getElementById('searchProduct');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+    // Función para mostrar/ocultar el botón de limpiar
+    function toggleClearButton() {
+        clearSearchBtn.classList.toggle('visible', searchProduct.value.length > 0);
+    }
+
+    // Función para limpiar la búsqueda
+    function clearSearch() {
+        searchProduct.value = '';
+        searchProduct.focus();
+        toggleClearButton();
+        // Mostrar todos los productos
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.style.display = 'block';
+        });
+    }
+
+    // Event listeners
     searchProduct.addEventListener('input', function() {
         const searchValue = this.value.toLowerCase();
         const productCards = document.querySelectorAll('.product-card');
@@ -47,12 +67,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.style.display = 'none';
             }
         });
+        toggleClearButton();
+    });
+
+    clearSearchBtn.addEventListener('click', clearSearch);
+
+    // También limpiar cuando se presione Escape
+    searchProduct.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            clearSearch();
+        }
     });
 
     // Selección de categoría
     const categoryButtons = document.querySelectorAll('.category-btn');
     categoryButtons.forEach(button => {
         button.addEventListener('click', function() {
+            searchProduct.value = '';
+            searchProduct.textContent = '';
+
             categoryButtons.forEach(btn => btn.classList.remove('selected'));
             this.classList.add('selected');
             

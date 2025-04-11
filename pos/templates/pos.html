@@ -81,7 +81,12 @@
     <!-- Caja registradora -->
     <div class="cash-machine">
         <div class="search-product">
-            <input type="text" class="search-input" id="searchProduct" placeholder="Buscar producto..." autofocus>
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" id="searchProduct" placeholder="Buscar producto..." autofocus>
+                <button class="search-clear-btn" id="clearSearchBtn" type="button" aria-label="Limpiar búsqueda">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         </div>
 
         <div class="quick-categories">
