@@ -98,11 +98,15 @@
         
         <div class="products-grid" id="productsGrid">
             {% for product in products %}
-            <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}" data-uom="{{ product.uom }}">
+            <button class="product-card" data-product-id="{{ product.id }}" data-category-id="{{ product.subcategory.category.id }}" data-uom="{{ product.uom }}" data-stock="{{ product.quantity }}">
                 <div class="product-subcategory-name">{{ product.subcategory.name }}</div>
                 <div class="product-info">
                     <div class="product-name">{{ product.name }}</div>
-                    <div class="product-stock">({{ product.quantity|floatformat:2 }})</div>
+                    {% if product.uom == 'unidad' %}
+                        <div class="product-stock">({{ product.quantity|floatformat:0}})</div>
+                    {% else %}
+                        <div class="product-stock">({{ product.quantity|floatformat:2 }})</div>
+                    {% endif %}
                 </div>
                 <div class="product-price">${{ product.price }}</div>
             </button>

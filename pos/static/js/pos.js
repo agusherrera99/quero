@@ -13,10 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
     cart.forEach(product => {
         const newRow = document.createElement('tr');
         newRow.dataset.productId = product.product_id;
+        newRow.dataset.maxStock = product.stock; // Guardar el stock máximo en la fila
         newRow.innerHTML = `
             <td>${product.product_name}</td>
             <td class="quantity-cell">
-                <input type="number" class="quantity-input" value="${product.quantity}" min="1" 
+                <input type="number" class="quantity-input" value="${product.quantity}" min="1" max="${product.stock}"
                     data-product-id="${product.product_id}" data-price="${product.price}" data-uom="${product.uom}">
             </td>
             <td class="price-cell">$${product.price}</td>
@@ -172,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const productName = productCard.querySelector('.product-name').textContent;
         const productPrice = parseFloat(productCard.querySelector('.product-price').textContent.replace('$', ''));
         const productUom = productCard.dataset.uom;
+        const productStock = parseInt(productCard.dataset.stock); // Añadir esto al HTML
 
         // Chequear si el producto ya está en el carrito
         const existingItem = cartItems.querySelector(`tr[data-product-id="${productId}"]`);
@@ -180,9 +182,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // Actualizar la cantidad del producto existente
             const quantityInput = existingItem.querySelector('.quantity-input');
             const newQuantity = parseInt(quantityInput.value) + 1;
+            
+            // Verificar si hay suficiente stock
+            if (newQuantity > productStock) {
+                alert(`No hay suficiente stock. Stock disponible: ${productStock} ${productUom}`);
+                return;
+            }
+            
             quantityInput.value = newQuantity;
-
-            updateRowTotal(existingItem, newQuantity, productPrice, productUom);  // Se pasa el precio correctamente
+            updateRowTotal(existingItem, newQuantity, productPrice, productUom);
         } else {
             // Elimina el mensaje de carrito vacío si está presente
             const emptyCart = document.getElementById('emptyCart');
@@ -193,13 +201,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Añadir una nueva fila al carrito
             const newRow = document.createElement('tr');
             newRow.dataset.productId = productId;
+            newRow.dataset.maxStock = productStock; // Guardar el stock máximo en la fila
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td class="quantity-cell">
-                    <input type="number" class="quantity-input" value="1" min="1" 
+                    <input type="number" class="quantity-input" value="1" min="1" max="${productStock}"
                         data-product-id="${productId}" data-price="${productPrice}" data-uom="${productUom}">
                 </td>
-                <td class="price-cell">$${productPrice}</td> <!-- Se muestra el precio de manera correcta -->
+                <td class="price-cell">$${productPrice}</td>
                 <td class="actions-cell">
                     <button class="btn-remove" title="Eliminar producto" data-product-id="${productId}" aria-label="Eliminar ${productName}">
                         <i class="fas fa-trash"></i>
@@ -207,12 +216,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
             `;
             cartItems.appendChild(newRow);
-
-            // Añadir manejadores de eventos para la nueva fila
             setupRowEventListeners(newRow);
         }
         
-        // Feedback visual (efecto de destello rápido)
+        // Feedback visual
         productCard.classList.add('added-to-cart');
         setTimeout(() => productCard.classList.remove('added-to-cart'), 300);
 
@@ -222,17 +229,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Agrega manejadores de eventos a las filas del carrito
     function setupRowEventListeners(row) {
-        // Actualiza la cantidad cuando se cambia el input de cantidad
-        const quantityInputs = document.querySelectorAll('.quantity-input');
-        quantityInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const quantity = parseFloat(this.value);
-                const price = parseFloat(this.dataset.price);
-                const uom = this.dataset.uom;
+        const quantityInput = row.querySelector('.quantity-input');
+        const maxStock = parseInt(row.dataset.maxStock);
 
-                updateRowTotal(this.closest('tr'), quantity, price, uom);
-                saveCartToLocalStorage();
-            });
+        quantityInput.addEventListener('input', function() {
+            let quantity = parseInt(this.value);
+            const price = parseFloat(this.dataset.price);
+            const uom = this.dataset.uom;
+
+            // Validar que la cantidad no exceda el stock
+            if (quantity > maxStock) {
+                quantity = maxStock;
+                this.value = maxStock;
+                alert(`No hay suficiente stock. Stock disponible: ${maxStock} ${uom}`);
+            }
+
+            updateRowTotal(row, quantity, price, uom);
+            saveCartToLocalStorage();
         });
         
         // Evento que se dispara cuando se elimina un producto del carrito
@@ -266,7 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const quantity = row.querySelector('.quantity-input').value;
             const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
             const productUom = row.querySelector('.quantity-input').dataset.uom;
-            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom });
+            const productStock = parseInt(row.dataset.maxStock); // Guardar el stock máximo
+            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom, stock: productStock });
         });
 
         localStorage.setItem('cart', JSON.stringify(cart));
@@ -295,7 +309,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const quantity = row.querySelector('.quantity-input').value;
             const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
             const productUom = row.querySelector('.quantity-input').dataset.uom;
-            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom });
+            const productStock = parseInt(row.dataset.maxStock); // Guardar el stock máximo
+            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom, stock: productStock });
         });
 
         const cartInput = document.getElementById('cartInput');
