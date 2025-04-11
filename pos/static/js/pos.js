@@ -1,323 +1,176 @@
+import { CartUtils } from './cart-utils.js';
+import { setupEventListeners } from './event-handlers.js';
+
 document.addEventListener('DOMContentLoaded', function() {
-    const cartItems = document.getElementById('cartItems');
-    const isReturningFromScan = sessionStorage.getItem('returningFromScan') === 'true';
-    
-    if (!isReturningFromScan) {
-        localStorage.removeItem('cart');
-    }
-    sessionStorage.removeItem('returningFromScan'); // Reset the flag
+    // DOM events
+    const elements = {
+        cartItems: document.getElementById('cartItems'),
+        searchProduct: document.getElementById('search-product'),
+        clearSearchBtn: document.getElementById('clearSearchBtn'),
+        totalAmountBtn: document.getElementById('totalAmount'),
+        confirmSaleForm: document.getElementById('confirmSaleForm'),
+        clearCartBtn: document.getElementById('clearCartBtn')
+    };
 
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    class CartManager {
+        constructor(container) {
+            this.container = container;
+            this.initializeCart();
+        }
 
-    // Cargar productos del carrito desde localStorage
-    cart.forEach(product => {
-        const newRow = document.createElement('tr');
-        newRow.dataset.productId = product.product_id;
-        newRow.dataset.maxStock = product.stock; // Guardar el stock máximo en la fila
-        newRow.innerHTML = `
-            <td>${product.product_name}</td>
-            <td class="quantity-cell">
-                <input type="number" class="quantity-input" value="${product.quantity}" min="1" max="${product.stock}"
-                    data-product-id="${product.product_id}" data-price="${product.price}" data-uom="${product.uom}">
-            </td>
-            <td class="price-cell">$${product.price}</td>
-            <td class="actions-cell">
-                <button class="btn-remove" title="Eliminar producto" data-product-id="${product.product_id}" aria-label="Eliminar ${product.product_name}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        `;
-        cartItems.appendChild(newRow);
-        setupRowEventListeners(newRow);
-        updateRowTotal(newRow, product.quantity, product.price, product.uom); // Actualizar el total del row
-    });
 
-    // Actualizar el total del carrito después de cargar los productos
-    updateTotalAmount();
+        initializeCart() {
+            if (!sessionStorage.getItem('returningFromScan')) {
+                localStorage.removeItem('cart');
+            }
+            sessionStorage.removeItem('returningFromScan');
+            
+            this.loadCartFromStorage();
+        }
 
-    // Buscador de productos
-    const searchProduct = document.getElementById('searchProduct');
-    const clearSearchBtn = document.getElementById('clearSearchBtn');
+        loadCartFromStorage() {
+            const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+            savedCart.forEach(item => this.addItemToCart(item));
+            
+            this.updateTotal();
+        }
 
-    // Función para mostrar/ocultar el botón de limpiar
-    function toggleClearButton() {
-        clearSearchBtn.classList.toggle('visible', searchProduct.value.length > 0);
-    }
+        addItemToCart(productData) {
+            const existingItem = this.findExistingItem(productData.id);
 
-    // Función para limpiar la búsqueda
-    function clearSearch() {
-        searchProduct.value = '';
-        searchProduct.focus();
-        toggleClearButton();
-        // Mostrar todos los productos
-        const productCards = document.querySelectorAll('.product-card');
-        productCards.forEach(card => {
-            card.style.display = 'block';
-        });
-    }
-
-    // Event listeners
-    searchProduct.addEventListener('input', function() {
-        const searchValue = this.value.toLowerCase();
-        const productCards = document.querySelectorAll('.product-card');
-        productCards.forEach(card => {
-            const productName = card.querySelector('.product-name').textContent.toLowerCase();
-            if (productName.includes(searchValue)) {
-                card.style.display = 'block';
+            if (existingItem) {
+                this.updateExitingItem(existingItem, productData);
             } else {
-                card.style.display = 'none';
+                this.createNewCartItem(productData);
             }
-        });
-        toggleClearButton();
-    });
 
-    clearSearchBtn.addEventListener('click', clearSearch);
-
-    // También limpiar cuando se presione Escape
-    searchProduct.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            clearSearch();
-        }
-    });
-
-    // Selección de categoría
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    categoryButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            searchProduct.value = '';
-            searchProduct.textContent = '';
-
-            categoryButtons.forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-            
-            const categoryId = this.dataset.categoryId;
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                if (categoryId == 0 || card.dataset.categoryId == categoryId) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    });
-
-    // Selección de productos
-    const productCards = document.querySelectorAll('.product-card');
-    productCards.forEach(card => {
-        card.addEventListener('click', function() {
-            AddToCart(this);
-        });
-    });
-
-    // Limpiar el carrito de ventas actual
-    const clearCartBtn = document.getElementById('clearCartBtn');
-    clearCartBtn.addEventListener('click', function() {
-        cartItems.innerHTML = `
-            <tr id="emptyCart">
-                <td colspan="4" style="text-align: center; padding: 1rem;">
-                    No hay productos en la venta actual
-                </td>
-            </tr>
-        `;
-        localStorage.removeItem('cart');
-        updateTotalAmount();
-    });
-
-    // Función para actualizar el total de la fila
-    function updateRowTotal(row, quantity, price, uom) {
-        let totalPrice;
-
-        if (uom === 'unidad') {
-            totalPrice = quantity * price;
-        } else if (uom === 'kilogramo' || uom === 'litro') {
-            totalPrice = quantity * price;
-        } else if (uom === 'gramo' || uom === 'mililitro') {
-            // Convertimos gramos o mililitros a la unidad base (kilogramo o litro)
-            totalPrice = (quantity / 1000) * price; // Conversión a kilos o litros
-        } else {
-            totalPrice = 0;
+            this.updateTotal();
+            this.saveCart();
         }
 
-        row.querySelector('.price-cell').textContent = `$${totalPrice.toFixed(2)}`;
-        updateTotalAmount(); // Actualizamos el total general del carrito
-    }
+        findExistingItem(productId) {
+            return this.container.querySelector(`tr[data-product-id="${productId}"]`);
+        }
 
-    // Actualiza el total de todos los productos en el carrito
-    function updateTotalAmount() {
-        const rows = cartItems.querySelectorAll('tr[data-product-id]');
-        let total = 0;
+        updateExitingItem(row, productData) {
+            const input = row.querySelector('.quantity-input');
+            const newQuantity = parseInt(input.value) + 1;
 
-        rows.forEach(row => {
-            const quantityInput = row.querySelector('.quantity-input');
-            const price = parseFloat(quantityInput.dataset.price);
-            const quantity = parseFloat(quantityInput.value);
-            const uom = quantityInput.dataset.uom;
+            if (CartUtils.validateStock(newQuantity, productData.stock, productData.uom)) {
+                input.value = newQuantity;
 
-            let rowTotal = quantity * price; // Calculamos el total de la fila
-
-            if (uom === 'gramo' || uom === 'mililitro') {
-                rowTotal = (quantity / 1000) * price; // Ajuste para gramos/mililitros
+                this.updateRowTotal(row);
             }
+        }
 
-            total += rowTotal;
-        });
+        updateRowTotal(row) {
+            const input = row.querySelector('.quantity-input');
+            const quantity = parseFloat(input.value);
+            const price = parseFloat(input.dataset.price);
+            const uom = input.dataset.uom;
 
-        const totalAmountSpan = document.getElementById('totalAmount');
-        totalAmountSpan.textContent = total.toFixed(2);
-    }
+            const total = CartUtils.calculatePrice(quantity, price, uom);
+            row.querySelector('.price-cell').textContent = `$${total.toFixed(2)}`;
 
-    // Añadir un producto al carrito
-    function AddToCart(productCard) {
-        const productId = productCard.dataset.productId;
-        const productName = productCard.querySelector('.product-name').textContent;
-        const productPrice = parseFloat(productCard.querySelector('.product-price').textContent.replace('$', ''));
-        const productUom = productCard.dataset.uom;
-        const productStock = parseInt(productCard.dataset.stock); // Añadir esto al HTML
+            this.updateTotal();
+            this.saveCart();
+        }
 
-        // Chequear si el producto ya está en el carrito
-        const existingItem = cartItems.querySelector(`tr[data-product-id="${productId}"]`);
+        createNewCartItem(productData) {
+            const row = document.createElement('tr');
+            row.dataset.productId = productData.id;
+            row.dataset.maxStock = productData.stock;
+            row.innerHTML = this.generateRowHTML(productData);
 
-        if (existingItem) {
-            // Actualizar la cantidad del producto existente
-            const quantityInput = existingItem.querySelector('.quantity-input');
-            const newQuantity = parseInt(quantityInput.value) + 1;
-            
-            // Verificar si hay suficiente stock
-            if (newQuantity > productStock) {
-                alert(`No hay suficiente stock. Stock disponible: ${productStock} ${productUom}`);
-                return;
-            }
-            
-            quantityInput.value = newQuantity;
-            updateRowTotal(existingItem, newQuantity, productPrice, productUom);
-        } else {
-            // Elimina el mensaje de carrito vacío si está presente
-            const emptyCart = document.getElementById('emptyCart');
-            if (emptyCart) {
-                emptyCart.remove();
-            }
+            this.container.appendChild(row);
+            this.setupRowEventListeners(row);
+        }
 
-            // Añadir una nueva fila al carrito
-            const newRow = document.createElement('tr');
-            newRow.dataset.productId = productId;
-            newRow.dataset.maxStock = productStock; // Guardar el stock máximo en la fila
-            newRow.innerHTML = `
-                <td>${productName}</td>
+        generateRowHTML(product) {
+            return `
+                <td>${product.name}</td>
                 <td class="quantity-cell">
-                    <input type="number" class="quantity-input" value="1" min="1" max="${productStock}"
-                        data-product-id="${productId}" data-price="${productPrice}" data-uom="${productUom}">
+                    <input type="number" class="quantity-input" value="1" min="1" max="${product.stock}"
+                        data-product-id="${product.id}" data-price="${product.price}" data-uom="${product.uom}">
                 </td>
-                <td class="price-cell">$${productPrice}</td>
+                <td class="price-cell">$${product.price}</td>
                 <td class="actions-cell">
-                    <button class="btn-remove" title="Eliminar producto" data-product-id="${productId}" aria-label="Eliminar ${productName}">
+                    <button class="btn-remove" title="Eliminar producto" data-product-id="${product.id}" 
+                        aria-label="Eliminar ${product.name}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
             `;
-            cartItems.appendChild(newRow);
-            setupRowEventListeners(newRow);
-        }
-        
-        // Feedback visual
-        productCard.classList.add('added-to-cart');
-        setTimeout(() => productCard.classList.remove('added-to-cart'), 300);
-
-        updateTotalAmount();
-        saveCartToLocalStorage();
-    }
-
-    // Agrega manejadores de eventos a las filas del carrito
-    function setupRowEventListeners(row) {
-        const quantityInput = row.querySelector('.quantity-input');
-        const maxStock = parseInt(row.dataset.maxStock);
-
-        quantityInput.addEventListener('input', function() {
-            let quantity = parseInt(this.value);
-            const price = parseFloat(this.dataset.price);
-            const uom = this.dataset.uom;
-
-            // Validar que la cantidad no exceda el stock
-            if (quantity > maxStock) {
-                quantity = maxStock;
-                this.value = maxStock;
-                alert(`No hay suficiente stock. Stock disponible: ${maxStock} ${uom}`);
-            }
-
-            updateRowTotal(row, quantity, price, uom);
-            saveCartToLocalStorage();
-        });
-        
-        // Evento que se dispara cuando se elimina un producto del carrito
-        const removeButton = row.querySelector('.btn-remove');
-        removeButton.addEventListener('click', function() {
-            row.remove();
-            updateTotalAmount();
-            saveCartToLocalStorage();
-            
-            // Show empty cart message if no items left
-            if (!cartItems.querySelector('tr[data-product-id]')) {
-                cartItems.innerHTML = `
-                    <tr id="emptyCart">
-                        <td colspan="4" style="text-align: center; padding: 1rem;">
-                            No hay productos en la venta actual
-                        </td>
-                    </tr>
-                `;
-            }
-        });
-    }
-
-    // Guardar el carrito en localStorage
-    function saveCartToLocalStorage() {
-        const rows = cartItems.querySelectorAll('tr[data-product-id]');
-        const cart = [];
-
-        rows.forEach(row => {
-            const productId = row.dataset.productId;
-            const productName = row.querySelector('td').textContent;
-            const quantity = row.querySelector('.quantity-input').value;
-            const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
-            const productUom = row.querySelector('.quantity-input').dataset.uom;
-            const productStock = parseInt(row.dataset.maxStock); // Guardar el stock máximo
-            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom, stock: productStock });
-        });
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-    }
-
-    // Esto se ejecuta cuando la página se carga por primera vez
-    const existingRows = cartItems.querySelectorAll('tr[data-product-id]');
-    existingRows.forEach(setupRowEventListeners); // Esto agrega los manejadores de eventos a los productos ya en el carrito
-
-    // Confirmar venta
-    const confirmSaleForm = document.getElementById('confirmSaleForm');
-    confirmSaleForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const rows = cartItems.querySelectorAll('tr[data-product-id]');
-
-        if (rows.length === 0) {
-            alert('No hay productos en el carrito. Por favor, agrega productos antes de confirmar la venta.');
-            return;
         }
 
-        const cart = [];
-        rows.forEach(row => {
-            const productId = row.dataset.productId;
-            const productName = row.querySelector('td').textContent;
-            const quantity = row.querySelector('.quantity-input').value;
-            const productPrice = parseFloat(row.querySelector('.price-cell').textContent.replace('$', ''));
-            const productUom = row.querySelector('.quantity-input').dataset.uom;
-            const productStock = parseInt(row.dataset.maxStock); // Guardar el stock máximo
-            cart.push({ product_id: productId, product_name: productName, quantity: quantity, price: productPrice, uom: productUom, stock: productStock });
-        });
+        setupRowEventListeners(row) {
+            this.setupQuantityListener(row);
+            this.setupRemoveListener(row);
+        }
 
-        const cartInput = document.getElementById('cartInput');
-        const totalAmountInput = document.getElementById('totalAmountInput');
-        cartInput.value = JSON.stringify(cart);
-        totalAmountInput.value = document.getElementById('totalAmount').textContent;
+        setupQuantityListener(row) {
+            const input = row.querySelector('.quantity-input');
+            const maxStock = parseInt(row.dataset.maxStock);
 
-        this.submit();
-    });
+            input.addEventListener('change', () => {
+                let quantity = parseInt(input.value);
+
+                if (quantity < 1) {
+                    quantity = 1;
+                    input.value = 1;
+                }
+
+                if (CartUtils.validateStock(quantity, maxStock, input.dataset.uom)) {
+                    this.updateRowTotal(row)
+                } else {
+                    input.value = maxStock;
+                    this.updateRowTotal(row);
+                }
+            });
+        }
+
+        setupRemoveListener(row) {
+            const removeBtn = row.querySelector('.btn-remove');
+            removeBtn.addEventListener('click', () => {
+                row.remove();
+                this.updateTotal();
+                this.saveCart();
+
+                if (!this.container.querySelector('tr[data-product-id]')) {
+                    CartUtils.showEmptyCartMessage(this.container);
+                }
+            });
+        }
+
+        updateTotal() {
+            const rows = this.container.querySelectorAll('tr[data-product-id]');
+            const total = Array.from(rows).reduce((sum, row) => {
+                const input = row.querySelector('.quantity-input');
+                return sum + CartUtils.calculatePrice(
+                    parseFloat(input.value),
+                    parseFloat(input.dataset.price),
+                    input.dataset.uom
+                );
+            }, 0);
+            elements.totalAmountBtn.textContent = total.toFixed(2);
+        }
+
+        saveCart() {
+            const cartData = Array.from(this.container.querySelectorAll('tr[data-product-id]'))
+                .map(row => CartUtils.createCartItem({
+                    id: row.dataset.productId,
+                    name: row.querySelector('td').textContent,
+                    quantity: row.querySelector('.quantity-input').value,
+                    price: parseFloat(row.querySelector('.price-cell').textContent),
+                    uom: row.querySelector('.quantity-input').dataset.uom,
+                    stock: parseInt(row.dataset.maxStock)
+                }));
+            localStorage.setItem('cart', JSON.stringify(cartData));
+        }
+    }
+
+    // Initialize
+    const cartManager = new CartManager(elements.cartItems);
+    setupEventListeners(cartManager);
+
 });
